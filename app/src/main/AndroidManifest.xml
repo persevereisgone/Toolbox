@@ -33,7 +33,7 @@
 
         <!-- 设备管理员接收器（用于执行锁屏） -->
         <receiver
-            android:name=".LockDeviceAdminReceiver"
+            android:name=".function.time.LockDeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
             android:exported="true">
             <meta-data
@@ -46,12 +46,12 @@
 
         <!-- 定时锁屏闹钟广播接收器 -->
         <receiver
-            android:name=".LockAlarmReceiver"
+            android:name=".function.time.LockAlarmReceiver"
             android:exported="true" />
 
         <!-- 倒计时前台服务：更新常驻通知与悬浮窗 -->
         <service
-            android:name=".CountdownOverlayService"
+            android:name=".function.time.CountdownOverlayService"
             android:exported="false"
             android:foregroundServiceType="dataSync"/>
     </application>

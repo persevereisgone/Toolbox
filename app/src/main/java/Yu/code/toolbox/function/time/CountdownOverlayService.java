@@ -1,4 +1,4 @@
-package Yu.code.toolbox;
+package Yu.code.toolbox.function.time;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -22,6 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import android.util.DisplayMetrics;
 import android.provider.Settings;
+
+import Yu.code.toolbox.MainActivity;
+import Yu.code.toolbox.R;
 
 public class CountdownOverlayService extends Service {
 
