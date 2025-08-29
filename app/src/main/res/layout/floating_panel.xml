@@ -9,13 +9,16 @@
     android:padding="16dp"
     app:shapeAppearanceOverlay="@style/RoundedCornerShape">
 
-    <!-- 网格布局，2列 -->
+    <!-- 网格布局，统一列宽，自动适配列数 -->
     <GridView
         android:id="@+id/panel_grid"
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:scrollbars="none"
         android:horizontalSpacing="16dp"
-        android:verticalSpacing="16dp" />
+        android:verticalSpacing="16dp"
+        android:numColumns="auto_fit"
+        android:columnWidth="70dp"
+        android:stretchMode="columnWidth" />
 
 </LinearLayout>

@@ -13,7 +13,7 @@ import android.widget.PopupWindow;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.android.material.snackbar.Snackbar;
+import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -27,6 +27,8 @@ import Yu.code.toolbox.databinding.ActivityMainBinding;
 import Yu.code.toolbox.function.time.CountdownOverlayService;
 import Yu.code.toolbox.function.time.LockAlarmReceiver;
 import Yu.code.toolbox.ui.PanelGridAdapter;
+import Yu.code.toolbox.ui.home.HomeFragment;
+import Yu.code.toolbox.ui.function.FunctionConstants;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -41,6 +43,10 @@ import android.os.Build;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
 import android.widget.NumberPicker;
+import android.os.Handler;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_LAST_HOURS = "last_custom_hours";
     private static final String KEY_LAST_MINUTES = "last_custom_minutes";
 
+    /**
+     * Activity创建时的初始化方法
+     * 设置UI界面、初始化FAB按钮、配置导航抽屉等
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
         handleOpenLockDialogIfNeeded(getIntent());
     }
 
+    /**
+     * 处理新的Intent，用于处理从悬浮窗跳转回来的情况
+     * @param intent 新的Intent对象
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -125,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
         handleOpenLockDialogIfNeeded(intent);
     }
 
+    /**
+     * Activity恢复时检查定时服务状态
+     * 如果之前设置了定时但服务未运行，则重新启动服务
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -141,6 +159,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+    /**
+     * 检查是否需要打开锁屏对话框
+     * 用于处理从悬浮窗跳转回来时自动显示定时对话框
+     * @param intent 要检查的Intent对象
+     */
     private void handleOpenLockDialogIfNeeded(Intent intent) {
         if (intent != null && intent.getBooleanExtra("OPEN_LOCK_DIALOG", false)) {
             showLockTimerDialog();
@@ -148,13 +173,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 创建选项菜单
+     * @param menu 菜单对象
+     * @return 返回true表示菜单创建成功
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
-    // 显示悬浮面板
+    /**
+     * 显示悬浮功能面板
+     * 创建并显示包含各种功能按钮的悬浮面板
+     * @param anchorView 锚点视图，用于确定面板显示位置
+     */
     private void showFloatingPanel(View anchorView) {
         // 加载悬浮面板布局
         View panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null);
@@ -170,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
                 String name = item.getName();
                 if ("定时返回".equals(name) || "定时锁屏".equals(name)) {
                     showLockTimerDialog();
+                } else if ("录音机".equals(name)) {
+                    showRecorderInHome();
                 }
             }
         });
@@ -235,6 +271,10 @@ public class MainActivity extends AppCompatActivity {
         mPopupWindow.setFocusable(true);
     }
 
+    /**
+     * 显示定时锁屏对话框
+     * 提供预设时长选项和自定义时长功能
+     */
     private void showLockTimerDialog() {
         final List<String> labels = new ArrayList<>();
         final List<Long> delays = new ArrayList<>();
@@ -273,16 +313,46 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * 在Home页面显示录音机功能
+     * 导航到Home Fragment并显示录音机界面
+     */
+    private void showRecorderInHome() {
+        // 关闭悬浮面板
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+
+        // 导航到Home Fragment
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        navController.navigate(R.id.nav_home);
+
+        // 延迟执行，确保Fragment已经创建
+        new Handler().postDelayed(() -> {
+            // 使用静态方法显示录音机功能
+            HomeFragment.showFunctionStatic(FunctionConstants.FUNCTION_RECORDER);
+        }, 300);
+    }
+
+    /**
+     * 确保悬浮窗权限已授予
+     * 如果没有权限，会引导用户到设置页面
+     * @return 返回true表示有权限，false表示需要用户手动授权
+     */
     private boolean ensureOverlayPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
         if (Settings.canDrawOverlays(this)) return true;
-        Snackbar.make(binding.getRoot(), "需要悬浮窗权限以显示倒计时", Snackbar.LENGTH_LONG).show();
+        Toast.makeText(this, "需要悬浮窗权限以显示倒计时", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:" + getPackageName()));
         startActivity(intent);
         return false;
     }
 
+    /**
+     * 确保通知权限已授予（Android 13及以上版本需要）
+     * 如果没有权限，会请求用户授权
+     */
     private void ensureNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -293,11 +363,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 确保精准闹钟权限已授予（Android 12及以上版本需要）
+     * 如果没有权限，会引导用户到设置页面
+     * @return 返回true表示有权限，false表示需要用户手动授权
+     */
     private boolean ensureExactAlarmPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true;
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (am != null && am.canScheduleExactAlarms()) return true;
-        Snackbar.make(binding.getRoot(), "需要授予精准闹钟权限", Snackbar.LENGTH_LONG).show();
+        Toast.makeText(this, "需要授予精准闹钟权限", Toast.LENGTH_LONG).show();
         Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
@@ -308,6 +383,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * 设置定时锁屏
+     * 创建闹钟并启动倒计时服务
+     * @param delayMillis 延迟时间（毫秒）
+     */
     private void scheduleLock(long delayMillis) {
         long triggerAt = System.currentTimeMillis() + delayMillis;
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -330,9 +410,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startService(svc);
         }
-        Snackbar.make(binding.getRoot(), "已设置：" + formatDuration(delayMillis) + "后回到主屏", Snackbar.LENGTH_LONG).show();
+        Toast.makeText(this, "已设置：" + formatDuration(delayMillis) + "后回到主屏", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * 取消已设置的定时锁屏
+     * 取消闹钟并停止倒计时服务
+     */
     private void cancelScheduledLock() {
         AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         PendingIntent pi = buildLockPendingIntent();
@@ -348,9 +432,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startService(svc);
         }
-        Snackbar.make(binding.getRoot(), "已取消定时返回桌面", Snackbar.LENGTH_LONG).show();
+        Toast.makeText(this, "已取消定时返回桌面", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * 构建锁屏的PendingIntent
+     * 用于创建定时锁屏的广播接收器
+     * @return 返回配置好的PendingIntent对象
+     */
     private PendingIntent buildLockPendingIntent() {
         Intent intent = new Intent(this, LockAlarmReceiver.class);
         return PendingIntent.getBroadcast(
@@ -361,6 +450,10 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+    /**
+     * 提示用户输入自定义时长
+     * 显示NumberPicker对话框让用户选择小时和分钟
+     */
     private void promptCustomMinutes() {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_time_wheel, null, false);
         NumberPicker npHours = view.findViewById(R.id.np_hours);
@@ -391,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
             int minutes = npMinutes.getValue();
             long totalMinutes = (long) hours * 60L + minutes;
             if (totalMinutes <= 0) {
-                Snackbar.make(binding.getRoot(), "请选择大于0的时长", Snackbar.LENGTH_LONG).show();
+                Toast.makeText(this, "请选择大于0的时长", Toast.LENGTH_LONG).show();
                 return;
             }
             if (!ensureOverlayPermission()) return;
@@ -408,15 +501,25 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * 显示剩余时间
+     * 显示当前定时锁屏的剩余时间
+     */
     private void showRemainingTime() {
         long remaining = getRemainingMs();
         if (remaining <= 0) {
-            Snackbar.make(binding.getRoot(), "当前没有正在进行的定时", Snackbar.LENGTH_LONG).show();
+            Toast.makeText(this, "当前没有正在进行的定时", Toast.LENGTH_LONG).show();
         } else {
-            Snackbar.make(binding.getRoot(), "剩余：" + formatDuration(remaining) + "后回到主屏", Snackbar.LENGTH_LONG).show();
+            Toast.makeText(this, "剩余：" + formatDuration(remaining) + "后回到主屏", Toast.LENGTH_LONG).show();
         }
     }
 
+    /**
+     * 格式化时长显示
+     * 将毫秒转换为可读的时间格式（小时、分钟、秒）
+     * @param ms 毫秒数
+     * @return 格式化后的时间字符串
+     */
     private String formatDuration(long ms) {
         long totalSeconds = Math.max(0, ms / 1000);
         long hours = totalSeconds / 3600;
@@ -433,16 +536,29 @@ public class MainActivity extends AppCompatActivity {
         return seconds + "秒";
     }
 
+    /**
+     * 保存定时触发时间到SharedPreferences
+     * @param triggerAt 触发时间戳（毫秒）
+     */
     private void saveTriggerAt(long triggerAt) {
         SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         sp.edit().putLong(KEY_TRIGGER_AT, triggerAt).apply();
     }
 
+    /**
+     * 清除定时触发时间
+     * 从SharedPreferences中删除定时记录
+     */
     private void clearTriggerAt() {
         SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         sp.edit().remove(KEY_TRIGGER_AT).apply();
     }
 
+    /**
+     * 获取剩余时间
+     * 计算当前时间到定时触发时间的剩余毫秒数
+     * @return 剩余毫秒数，如果没有定时则返回-1
+     */
     private long getRemainingMs() {
         SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         long triggerAt = sp.getLong(KEY_TRIGGER_AT, -1L);
@@ -450,21 +566,25 @@ public class MainActivity extends AppCompatActivity {
         return triggerAt - System.currentTimeMillis();
     }
 
-    // 获取面板数据
+    /**
+     * 获取悬浮面板的功能项数据
+     * 定义悬浮面板中显示的功能按钮
+     * @return 功能项列表
+     */
     private List<PanelGridAdapter.PanelItem> getPanelItems() {
         List<PanelGridAdapter.PanelItem> items = new ArrayList<>();
 
         // 添加示例图标和名称
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "定时返回"));
+        items.add(new PanelGridAdapter.PanelItem(R.drawable.time, "定时返回"));
         items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-
         return items;
     }
 
+    /**
+     * 处理导航向上按钮点击事件
+     * 用于处理ActionBar的返回按钮
+     * @return 返回true表示事件已处理
+     */
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
