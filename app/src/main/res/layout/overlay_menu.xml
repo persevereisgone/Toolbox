@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/shape_10_white"
+    android:elevation="8dp">
+
+    <TextView
+        android:id="@+id/menu_open_app"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开应用"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:padding="6dp"/>
+
+    <TextView
+        android:id="@+id/menu_adjust"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="调整时长"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:padding="6dp"/>
+
+    <TextView
+        android:id="@+id/menu_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="取消定时"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="14sp"
+        android:padding="6dp"/>
+
+</LinearLayout>

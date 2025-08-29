@@ -27,6 +27,24 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import Yu.code.toolbox.databinding.ActivityMainBinding;
 import Yu.code.toolbox.ui.PanelGridAdapter;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.app.admin.DevicePolicyManager;
+import android.widget.AdapterView;
+import androidx.appcompat.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.text.InputType;
+import android.widget.EditText;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import androidx.core.app.ActivityCompat;
+import android.widget.NumberPicker;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +55,13 @@ public class MainActivity extends AppCompatActivity {
     private PopupWindow mPopupWindow;
     private GridView mGridView;
     private PanelGridAdapter mAdapter;
+    private static final String PREFS_NAME = "lock_prefs";
+    private static final String KEY_TRIGGER_AT = "lock_trigger_at";
+    private static final int REQ_CODE_LOCK = 1001;
+    private static final int REQ_CODE_POST_NOTI = 3001;
+    private static final int REQ_CODE_EXACT_ALARM = 3002;
+    private static final String KEY_LAST_HOURS = "last_custom_hours";
+    private static final String KEY_LAST_MINUTES = "last_custom_minutes";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +117,39 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        // 如从悬浮窗菜单带参跳回，自动弹出对话框
+        handleOpenLockDialogIfNeeded(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleOpenLockDialogIfNeeded(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 若已设置定时但服务未展示，自动拉起服务（修复权限授权后未手动重设的场景）
+        if (getRemainingMs() > 0) {
+            ensureNotificationPermissionIfNeeded();
+            Intent svc = new Intent(this, CountdownOverlayService.class);
+            svc.setAction(CountdownOverlayService.ACTION_START);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(svc);
+            } else {
+                startService(svc);
+            }
+        }
+    }
+
+    private void handleOpenLockDialogIfNeeded(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("OPEN_LOCK_DIALOG", false)) {
+            showLockTimerDialog();
+            intent.removeExtra("OPEN_LOCK_DIALOG");
+        }
     }
 
     @Override
@@ -109,6 +167,16 @@ public class MainActivity extends AppCompatActivity {
         mGridView = panelView.findViewById(R.id.panel_grid);
         mAdapter = new PanelGridAdapter(this, getPanelItems());
         mGridView.setAdapter(mAdapter);
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PanelGridAdapter.PanelItem item = (PanelGridAdapter.PanelItem) mAdapter.getItem(position);
+                String name = item.getName();
+                if ("定时返回".equals(name) || "定时锁屏".equals(name)) {
+                    showLockTimerDialog();
+                }
+            }
+        });
 
         // 创建PopupWindow
         mPopupWindow = new PopupWindow(
@@ -171,12 +239,227 @@ public class MainActivity extends AppCompatActivity {
         mPopupWindow.setFocusable(true);
     }
 
+    private void showLockTimerDialog() {
+        final List<String> labels = new ArrayList<>();
+        final List<Long> delays = new ArrayList<>();
+        // 15-120 分钟，步长 15 分钟
+        for (int m = 15; m <= 120; m += 15) {
+            labels.add(m + " 分钟后");
+            delays.add(m * 60L * 1000L);
+        }
+        // 追加功能项
+        labels.add("自定义时长…");
+        labels.add("查看剩余时间");
+        labels.add("取消已设置的定时");
+
+        new AlertDialog.Builder(this)
+                .setTitle("定时返回桌面")
+                .setItems(labels.toArray(new String[0]), (dialog, which) -> {
+                    if (which < delays.size()) {
+                        if (!ensureOverlayPermission()) return;
+                        ensureNotificationPermissionIfNeeded();
+                        if (!ensureExactAlarmPermission()) return;
+                        scheduleLock(delays.get(which));
+                        if (mPopupWindow != null && mPopupWindow.isShowing()) mPopupWindow.dismiss();
+                    } else {
+                        int actionIndex = which - delays.size();
+                        if (actionIndex == 0) {
+                            // 自定义
+                            promptCustomMinutes();
+                        } else if (actionIndex == 1) {
+                            showRemainingTime();
+                        } else if (actionIndex == 2) {
+                            cancelScheduledLock();
+                        }
+                    }
+                })
+                .setNegativeButton("关闭", null)
+                .show();
+    }
+
+    private boolean ensureOverlayPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return true;
+        if (Settings.canDrawOverlays(this)) return true;
+        Snackbar.make(binding.getRoot(), "需要悬浮窗权限以显示倒计时", Snackbar.LENGTH_LONG).show();
+        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        startActivity(intent);
+        return false;
+    }
+
+    private void ensureNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQ_CODE_POST_NOTI);
+            }
+        }
+    }
+
+    private boolean ensureExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true;
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (am != null && am.canScheduleExactAlarms()) return true;
+        Snackbar.make(binding.getRoot(), "需要授予精准闹钟权限", Snackbar.LENGTH_LONG).show();
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            intent.setData(Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+            return false;
+        }
+        return true;
+    }
+
+    private void scheduleLock(long delayMillis) {
+        long triggerAt = System.currentTimeMillis() + delayMillis;
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pi = buildLockPendingIntent();
+        if (am != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+            } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, triggerAt, pi);
+            }
+        }
+        saveTriggerAt(triggerAt);
+        // 启动前台服务，显示常驻通知与悬浮窗
+        Intent svc = new Intent(this, CountdownOverlayService.class);
+        svc.setAction(CountdownOverlayService.ACTION_START);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(svc);
+        } else {
+            startService(svc);
+        }
+        Snackbar.make(binding.getRoot(), "已设置：" + formatDuration(delayMillis) + "后回到主屏", Snackbar.LENGTH_LONG).show();
+    }
+
+    private void cancelScheduledLock() {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pi = buildLockPendingIntent();
+        if (am != null) {
+            am.cancel(pi);
+        }
+        clearTriggerAt();
+        // 停止前台服务
+        Intent svc = new Intent(this, CountdownOverlayService.class);
+        svc.setAction(CountdownOverlayService.ACTION_STOP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(svc);
+        } else {
+            startService(svc);
+        }
+        Snackbar.make(binding.getRoot(), "已取消定时返回桌面", Snackbar.LENGTH_LONG).show();
+    }
+
+    private PendingIntent buildLockPendingIntent() {
+        Intent intent = new Intent(this, LockAlarmReceiver.class);
+        return PendingIntent.getBroadcast(
+                this,
+                REQ_CODE_LOCK,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+    }
+
+    private void promptCustomMinutes() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_time_wheel, null, false);
+        NumberPicker npHours = view.findViewById(R.id.np_hours);
+        NumberPicker npMinutes = view.findViewById(R.id.np_minutes);
+        npHours.setMinValue(0);
+        npHours.setMaxValue(12);
+        int lastH = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(KEY_LAST_HOURS, 0);
+        int lastM = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(KEY_LAST_MINUTES, 25);
+        if (lastH < 0) lastH = 0; if (lastH > 12) lastH = 12;
+        if (lastM < 0) lastM = 0; if (lastM > 59) lastM = 59;
+        npHours.setValue(lastH);
+        npMinutes.setMinValue(0);
+        npMinutes.setMaxValue(59);
+        npMinutes.setValue(lastM);
+        npHours.setWrapSelectorWheel(true);
+        npMinutes.setWrapSelectorWheel(true);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("自定义时长")
+                .setView(view)
+                .create();
+
+        View btnOk = view.findViewById(R.id.btn_ok);
+        View btnCancel = view.findViewById(R.id.btn_cancel);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnOk.setOnClickListener(v -> {
+            int hours = npHours.getValue();
+            int minutes = npMinutes.getValue();
+            long totalMinutes = (long) hours * 60L + minutes;
+            if (totalMinutes <= 0) {
+                Snackbar.make(binding.getRoot(), "请选择大于0的时长", Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            if (!ensureOverlayPermission()) return;
+            ensureNotificationPermissionIfNeeded();
+            if (!ensureExactAlarmPermission()) return;
+            // 记忆用户上次选择
+            SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+            sp.edit().putInt(KEY_LAST_HOURS, hours).putInt(KEY_LAST_MINUTES, minutes).apply();
+            scheduleLock(totalMinutes * 60L * 1000L);
+            if (mPopupWindow != null && mPopupWindow.isShowing()) mPopupWindow.dismiss();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void showRemainingTime() {
+        long remaining = getRemainingMs();
+        if (remaining <= 0) {
+            Snackbar.make(binding.getRoot(), "当前没有正在进行的定时", Snackbar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(binding.getRoot(), "剩余：" + formatDuration(remaining) + "后回到主屏", Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private String formatDuration(long ms) {
+        long totalSeconds = Math.max(0, ms / 1000);
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        if (hours > 0) {
+            if (minutes > 0) return hours + "小时" + minutes + "分钟";
+            return hours + "小时";
+        }
+        if (minutes > 0) {
+            if (seconds > 0) return minutes + "分钟" + seconds + "秒";
+            return minutes + "分钟";
+        }
+        return seconds + "秒";
+    }
+
+    private void saveTriggerAt(long triggerAt) {
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        sp.edit().putLong(KEY_TRIGGER_AT, triggerAt).apply();
+    }
+
+    private void clearTriggerAt() {
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        sp.edit().remove(KEY_TRIGGER_AT).apply();
+    }
+
+    private long getRemainingMs() {
+        SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        long triggerAt = sp.getLong(KEY_TRIGGER_AT, -1L);
+        if (triggerAt <= 0) return -1L;
+        return triggerAt - System.currentTimeMillis();
+    }
+
     // 获取面板数据
     private List<PanelGridAdapter.PanelItem> getPanelItems() {
         List<PanelGridAdapter.PanelItem> items = new ArrayList<>();
 
         // 添加示例图标和名称
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
+        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "定时返回"));
         items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
         items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
         items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
