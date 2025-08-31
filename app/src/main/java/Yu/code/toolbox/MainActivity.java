@@ -206,6 +206,8 @@ public class MainActivity extends AppCompatActivity {
                     showLockTimerDialog();
                 } else if ("录音机".equals(name)) {
                     showRecorderInHome();
+                } else if ("统计".equals(name)) {
+                    showStatisticsInHome();
                 }
             }
         });
@@ -331,6 +333,27 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(() -> {
             // 使用静态方法显示录音机功能
             HomeFragment.showFunctionStatic(FunctionConstants.FUNCTION_RECORDER);
+        }, 300);
+    }
+
+    /**
+     * 在Home页面显示统计功能
+     * 导航到Home Fragment并显示统计界面
+     */
+    private void showStatisticsInHome() {
+        // 关闭悬浮面板
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+
+        // 导航到Home Fragment
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        navController.navigate(R.id.nav_home);
+
+        // 延迟执行，确保Fragment已经创建
+        new Handler().postDelayed(() -> {
+            // 使用静态方法显示统计功能
+            HomeFragment.showFunctionStatic(FunctionConstants.FUNCTION_STATISTICS);
         }, 300);
     }
 
@@ -577,6 +600,7 @@ public class MainActivity extends AppCompatActivity {
         // 添加示例图标和名称
         items.add(new PanelGridAdapter.PanelItem(R.drawable.time, "定时返回"));
         items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
+        items.add(new PanelGridAdapter.PanelItem(R.drawable.statistics, "统计"));
         return items;
     }
 

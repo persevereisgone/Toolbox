@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical">
+
+    <!-- 物品名称 -->
+    <TextView
+        android:id="@+id/tv_item_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:layout_marginEnd="16dp" />
+
+    <!-- 数量控制区域 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- 减少按钮 -->
+        <Button
+            android:id="@+id/btn_decrease"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="2dp"
+            android:text="-"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="8dp" />
+
+        <!-- 数量显示 -->
+        <TextView
+            android:id="@+id/tv_quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:clickable="true"
+            android:minWidth="40dp"
+            android:gravity="center"
+            android:layout_marginEnd="8dp" />
+
+        <!-- 增加按钮 -->
+        <Button
+            android:id="@+id/btn_increase"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="2dp"
+            android:text="+"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="8dp" />
+
+        <!-- 删除按钮 -->
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="5dp"
+            android:text="×"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/holo_red_light" />
+
+    </LinearLayout>
+
+</LinearLayout>

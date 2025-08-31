@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="以下数据格式有误，请检查并修正："
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="12dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/shape_10_white">
+
+        <TextView
+            android:id="@+id/tv_error_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:textSize="12sp"
+            android:textColor="#FF5722"
+            android:lineSpacingExtra="2dp" />
+
+    </ScrollView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="正确格式示例："
+        android:textSize="12sp"
+        android:textColor="#4CAF50"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/shape_10_white"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="苹果,5"
+            android:textSize="12sp"
+            android:textColor="#4CAF50"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="可乐15"
+            android:textSize="12sp"
+            android:textColor="#4CAF50"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="脉动2 23"
+            android:textSize="12sp"
+            android:textColor="#4CAF50"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="脉动 c 30"
+            android:textSize="12sp"
+            android:textColor="#4CAF50"
+            android:fontFamily="monospace" />
+
+    </LinearLayout>
+
+</LinearLayout>

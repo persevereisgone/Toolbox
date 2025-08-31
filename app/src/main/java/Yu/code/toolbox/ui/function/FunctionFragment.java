@@ -11,12 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import Yu.code.toolbox.R;
+import Yu.code.toolbox.function.statistics.StatisticsManager;
 
 public class FunctionFragment extends Fragment {
 
     private FrameLayout container;
     private int currentLayoutId = -1;
     private RecorderManager recorderManager;
+    private StatisticsManager statisticsManager;
 
     @Nullable
     @Override
@@ -59,6 +61,8 @@ public class FunctionFragment extends Fragment {
         // 根据布局ID初始化相应的管理器
         if (layoutId == R.layout.function_recorder) {
             recorderManager = new RecorderManager(this, functionView);
+        } else if (layoutId == R.layout.function_statistics) {
+            statisticsManager = new StatisticsManager(requireContext(), functionView);
         }
         // 在这里可以添加其他功能的管理器
     }
@@ -67,6 +71,10 @@ public class FunctionFragment extends Fragment {
         if (recorderManager != null) {
             recorderManager.onDestroy();
             recorderManager = null;
+        }
+        if (statisticsManager != null) {
+            statisticsManager.onDestroy();
+            statisticsManager = null;
         }
         // 在这里可以清理其他功能的管理器
     }

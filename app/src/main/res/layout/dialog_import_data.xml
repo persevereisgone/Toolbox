@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请粘贴需要导入的数据文本："
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/et_import_data"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:hint="粘贴数据文本..."
+        android:inputType="textMultiLine"
+        android:gravity="top|start"
+        android:padding="12dp"
+        android:background="@drawable/shape_10_white"
+        android:textSize="14sp"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="支持格式："
+        android:textSize="12sp"
+        android:textColor="#999999"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/shape_10_white"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 物品名称,数量"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 物品名称 数量"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 物品名称-数量"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 物品名称.数量"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 物品名称数量 (无分隔符)"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="支持复杂名称："
+            android:textSize="11sp"
+            android:textColor="#999999"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 脉动2 23 (物品名含数字)"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 脉动 c 30 (物品名含空格)"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace"
+            android:layout_marginBottom="2dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="• 可乐15 (无分隔符)"
+            android:textSize="11sp"
+            android:textColor="#666666"
+            android:fontFamily="monospace" />
+
+    </LinearLayout>
+
+</LinearLayout>
