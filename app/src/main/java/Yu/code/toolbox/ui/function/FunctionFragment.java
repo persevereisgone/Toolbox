@@ -1,5 +1,6 @@
 package Yu.code.toolbox.ui.function;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 
 import Yu.code.toolbox.R;
 import Yu.code.toolbox.function.statistics.StatisticsManager;
+import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
 
 public class FunctionFragment extends Fragment {
 
@@ -19,6 +21,7 @@ public class FunctionFragment extends Fragment {
     private int currentLayoutId = -1;
     private RecorderManager recorderManager;
     private StatisticsManager statisticsManager;
+    private RecordingPlaylistManager recordingPlaylistManager;
 
     @Nullable
     @Override
@@ -63,6 +66,8 @@ public class FunctionFragment extends Fragment {
             recorderManager = new RecorderManager(this, functionView);
         } else if (layoutId == R.layout.function_statistics) {
             statisticsManager = new StatisticsManager(requireContext(), functionView);
+        } else if (layoutId == R.layout.function_recorder_playlist) {
+            recordingPlaylistManager = new RecordingPlaylistManager(this, functionView);
         }
         // 在这里可以添加其他功能的管理器
     }
@@ -76,6 +81,10 @@ public class FunctionFragment extends Fragment {
             statisticsManager.onDestroy();
             statisticsManager = null;
         }
+        if (recordingPlaylistManager != null) {
+            recordingPlaylistManager.onDestroy();
+            recordingPlaylistManager = null;
+        }
         // 在这里可以清理其他功能的管理器
     }
 
@@ -84,6 +93,9 @@ public class FunctionFragment extends Fragment {
         super.onPause();
         if (recorderManager != null) {
             recorderManager.onPause();
+        }
+        if (recordingPlaylistManager != null) {
+            recordingPlaylistManager.onPause();
         }
     }
 
@@ -98,6 +110,14 @@ public class FunctionFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (recorderManager != null) {
             recorderManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (recorderManager != null) {
+            recorderManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

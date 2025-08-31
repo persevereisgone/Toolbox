@@ -18,6 +18,7 @@
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
             android:text="返回"
             android:layout_marginEnd="16dp"/>
 
@@ -48,6 +49,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="停止并保存"
+        android:enabled="false"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="12dp"/>
+
+    <Button
+        android:id="@+id/btn_play_recordings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="播放录音"
+        android:background="@drawable/button_ripple"
+        android:textColor="@android:color/black"
+        android:backgroundTint="@android:color/holo_blue_dark"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="12dp"/>
+
+    <Button
+        android:id="@+id/btn_take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="拍照"
+        android:background="@drawable/button_ripple"
+        android:textColor="@android:color/black"
+        android:backgroundTint="@android:color/holo_green_dark"
         android:enabled="false"/>
 
 </LinearLayout>
