@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- 标题栏 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="定时返回桌面"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"
+        android:padding="16dp"/>
+
+    <!-- 当前状态显示 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/shape_overlay_bg"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/tv_timer_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="当前没有正在进行的定时"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/tv_remaining_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textColor="@color/blue"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <!-- 预设时长按钮区域 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="快速设置"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"/>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="3"
+        android:rowCount="3"
+        android:layout_marginBottom="24dp">
+
+        <Button
+            android:id="@+id/btn_15min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:text="15分钟"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:id="@+id/btn_30min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:text="30分钟"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:id="@+id/btn_45min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:text="45分钟"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:id="@+id/btn_60min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:text="1小时"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:id="@+id/btn_90min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:text="1.5小时"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:id="@+id/btn_120min"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="4dp"
+            android:text="2小时"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+    </GridLayout>
+
+    <!-- 自定义时长区域 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自定义时长"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
+        <EditText
+            android:id="@+id/et_custom_hours"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="小时"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/shape_10_white"
+            android:layout_marginEnd="8dp"/>
+
+        <EditText
+            android:id="@+id/et_custom_minutes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="分钟"
+            android:inputType="number"
+            android:padding="12dp"
+            android:background="@drawable/shape_10_white"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btn_set_custom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设置"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="2dp"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+
+    <!-- 操作按钮区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <Button
+            android:id="@+id/btn_cancel_timer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="取消定时"
+            android:layout_margin="4dp"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btn_refresh_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="刷新状态"
+            android:layout_margin="4dp"
+            android:background="@drawable/button_ripple"
+            android:textColor="@android:color/black"/>
+
+    </LinearLayout>
+
+    <!-- 说明文字 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="设置定时后，应用将在指定时间后自动返回桌面，并显示倒计时悬浮窗。"
+        android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:gravity="center"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

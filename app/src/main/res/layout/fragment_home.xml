@@ -6,34 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment">
 
-    <!-- 默认的Home界面 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/home_default_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/text_home"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- 功能界面容器 -->
-    <fragment
-        android:id="@+id/function_fragment"
-        android:name="Yu.code.toolbox.ui.function.FunctionFragment"
+    <!-- 默认的Home界面：功能列表 -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 可使用功能区域 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="可使用"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:layout_marginBottom="12dp" />
+
+            <GridView
+                android:id="@+id/home_panel_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="auto_fit"
+                android:columnWidth="70dp"
+                android:scrollbars="none"
+                android:horizontalSpacing="16dp"
+                android:verticalSpacing="16dp"
+                android:stretchMode="columnWidth" />
+
+            <!-- 测试版功能区域 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="测试版"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/red"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp" />
+
+            <GridView
+                android:id="@+id/beta_panel_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="auto_fit"
+                android:scrollbars="none"
+                android:columnWidth="70dp"
+                android:horizontalSpacing="16dp"
+                android:verticalSpacing="16dp"
+                android:stretchMode="columnWidth" />
+
+        </LinearLayout>
+    </ScrollView>
+
 
 </FrameLayout>

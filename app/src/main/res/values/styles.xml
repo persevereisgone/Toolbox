@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 统一的对话框样式：淡蓝圆角背景 -->
+    <style name="AppDialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="android:windowBackground">@drawable/shape_overlay_bg</item>
+        <item name="backgroundTint">@color/light_blue_bg</item>
+    </style>
 
     <style name="RoundedCornerShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
@@ -10,5 +15,6 @@
         <item name="android:windowEnterAnimation">@anim/popup_show</item>
         <item name="android:windowExitAnimation">@anim/popup_hide</item>
     </style>
+
 
 </resources>

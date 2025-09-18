@@ -3,21 +3,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp"
-    android:background="@drawable/shape_10_white"
+    android:padding="10dp"
+    android:background="@drawable/shape_overlay_bg"
     android:elevation="8dp">
 
     <TextView
         android:id="@+id/menu_open_app"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="打开应用"
-        android:textColor="@android:color/black"
-        android:textSize="14sp"
-        android:padding="6dp"/>
-
-    <TextView
-        android:id="@+id/menu_adjust"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="调整时长"

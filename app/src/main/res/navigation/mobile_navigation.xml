@@ -22,4 +22,11 @@
         android:name="Yu.code.toolbox.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <!-- 功能页面 -->
+    <fragment
+        android:id="@+id/nav_function"
+        android:name="Yu.code.toolbox.ui.function.FunctionFragment"
+        android:label="功能"
+        tools:layout="@layout/fragment_function" />
 </navigation>

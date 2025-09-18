@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import Yu.code.toolbox.R;
 import Yu.code.toolbox.function.statistics.StatisticsManager;
 import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
+import Yu.code.toolbox.function.time.TimerManager;
 
 public class FunctionFragment extends Fragment {
 
@@ -22,12 +23,22 @@ public class FunctionFragment extends Fragment {
     private RecorderManager recorderManager;
     private StatisticsManager statisticsManager;
     private RecordingPlaylistManager recordingPlaylistManager;
+    private TimerManager timerManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_function, container, false);
         this.container = root.findViewById(R.id.function_container);
+
+        // 检查是否有传递的功能ID
+        if (getArguments() != null) {
+            int functionId = getArguments().getInt("function_id", -1);
+            if (functionId != -1) {
+                showFunction(functionId);
+            }
+        }
+
         return root;
     }
 
@@ -68,6 +79,8 @@ public class FunctionFragment extends Fragment {
             statisticsManager = new StatisticsManager(requireContext(), functionView);
         } else if (layoutId == R.layout.function_recorder_playlist) {
             recordingPlaylistManager = new RecordingPlaylistManager(this, functionView);
+        } else if (layoutId == R.layout.function_timer) {
+            timerManager = new TimerManager(requireContext(), functionView);
         }
         // 在这里可以添加其他功能的管理器
     }
@@ -84,6 +97,10 @@ public class FunctionFragment extends Fragment {
         if (recordingPlaylistManager != null) {
             recordingPlaylistManager.onDestroy();
             recordingPlaylistManager = null;
+        }
+        if (timerManager != null) {
+            timerManager.onDestroy();
+            timerManager = null;
         }
         // 在这里可以清理其他功能的管理器
     }

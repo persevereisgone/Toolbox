@@ -252,19 +252,13 @@ public class CountdownOverlayService extends Service {
 
         menuView.findViewById(R.id.menu_open_app).setOnClickListener(v -> {
             Intent open = new Intent(this, MainActivity.class);
-            open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            open.putExtra("NAVIGATE_TO_TIMER", true);
             startActivity(open);
             removeMenu();
         });
         menuView.findViewById(R.id.menu_cancel).setOnClickListener(v -> {
             cancelScheduledLockInternal();
-            removeMenu();
-        });
-        menuView.findViewById(R.id.menu_adjust).setOnClickListener(v -> {
-            Intent open = new Intent(this, MainActivity.class);
-            open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            open.putExtra("OPEN_LOCK_DIALOG", true);
-            startActivity(open);
             removeMenu();
         });
 

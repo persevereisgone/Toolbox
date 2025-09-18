@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,10 +30,29 @@ import Yu.code.toolbox.R;
 import Yu.code.toolbox.ui.home.HomeFragment;
 import Yu.code.toolbox.Utils.DialogUtils;
 
+// 统计组数据类
+class StatisticsSet {
+    private String name;
+    private List<StatisticsItem> items;
+
+    public StatisticsSet(String name) {
+        this.name = name;
+        this.items = new ArrayList<>();
+    }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public List<StatisticsItem> getItems() { return items; }
+    public void setItems(List<StatisticsItem> items) { this.items = items; }
+}
+
 public class StatisticsManager {
 
     private static final String PREFS_NAME = "statistics_prefs";
     private static final String KEY_STATISTICS_DATA = "statistics_data";
+    private static final String KEY_STATISTICS_SETS = "statistics_sets";
+    private static final String KEY_CURRENT_SET = "current_set";
+    private static final String DEFAULT_SET_NAME = "默认统计组";
 
     private Context context;
     private View rootView;
@@ -43,16 +64,23 @@ public class StatisticsManager {
     private EditText etItemQuantity;
     private RecyclerView rvStatistics;
     private TextView tvTotalCount;
+    private Spinner spinnerStatisticsSet;
+    private ArrayAdapter<String> setAdapter;
+
+    private List<StatisticsSet> statisticsSets;
+    private String currentSetName;
 
     public StatisticsManager(Context context, View rootView) {
         this.context = context;
         this.rootView = rootView;
         this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
+        this.statisticsSets = new ArrayList<>();
 
         initViews();
         setupRecyclerView();
-        loadData();
+        loadStatisticsSets();
+        loadCurrentSetData();
     }
 
     private void initViews() {
@@ -60,6 +88,7 @@ public class StatisticsManager {
         etItemQuantity = rootView.findViewById(R.id.et_item_quantity);
         rvStatistics = rootView.findViewById(R.id.rv_statistics);
         tvTotalCount = rootView.findViewById(R.id.tv_total_count);
+        spinnerStatisticsSet = rootView.findViewById(R.id.spinner_statistics_set);
 
         // 设置添加按钮点击事件
         rootView.findViewById(R.id.btn_add_item).setOnClickListener(v -> addNewItem());
@@ -73,22 +102,9 @@ public class StatisticsManager {
         // 设置导入按钮点击事件
         rootView.findViewById(R.id.btn_import).setOnClickListener(v -> importData());
 
-        // 设置返回按钮点击事件
-        rootView.findViewById(R.id.btn_back).setOnClickListener(v -> {
-            // 隐藏功能界面，显示默认界面
-            if (context instanceof FragmentActivity) {
-                FragmentActivity activity = (FragmentActivity) context;
-                Fragment fragment = activity.getSupportFragmentManager()
-                        .findFragmentById(R.id.nav_host_fragment_content_main);
-                if (fragment != null && fragment.getChildFragmentManager() != null) {
-                    Fragment homeFragment = fragment.getChildFragmentManager()
-                            .findFragmentById(R.id.function_fragment);
-                    if (homeFragment instanceof HomeFragment) {
-                        ((HomeFragment) homeFragment).hideFunction();
-                    }
-                }
-            }
-        });
+        // 设置统计套管理按钮点击事件
+        rootView.findViewById(R.id.btn_manage_sets).setOnClickListener(v -> showManageSetsDialog());
+
     }
 
     private void setupRecyclerView() {
@@ -261,25 +277,15 @@ public class StatisticsManager {
     }
 
     private void loadData() {
-        String jsonData = prefs.getString(KEY_STATISTICS_DATA, "[]");
-        try {
-            Type type = new TypeToken<ArrayList<StatisticsItem>>(){}.getType();
-            List<StatisticsItem> items = gson.fromJson(jsonData, type);
-            if (items != null) {
-                adapter.setItems(items);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            // 如果数据损坏，使用空列表
-            adapter.setItems(new ArrayList<>());
-        }
-        updateTotalCount();
+        // 这个方法现在由loadCurrentSetData()替代
+        // 保留此方法是为了向后兼容，但实际加载逻辑在loadCurrentSetData()中
+        loadCurrentSetData();
     }
 
     private void saveData() {
         try {
-            String jsonData = gson.toJson(adapter.getItems());
-            prefs.edit().putString(KEY_STATISTICS_DATA, jsonData).apply();
+            // 保存到当前选中的统计套
+            saveCurrentSetData();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -522,5 +528,305 @@ public class StatisticsManager {
         }
     }
 
-    // 其他方法将在后续添加...
+    // ==================== 多组统计功能 ====================
+
+    /**
+     * 加载统计组列表
+     */
+    private void loadStatisticsSets() {
+        String setsJson = prefs.getString(KEY_STATISTICS_SETS, "");
+        if (TextUtils.isEmpty(setsJson)) {
+            // 如果没有数据，创建默认统计组
+            statisticsSets.clear();
+            statisticsSets.add(new StatisticsSet(DEFAULT_SET_NAME));
+            saveStatisticsSets();
+        } else {
+            Type type = new TypeToken<List<StatisticsSet>>(){}.getType();
+            statisticsSets = gson.fromJson(setsJson, type);
+            if (statisticsSets == null || statisticsSets.isEmpty()) {
+                statisticsSets = new ArrayList<>();
+                statisticsSets.add(new StatisticsSet(DEFAULT_SET_NAME));
+                saveStatisticsSets();
+            }
+        }
+
+        // 加载当前选中的统计组
+        currentSetName = prefs.getString(KEY_CURRENT_SET, DEFAULT_SET_NAME);
+        if (!isSetExists(currentSetName)) {
+            currentSetName = statisticsSets.get(0).getName();
+            saveCurrentSet();
+        }
+
+        setupSpinner();
+    }
+
+    /**
+     * 保存统计组列表
+     */
+    private void saveStatisticsSets() {
+        String setsJson = gson.toJson(statisticsSets);
+        prefs.edit().putString(KEY_STATISTICS_SETS, setsJson).apply();
+    }
+
+    /**
+     * 保存当前选中的统计组
+     */
+    private void saveCurrentSet() {
+        prefs.edit().putString(KEY_CURRENT_SET, currentSetName).apply();
+    }
+
+    /**
+     * 检查统计组是否存在
+     */
+    private boolean isSetExists(String setName) {
+        for (StatisticsSet set : statisticsSets) {
+            if (set.getName().equals(setName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 设置Spinner
+     */
+    private void setupSpinner() {
+        List<String> setNames = new ArrayList<>();
+        for (StatisticsSet set : statisticsSets) {
+            setNames.add(set.getName());
+        }
+
+        setAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, setNames);
+        setAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerStatisticsSet.setAdapter(setAdapter);
+
+        // 设置当前选中的统计组
+        int position = setNames.indexOf(currentSetName);
+        if (position >= 0) {
+            spinnerStatisticsSet.setSelection(position);
+        }
+
+        // 设置选择监听器
+        spinnerStatisticsSet.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                String selectedSetName = setNames.get(position);
+                if (!selectedSetName.equals(currentSetName)) {
+                    switchToSet(selectedSetName);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+                // 不做处理
+            }
+        });
+    }
+
+    /**
+     * 切换到指定的统计组
+     */
+    private void switchToSet(String setName) {
+        // 保存当前统计组的数据
+        saveCurrentSetData();
+
+        // 切换到新的统计组
+        currentSetName = setName;
+        saveCurrentSet();
+
+        // 加载新统计组的数据
+        loadCurrentSetData();
+    }
+
+    /**
+     * 加载当前统计组的数据
+     */
+    private void loadCurrentSetData() {
+        StatisticsSet currentSet = getCurrentSet();
+        if (currentSet != null) {
+            adapter.setItems(new ArrayList<>(currentSet.getItems()));
+            updateTotalCount();
+        }
+    }
+
+    /**
+     * 保存当前统计组的数据
+     */
+    private void saveCurrentSetData() {
+        StatisticsSet currentSet = getCurrentSet();
+        if (currentSet != null) {
+            currentSet.setItems(new ArrayList<>(adapter.getItems()));
+            saveStatisticsSets();
+        }
+    }
+
+    /**
+     * 获取当前统计组
+     */
+    private StatisticsSet getCurrentSet() {
+        for (StatisticsSet set : statisticsSets) {
+            if (set.getName().equals(currentSetName)) {
+                return set;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 显示统计组管理对话框
+     */
+    private void showManageSetsDialog() {
+        String[] options = {"创建新统计组", "重命名当前统计组", "删除当前统计组"};
+
+        new AlertDialog.Builder(context)
+                .setTitle("管理统计组")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            showCreateSetDialog();
+                            break;
+                        case 1:
+                            showRenameSetDialog();
+                            break;
+                        case 2:
+                            showDeleteSetDialog();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * 显示创建统计组对话框
+     */
+    private void showCreateSetDialog() {
+        EditText etSetName = new EditText(context);
+        etSetName.setHint("请输入统计组名称");
+
+        new AlertDialog.Builder(context)
+                .setTitle("创建新统计组")
+                .setView(etSetName)
+                .setPositiveButton("创建", (dialog, which) -> {
+                    String setName = etSetName.getText().toString().trim();
+                    if (!TextUtils.isEmpty(setName)) {
+                        createNewSet(setName);
+                    } else {
+                        Toast.makeText(context, "请输入统计组名称", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    /**
+     * 显示重命名统计组对话框
+     */
+    private void showRenameSetDialog() {
+        EditText etSetName = new EditText(context);
+        etSetName.setText(currentSetName);
+        etSetName.setHint("请输入新的统计组名称");
+
+        new AlertDialog.Builder(context)
+                .setTitle("重命名统计组")
+                .setView(etSetName)
+                .setPositiveButton("重命名", (dialog, which) -> {
+                    String newName = etSetName.getText().toString().trim();
+                    if (!TextUtils.isEmpty(newName) && !newName.equals(currentSetName)) {
+                        renameCurrentSet(newName);
+                    } else if (newName.equals(currentSetName)) {
+                        Toast.makeText(context, "名称没有变化", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "请输入有效的统计组名称", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    /**
+     * 显示删除统计组对话框
+     */
+    private void showDeleteSetDialog() {
+        if (statisticsSets.size() <= 1) {
+            Toast.makeText(context, "至少需要保留一个统计组", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new AlertDialog.Builder(context)
+                .setTitle("删除统计组")
+                .setMessage("确定要删除统计组 \"" + currentSetName + "\" 吗？\n此操作不可撤销！")
+                .setPositiveButton("删除", (dialog, which) -> deleteCurrentSet())
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
+    /**
+     * 创建新的统计组
+     */
+    private void createNewSet(String setName) {
+        if (isSetExists(setName)) {
+            Toast.makeText(context, "统计组名称已存在", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StatisticsSet newSet = new StatisticsSet(setName);
+        statisticsSets.add(newSet);
+        saveStatisticsSets();
+
+        // 更新Spinner
+        setupSpinner();
+
+        // 切换到新创建的统计组
+        switchToSet(setName);
+
+        Toast.makeText(context, "统计组 \"" + setName + "\" 创建成功", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 重命名当前统计组
+     */
+    private void renameCurrentSet(String newName) {
+        if (isSetExists(newName)) {
+            Toast.makeText(context, "统计组名称已存在", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StatisticsSet currentSet = getCurrentSet();
+        if (currentSet != null) {
+            currentSet.setName(newName);
+            saveStatisticsSets();
+
+            // 更新当前统计套名称
+            currentSetName = newName;
+            saveCurrentSet();
+
+            // 更新Spinner
+            setupSpinner();
+
+            Toast.makeText(context, "统计组重命名成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 删除当前统计组
+     */
+    private void deleteCurrentSet() {
+        if (statisticsSets.size() <= 1) {
+            Toast.makeText(context, "至少需要保留一个统计组", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        statisticsSets.removeIf(set -> set.getName().equals(currentSetName));
+        saveStatisticsSets();
+
+        // 切换到第一个统计组
+        currentSetName = statisticsSets.get(0).getName();
+        saveCurrentSet();
+
+        // 更新Spinner和加载数据
+        setupSpinner();
+        loadCurrentSetData();
+
+        Toast.makeText(context, "统计组已删除", Toast.LENGTH_SHORT).show();
+    }
 }

@@ -1,15 +1,9 @@
 package Yu.code.toolbox;
 
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
-import android.view.WindowManager;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.widget.GridView;
-import android.widget.PopupWindow;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +20,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import Yu.code.toolbox.databinding.ActivityMainBinding;
 import Yu.code.toolbox.function.time.CountdownOverlayService;
 import Yu.code.toolbox.function.time.LockAlarmReceiver;
-import Yu.code.toolbox.ui.PanelGridAdapter;
 import Yu.code.toolbox.ui.home.HomeFragment;
 import Yu.code.toolbox.ui.function.FunctionConstants;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.AdapterView;
 import androidx.appcompat.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.Manifest;
@@ -42,6 +34,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.widget.NumberPicker;
 import android.os.Handler;
 import androidx.fragment.app.Fragment;
@@ -54,9 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     // 悬浮面板相关变量
-    private PopupWindow mPopupWindow;
-    private GridView mGridView;
-    private PanelGridAdapter mAdapter;
+    // 已移除悬浮面板相关成员
     private static final String PREFS_NAME = "lock_prefs";
     private static final String KEY_TRIGGER_AT = "lock_trigger_at";
     private static final int REQ_CODE_LOCK = 1001;
@@ -102,17 +93,15 @@ public class MainActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
-        // 初始化FAB点击事件
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mPopupWindow != null && mPopupWindow.isShowing()) {
-                    mPopupWindow.dismiss();
-                } else {
-                    showFloatingPanel(view);
-                }
-            }
-        });
+        // 绑定底部导航
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = findViewById(R.id.bottom_nav);
+        if (bottomNav != null) {
+            NavigationUI.setupWithNavController(bottomNav, navController);
+            // 显式关闭图标着色与水波纹，避免被主题或库默认值覆盖
+            bottomNav.setItemIconTintList(null);
+            bottomNav.setItemRippleColor(null);
+        }
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
@@ -120,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
@@ -162,15 +150,38 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * 检查是否需要打开锁屏对话框
-     * 用于处理从悬浮窗跳转回来时自动显示定时对话框
+     * 检查是否需要打开锁屏对话框或导航到定时器页面
+     * 用于处理从悬浮窗跳转回来时的不同操作
      * @param intent 要检查的Intent对象
      */
     private void handleOpenLockDialogIfNeeded(Intent intent) {
-        if (intent != null && intent.getBooleanExtra("OPEN_LOCK_DIALOG", false)) {
-            showLockTimerDialog();
-            intent.removeExtra("OPEN_LOCK_DIALOG");
+        if (intent != null) {
+            if (intent.getBooleanExtra("OPEN_LOCK_DIALOG", false)) {
+                showLockTimerDialog();
+                intent.removeExtra("OPEN_LOCK_DIALOG");
+            } else if (intent.getBooleanExtra("NAVIGATE_TO_TIMER", false)) {
+                navigateToTimerPage();
+                intent.removeExtra("NAVIGATE_TO_TIMER");
+            }
         }
+    }
+
+    /**
+     * 导航到定时器页面
+     * 用于从悬浮窗直接跳转到定时器功能页面
+     */
+    private void navigateToTimerPage() {
+        androidx.navigation.NavController navController = androidx.navigation.Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        androidx.navigation.NavOptions navOptions = new androidx.navigation.NavOptions.Builder()
+                .setEnterAnim(android.R.anim.slide_in_left)
+                .setExitAnim(android.R.anim.slide_out_right)
+                .build();
+
+        // 创建Bundle传递功能ID
+        android.os.Bundle args = new android.os.Bundle();
+        args.putInt("function_id", Yu.code.toolbox.ui.function.FunctionConstants.FUNCTION_TIMER);
+
+        navController.navigate(R.id.nav_function, args, navOptions);
     }
 
     /**
@@ -189,95 +200,13 @@ public class MainActivity extends AppCompatActivity {
      * 创建并显示包含各种功能按钮的悬浮面板
      * @param anchorView 锚点视图，用于确定面板显示位置
      */
-    private void showFloatingPanel(View anchorView) {
-        // 加载悬浮面板布局
-        View panelView = LayoutInflater.from(this).inflate(R.layout.floating_panel, null);
 
-        // 初始化GridView
-        mGridView = panelView.findViewById(R.id.panel_grid);
-        mAdapter = new PanelGridAdapter(this, getPanelItems());
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PanelGridAdapter.PanelItem item = (PanelGridAdapter.PanelItem) mAdapter.getItem(position);
-                String name = item.getName();
-                if ("定时返回".equals(name) || "定时锁屏".equals(name)) {
-                    showLockTimerDialog();
-                } else if ("录音机".equals(name)) {
-                    showRecorderInHome();
-                } else if ("统计".equals(name)) {
-                    showStatisticsInHome();
-                }
-            }
-        });
-
-        // 创建PopupWindow
-        mPopupWindow = new PopupWindow(
-                panelView,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                true
-        );
-
-        // 设置动画效果
-        mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
-
-        // 获取屏幕宽度和高度
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidth = displayMetrics.widthPixels;
-        int screenHeight = displayMetrics.heightPixels;
-
-        // 20dp转换为像素
-        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
-
-        // 图标大小和间距（从XML布局中获取）
-        int iconSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
-        int horizontalSpacing = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
-        int itemPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()); // panel_item.xml中的padding
-
-        // 计算可用宽度和一行能放的图标数量
-        int availableWidth = screenWidth - 2 * margin; // 左右边距各20dp
-        int itemTotalWidth = iconSize + 2 * itemPadding; // 图标宽度+两侧padding（文字宽度不超过图标宽度，因为是单行显示）
-        int numColumns = availableWidth / (itemTotalWidth + horizontalSpacing); // 向下取整，考虑间距
-
-        // 确保至少有1列
-        if (numColumns < 1) {
-            numColumns = 1;
-        }
-
-        // 额外检查：确保最后一列不会超出可用宽度
-        int totalWidthWithColumns = numColumns * itemTotalWidth + (numColumns - 1) * horizontalSpacing;
-        if (totalWidthWithColumns > availableWidth) {
-            numColumns--;
-        }
-
-        // 设置GridView的列数
-        mGridView.setNumColumns(numColumns);
-
-        // 强制测量panelView
-        panelView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-
-        // 设置悬浮面板位于屏幕底部，距离左右和底部各20dp
-        int x = margin;
-        int y = screenHeight - panelView.getMeasuredHeight() - margin;
-
-        // 设置PopupWindow的宽度
-        mPopupWindow.setWidth(screenWidth - 2 * margin);
-
-        mPopupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, x, y);
-
-        // 设置点击外部关闭
-        mPopupWindow.setOutsideTouchable(true);
-        mPopupWindow.setFocusable(true);
-    }
 
     /**
      * 显示定时锁屏对话框
      * 提供预设时长选项和自定义时长功能
      */
-    private void showLockTimerDialog() {
+    public void showLockTimerDialog() {
         final List<String> labels = new ArrayList<>();
         final List<Long> delays = new ArrayList<>();
         // 15-120 分钟，步长 15 分钟
@@ -290,15 +219,14 @@ public class MainActivity extends AppCompatActivity {
         labels.add("查看剩余时间");
         labels.add("取消已设置的定时");
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("定时返回桌面")
-                .setItems(labels.toArray(new String[0]), (dialog, which) -> {
+                .setItems(labels.toArray(new String[0]), (d, which) -> {
                     if (which < delays.size()) {
                         if (!ensureOverlayPermission()) return;
                         ensureNotificationPermissionIfNeeded();
                         if (!ensureExactAlarmPermission()) return;
                         scheduleLock(delays.get(which));
-                        if (mPopupWindow != null && mPopupWindow.isShowing()) mPopupWindow.dismiss();
                     } else {
                         int actionIndex = which - delays.size();
                         if (actionIndex == 0) {
@@ -312,7 +240,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("关闭", null)
-                .show();
+                .create();
+
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(
+                    ContextCompat.getDrawable(this, R.drawable.shape_overlay_bg)
+            );
+        }
+
+        // 设置按钮文字颜色为黑色
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, android.R.color.black));
     }
 
     /**
@@ -320,11 +258,6 @@ public class MainActivity extends AppCompatActivity {
      * 导航到Home Fragment并显示录音机界面
      */
     private void showRecorderInHome() {
-        // 关闭悬浮面板
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
-
         // 导航到Home Fragment
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         navController.navigate(R.id.nav_home);
@@ -341,11 +274,6 @@ public class MainActivity extends AppCompatActivity {
      * 导航到Home Fragment并显示统计界面
      */
     private void showStatisticsInHome() {
-        // 关闭悬浮面板
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
-
         // 导航到Home Fragment
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         navController.navigate(R.id.nav_home);
@@ -517,7 +445,6 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             sp.edit().putInt(KEY_LAST_HOURS, hours).putInt(KEY_LAST_MINUTES, minutes).apply();
             scheduleLock(totalMinutes * 60L * 1000L);
-            if (mPopupWindow != null && mPopupWindow.isShowing()) mPopupWindow.dismiss();
             dialog.dismiss();
         });
 
@@ -587,21 +514,6 @@ public class MainActivity extends AppCompatActivity {
         long triggerAt = sp.getLong(KEY_TRIGGER_AT, -1L);
         if (triggerAt <= 0) return -1L;
         return triggerAt - System.currentTimeMillis();
-    }
-
-    /**
-     * 获取悬浮面板的功能项数据
-     * 定义悬浮面板中显示的功能按钮
-     * @return 功能项列表
-     */
-    private List<PanelGridAdapter.PanelItem> getPanelItems() {
-        List<PanelGridAdapter.PanelItem> items = new ArrayList<>();
-
-        // 添加示例图标和名称
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.time, "定时返回"));
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-        items.add(new PanelGridAdapter.PanelItem(R.drawable.statistics, "统计"));
-        return items;
     }
 
     /**

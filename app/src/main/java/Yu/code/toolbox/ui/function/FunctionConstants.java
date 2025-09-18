@@ -13,6 +13,9 @@ public class FunctionConstants {
     // 统计功能
     public static final int FUNCTION_STATISTICS = R.layout.function_statistics;
 
+    // 定时返回功能
+    public static final int FUNCTION_TIMER = R.layout.function_timer;
+
     // 在这里可以添加更多功能的常量
     // public static final int FUNCTION_CALCULATOR = R.layout.function_calculator;
     // public static final int FUNCTION_NOTES = R.layout.function_notes;

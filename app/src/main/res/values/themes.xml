@@ -11,6 +11,9 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/white</item>
+        <!-- 全局对话框主题：淡蓝色圆角 -->
+        <item name="alertDialogTheme">@style/AppDialogStyle</item>
+        <item name="materialAlertDialogTheme">@style/AppDialogStyle</item>
         <!-- Customize your theme here. -->
     </style>
 
