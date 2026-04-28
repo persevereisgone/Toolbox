@@ -26,6 +26,7 @@ public class HomeFragment extends Fragment {
 
     private static final String PREFS_HOME_DEBUG = "home_debug_prefs";
     private static final String KEY_BETA_UNLOCKED = "beta_unlocked";
+    private static final String KEY_CHANGELOG_LAST_SEEN_VERSION = "changelog_last_seen_version";
     private static final int DEV_TAP_REQUIRED = 5;
     private static final long DEV_TAP_TIMEOUT_MS = 1200L;
 
@@ -116,6 +117,38 @@ public class HomeFragment extends Fragment {
                 devTapCount = 0;
             }
         });
+
+        updateChangelogBadgeVisibility();
+        binding.homeChangelogEntry.setOnClickListener(v -> {
+            markChangelogAsSeen();
+            navigateToFunction(FunctionConstants.FUNCTION_CHANGELOG);
+        });
+    }
+
+    private void updateChangelogBadgeVisibility() {
+        int lastSeenVersion = debugPreferences.getInt(KEY_CHANGELOG_LAST_SEEN_VERSION, 0);
+        boolean hasUnread = getCurrentVersionCode() > lastSeenVersion;
+        binding.homeChangelogBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+    }
+
+    private void markChangelogAsSeen() {
+        debugPreferences.edit().putInt(KEY_CHANGELOG_LAST_SEEN_VERSION, getCurrentVersionCode()).apply();
+        binding.homeChangelogBadge.setVisibility(View.GONE);
+    }
+
+    private int getCurrentVersionCode() {
+        try {
+            android.content.pm.PackageInfo packageInfo = requireContext()
+                    .getPackageManager()
+                    .getPackageInfo(requireContext().getPackageName(), 0);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                return (int) packageInfo.getLongVersionCode();
+            } else {
+                return packageInfo.versionCode;
+            }
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private void updateBetaSectionVisibility() {

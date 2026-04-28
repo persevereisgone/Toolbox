@@ -25,6 +25,9 @@ public class FunctionConstants {
     // 定时录屏功能
     public static final int FUNCTION_SCREEN_RECORDER = R.layout.function_screen_recorder;
 
+    // 更新日志功能
+    public static final int FUNCTION_CHANGELOG = R.layout.function_changelog;
+
     // 在这里可以添加更多功能的常量
     // public static final int FUNCTION_CALCULATOR = R.layout.function_calculator;
     // public static final int FUNCTION_NOTES = R.layout.function_notes;

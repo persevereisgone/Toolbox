@@ -37,8 +37,10 @@ public class StatisticsManagerRobolectricTest {
         final EditText etQty;
         final Button btnAdd;
         final Button btnClearAll;
+        final Button btnBatchDelete;
         final Button btnExport;
         final Button btnImport;
+        final Button btnFullscreenList;
         final Button btnManageSets;
         final TextView tvTotal;
         final Spinner spinnerSets;
@@ -55,8 +57,10 @@ public class StatisticsManagerRobolectricTest {
             etQty = rootView.findViewById(R.id.et_item_quantity);
             btnAdd = rootView.findViewById(R.id.btn_add_item);
             btnClearAll = rootView.findViewById(R.id.btn_clear_all);
+            btnBatchDelete = rootView.findViewById(R.id.btn_batch_delete);
             btnExport = rootView.findViewById(R.id.btn_export);
             btnImport = rootView.findViewById(R.id.btn_import);
+            btnFullscreenList = rootView.findViewById(R.id.btn_fullscreen_list);
             btnManageSets = rootView.findViewById(R.id.btn_manage_sets);
             tvTotal = rootView.findViewById(R.id.tv_total_count);
             spinnerSets = rootView.findViewById(R.id.spinner_statistics_set);
@@ -100,8 +104,10 @@ public class StatisticsManagerRobolectricTest {
         assertEquals("数量", h.etQty.getHint().toString());
         assertEquals("添加", h.btnAdd.getText().toString());
         assertEquals("一键清空", h.btnClearAll.getText().toString());
+        assertEquals("批量删除", h.btnBatchDelete.getText().toString());
         assertEquals("导出数据", h.btnExport.getText().toString());
         assertEquals("导入数据", h.btnImport.getText().toString());
+        assertEquals("全屏查看物品列表", h.btnFullscreenList.getText().toString());
         assertEquals("管理", h.btnManageSets.getText().toString());
         assertEquals("总计: 0", h.tvTotal.getText().toString());
     }
@@ -125,6 +131,39 @@ public class StatisticsManagerRobolectricTest {
         assertTrue(negative.getText().length() > 0);
 
         int expectedPositiveColor = h.activity.getResources().getColor(android.R.color.holo_blue_dark);
+        int expectedNegativeColor = h.activity.getResources().getColor(android.R.color.black);
+        assertEquals(expectedPositiveColor, positive.getCurrentTextColor());
+        assertEquals(expectedNegativeColor, negative.getCurrentTextColor());
+    }
+
+    @Test
+    public void batchDelete_whenNoItems_shouldToast() {
+        Harness h = new Harness();
+        h.btnBatchDelete.performClick();
+        assertEquals("没有物品可删除", ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void batchDeleteDialog_buttonsShouldBeVisibleAndReadable() {
+        Harness h = new Harness();
+        h.etName.setText("可乐");
+        h.etQty.setText("1");
+        h.btnAdd.performClick();
+
+        h.btnBatchDelete.performClick();
+        android.app.Dialog dialog = ShadowAlertDialog.getLatestDialog();
+        assertNotNull(dialog);
+
+        android.widget.Button positive = getDialogButton(dialog, android.content.DialogInterface.BUTTON_POSITIVE);
+        android.widget.Button negative = getDialogButton(dialog, android.content.DialogInterface.BUTTON_NEGATIVE);
+        assertNotNull(positive);
+        assertNotNull(negative);
+        assertEquals(View.VISIBLE, positive.getVisibility());
+        assertEquals(View.VISIBLE, negative.getVisibility());
+        assertTrue(positive.getText().length() > 0);
+        assertTrue(negative.getText().length() > 0);
+
+        int expectedPositiveColor = h.activity.getResources().getColor(android.R.color.holo_red_dark);
         int expectedNegativeColor = h.activity.getResources().getColor(android.R.color.black);
         assertEquals(expectedPositiveColor, positive.getCurrentTextColor());
         assertEquals(expectedNegativeColor, negative.getCurrentTextColor());
@@ -155,6 +194,16 @@ public class StatisticsManagerRobolectricTest {
         }
         if (dialog instanceof androidx.appcompat.app.AlertDialog) {
             return ((androidx.appcompat.app.AlertDialog) dialog).getButton(whichButton);
+        }
+        return null;
+    }
+
+    private android.widget.ListView getDialogListView(android.app.Dialog dialog) {
+        if (dialog instanceof android.app.AlertDialog) {
+            return ((android.app.AlertDialog) dialog).getListView();
+        }
+        if (dialog instanceof androidx.appcompat.app.AlertDialog) {
+            return ((androidx.appcompat.app.AlertDialog) dialog).getListView();
         }
         return null;
     }
@@ -279,6 +328,44 @@ public class StatisticsManagerRobolectricTest {
         assertEquals(0, h.adapter().getItemCount());
         assertEquals("总计: 0", h.tvTotal.getText().toString());
         assertEquals("已清空所有物品", ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void batchDelete_shouldDeleteSelectedItems_andUpdateTotal() {
+        Harness h = new Harness();
+
+        h.etName.setText("可乐");
+        h.etQty.setText("2");
+        h.btnAdd.performClick();
+        h.etName.setText("薯片");
+        h.etQty.setText("3");
+        h.btnAdd.performClick();
+        h.etName.setText("面包");
+        h.etQty.setText("4");
+        h.btnAdd.performClick();
+
+        assertEquals(3, h.adapter().getItemCount());
+        assertEquals("总计: 9", h.tvTotal.getText().toString());
+
+        h.btnBatchDelete.performClick();
+        android.app.Dialog dialog = ShadowAlertDialog.getLatestDialog();
+        assertNotNull(dialog);
+        android.widget.ListView listView = getDialogListView(dialog);
+        assertNotNull(listView);
+
+        View first = listView.getAdapter().getView(0, null, listView);
+        View second = listView.getAdapter().getView(1, null, listView);
+        listView.performItemClick(first, 0, listView.getAdapter().getItemId(0));
+        listView.performItemClick(second, 1, listView.getAdapter().getItemId(1));
+
+        android.widget.Button positive = getDialogButton(dialog, android.content.DialogInterface.BUTTON_POSITIVE);
+        assertNotNull(positive);
+        positive.performClick();
+        Shadows.shadowOf(android.os.Looper.getMainLooper()).idle();
+
+        assertEquals(1, h.adapter().getItemCount());
+        assertEquals("总计: 4", h.tvTotal.getText().toString());
+        assertEquals("已批量删除 2 个物品", ShadowToast.getTextOfLatestToast());
     }
 
     @Test

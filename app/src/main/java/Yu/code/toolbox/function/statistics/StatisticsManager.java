@@ -8,11 +8,15 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +39,8 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -110,11 +116,17 @@ public class StatisticsManager {
         // 设置一键清空按钮点击事件
         rootView.findViewById(R.id.btn_clear_all).setOnClickListener(v -> clearAllItems());
 
+        // 设置批量删除按钮点击事件
+        rootView.findViewById(R.id.btn_batch_delete).setOnClickListener(v -> showBatchDeleteDialog());
+
         // 设置导出按钮点击事件
         rootView.findViewById(R.id.btn_export).setOnClickListener(v -> exportData());
 
         // 设置导入按钮点击事件
         rootView.findViewById(R.id.btn_import).setOnClickListener(v -> importData());
+
+        // 设置全屏查看按钮点击事件
+        rootView.findViewById(R.id.btn_fullscreen_list).setOnClickListener(v -> showFullscreenListDialog());
 
         // 设置统计套管理按钮点击事件
         rootView.findViewById(R.id.btn_manage_sets).setOnClickListener(v -> showManageSetsDialog());
@@ -241,6 +253,168 @@ public class StatisticsManager {
                     null);
         } else {
             Toast.makeText(context, "没有物品需要清空", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showBatchDeleteDialog() {
+        List<StatisticsItem> items = adapter.getItems();
+        if (items.isEmpty()) {
+            Toast.makeText(context, "没有物品可删除", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] itemNames = new String[items.size()];
+        boolean[] checkedItems = new boolean[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            StatisticsItem item = items.get(i);
+            itemNames[i] = item.getName() + " (" + item.getQuantity() + ")";
+            checkedItems[i] = false;
+        }
+
+        AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle("批量删除物品")
+                .setMultiChoiceItems(itemNames, checkedItems, (dialog, which, isChecked) -> checkedItems[which] = isChecked)
+                .setPositiveButton("删除选中", (dialog, which) -> {
+                    int deletedCount = 0;
+                    for (int i = checkedItems.length - 1; i >= 0; i--) {
+                        if (checkedItems[i]) {
+                            adapter.removeItem(i);
+                            deletedCount++;
+                        }
+                    }
+
+                    if (deletedCount > 0) {
+                        saveData();
+                        updateTotalCount();
+                        Toast.makeText(context, "已批量删除 " + deletedCount + " 个物品", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "请至少选择一个物品", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create();
+        alertDialog.show();
+
+        // 显式设置按钮文字颜色，避免主题导致按钮“存在但不可见”
+        if (alertDialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                    context.getResources().getColor(android.R.color.holo_red_dark)
+            );
+        }
+        if (alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
+                    context.getResources().getColor(android.R.color.black)
+            );
+        }
+    }
+
+    private void showFullscreenListDialog() {
+        List<StatisticsItem> items = adapter.getItems();
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_statistics_fullscreen, null);
+        TextView tvFullscreenTotal = dialogView.findViewById(R.id.tv_fullscreen_total_count);
+        EditText etFullscreenSearch = dialogView.findViewById(R.id.et_fullscreen_search);
+        Spinner spinnerFullscreenSort = dialogView.findViewById(R.id.spinner_fullscreen_sort);
+        ListView lvFullscreenStatistics = dialogView.findViewById(R.id.lv_fullscreen_statistics);
+
+        int total = 0;
+        for (StatisticsItem item : items) {
+            total += item.getQuantity();
+        }
+        tvFullscreenTotal.setText("总计: " + total);
+
+        String[] sortOptions = {"数量高->低", "数量低->高", "名称A->Z"};
+        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(
+                context,
+                android.R.layout.simple_spinner_item,
+                sortOptions
+        );
+        sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerFullscreenSort.setAdapter(sortAdapter);
+
+        ArrayAdapter<String> fullscreenAdapter = new ArrayAdapter<String>(
+                context,
+                android.R.layout.simple_list_item_1,
+                new ArrayList<>()
+        ) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView textView = view.findViewById(android.R.id.text1);
+                textView.setTextSize(17f);
+                textView.setTextColor(context.getResources().getColor(R.color.app_text_primary));
+                textView.setPadding(24, 20, 24, 20);
+                return view;
+            }
+        };
+        lvFullscreenStatistics.setAdapter(fullscreenAdapter);
+
+        Runnable refreshList = () -> {
+            String keyword = etFullscreenSearch.getText().toString().trim().toLowerCase(Locale.getDefault());
+            List<StatisticsItem> filtered = new ArrayList<>();
+            for (StatisticsItem item : items) {
+                if (TextUtils.isEmpty(keyword) || item.getName().toLowerCase(Locale.getDefault()).contains(keyword)) {
+                    filtered.add(item);
+                }
+            }
+
+            int sortPos = spinnerFullscreenSort.getSelectedItemPosition();
+            if (sortPos == 0) {
+                Collections.sort(filtered, (a, b) -> Integer.compare(b.getQuantity(), a.getQuantity()));
+            } else if (sortPos == 1) {
+                Collections.sort(filtered, Comparator.comparingInt(StatisticsItem::getQuantity));
+            } else {
+                Collections.sort(filtered, (a, b) -> a.getName().compareToIgnoreCase(b.getName()));
+            }
+
+            List<String> displayItems = new ArrayList<>();
+            for (StatisticsItem item : filtered) {
+                displayItems.add(item.getName() + "    数量: " + item.getQuantity());
+            }
+            if (displayItems.isEmpty()) {
+                displayItems.add("没有匹配的物品");
+            }
+
+            fullscreenAdapter.clear();
+            fullscreenAdapter.addAll(displayItems);
+            fullscreenAdapter.notifyDataSetChanged();
+        };
+
+        etFullscreenSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                refreshList.run();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        spinnerFullscreenSort.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                refreshList.run();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        refreshList.run();
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setPositiveButton("关闭", null)
+                .create();
+        dialog.show();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
         }
     }
 
