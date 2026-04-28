@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         // 设置ActionBar但隐藏标题
         setSupportActionBar(binding.appBarMain.toolbar);
         // 设置导航栏为白色
-        binding.appBarMain.toolbar.setBackgroundColor(getResources().getColor(android.R.color.white));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             // 设置导航图标颜色为黑色

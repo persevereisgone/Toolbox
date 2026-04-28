@@ -410,6 +410,13 @@ public class StatisticsManager {
                 .create();
         dialog.show();
 
+        // 设置按钮文字颜色，避免主题导致按钮不可见
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                    context.getResources().getColor(android.R.color.holo_blue_dark)
+            );
+        }
+
         if (dialog.getWindow() != null) {
             dialog.getWindow().setLayout(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -422,20 +429,11 @@ public class StatisticsManager {
         if (position >= 0 && position < adapter.getItemCount()) {
             StatisticsItem item = adapter.getItems().get(position);
 
-            // 创建输入对话框
-            View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_edit_quantity, null);
-            EditText etQuantity = dialogView.findViewById(R.id.et_quantity);
-            etQuantity.setText(String.valueOf(item.getQuantity()));
-            etQuantity.setSelection(etQuantity.getText().length()); // 光标移到末尾
-            etQuantity.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
-
-            DialogUtils.createCustomViewDialog(context, "编辑数量", dialogView,
-                    "确定", "取消",
-                    (dialog, which) -> {
-                        String quantityStr = etQuantity.getText().toString().trim();
-                        if (!TextUtils.isEmpty(quantityStr)) {
+            DialogUtils.showNumberInputDialog(context, "编辑数量", "请输入数量",
+                    String.valueOf(item.getQuantity()), input -> {
+                        if (!TextUtils.isEmpty(input)) {
                             try {
-                                int newQuantity = Integer.parseInt(quantityStr);
+                                int newQuantity = Integer.parseInt(input);
                                 if (newQuantity >= 0) {
                                     item.setQuantity(newQuantity);
                                     adapter.updateItem(position, item);
@@ -451,8 +449,7 @@ public class StatisticsManager {
                         } else {
                             Toast.makeText(context, "请输入数量", Toast.LENGTH_SHORT).show();
                         }
-                    },
-                    null);
+                    });
         }
     }
 
@@ -579,12 +576,25 @@ public class StatisticsManager {
      * 显示导出成功对话框
      */
     private void showExportSuccessDialog(File excelFile) {
-        new AlertDialog.Builder(context)
+        AlertDialog dialog = new AlertDialog.Builder(context)
                 .setTitle("导出成功")
                 .setMessage("文件已保存到:\n" + excelFile.getAbsolutePath() + "\n\n是否立即分享？")
-                .setPositiveButton("分享", (dialog, which) -> shareFile(excelFile))
+                .setPositiveButton("分享", (dialogInterface, which) -> shareFile(excelFile))
                 .setNegativeButton("完成", null)
-                .show();
+                .create();
+        dialog.show();
+
+        // 设置按钮文字颜色，避免主题导致按钮不可见
+        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
+                    context.getResources().getColor(android.R.color.holo_blue_dark)
+            );
+        }
+        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
+                    context.getResources().getColor(android.R.color.black)
+            );
+        }
     }
 
     /**
@@ -1281,41 +1291,30 @@ public class StatisticsManager {
      * 显示创建统计组对话框
      */
     private void showCreateSetDialog() {
-        EditText etSetName = new EditText(context);
-        etSetName.setHint("请输入统计组名称");
-        DialogUtils.createCustomViewDialog(context, "创建新统计组", etSetName,
-                "创建", "取消",
-                (dialog, which) -> {
-                    String setName = etSetName.getText().toString().trim();
-                    if (!TextUtils.isEmpty(setName)) {
-                        createNewSet(setName);
+        DialogUtils.showInputDialog(context, "创建新统计组", "请输入统计组名称", null,
+                input -> {
+                    if (!TextUtils.isEmpty(input)) {
+                        createNewSet(input);
                     } else {
                         Toast.makeText(context, "请输入统计组名称", Toast.LENGTH_SHORT).show();
                     }
-                },
-                null);
+                });
     }
 
     /**
      * 显示重命名统计组对话框
      */
     private void showRenameSetDialog() {
-        EditText etSetName = new EditText(context);
-        etSetName.setText(currentSetName);
-        etSetName.setHint("请输入新的统计组名称");
-        DialogUtils.createCustomViewDialog(context, "重命名统计组", etSetName,
-                "重命名", "取消",
-                (dialog, which) -> {
-                    String newName = etSetName.getText().toString().trim();
-                    if (!TextUtils.isEmpty(newName) && !newName.equals(currentSetName)) {
-                        renameCurrentSet(newName);
-                    } else if (newName.equals(currentSetName)) {
+        DialogUtils.showInputDialog(context, "重命名统计组", "请输入新的统计组名称", currentSetName,
+                input -> {
+                    if (!TextUtils.isEmpty(input) && !input.equals(currentSetName)) {
+                        renameCurrentSet(input);
+                    } else if (input.equals(currentSetName)) {
                         Toast.makeText(context, "名称没有变化", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(context, "请输入有效的统计组名称", Toast.LENGTH_SHORT).show();
                     }
-                },
-                null);
+                });
     }
 
     /**

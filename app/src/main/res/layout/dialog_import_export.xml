@@ -26,20 +26,15 @@
         android:layout_marginTop="@dimen/space_xs"
         android:text="示例：一等奖|1|#FF6B6B" />
 
-    <ScrollView
+    <EditText
+        android:id="@+id/et_import_export"
+        style="@style/Widget.Toolbox.Input"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="@dimen/space_lg">
-
-        <EditText
-            android:id="@+id/et_import_export"
-            style="@style/Widget.Toolbox.Input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="在此输入或粘贴内容..."
-            android:minLines="5" />
-    </ScrollView>
+        android:layout_height="120dp"
+        android:layout_marginTop="@dimen/space_lg"
+        android:gravity="top"
+        android:hint="在此输入或粘贴内容..."
+        android:minLines="5" />
 
     <LinearLayout
         android:layout_width="match_parent"

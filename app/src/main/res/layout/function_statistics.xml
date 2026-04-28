@@ -111,8 +111,9 @@
                     style="@style/Widget.Toolbox.Input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/space_lg"
                     android:layout_weight="1"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginBottom="1dp"
                     android:hint="物品名称" />
 
                 <EditText
@@ -120,9 +121,11 @@
                     style="@style/Widget.Toolbox.Input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/space_lg"
                     android:layout_weight="0.55"
                     android:hint="数量"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginBottom="1dp"
                     android:inputType="number" />
 
                 <Button

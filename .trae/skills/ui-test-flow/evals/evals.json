@@ -1,0 +1,23 @@
+{
+  "skill_name": "ui-test-flow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "UI界面测试",
+      "expected_output": "执行Espresso UI测试和单元测试，检查对话框按钮可见性和颜色",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "运行UI测试",
+      "expected_output": "执行完整的UI测试流程，包括对话框按钮测试和深色模式测试",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "测试UI显示",
+      "expected_output": "检查UI元素可见性，特别是对话框按钮的显示情况",
+      "files": []
+    }
+  ]
+}

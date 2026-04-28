@@ -228,7 +228,6 @@
                     style="@style/Widget.Toolbox.Input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/space_lg"
                     android:layout_weight="1"
                     android:hint="小时"
                     android:inputType="number" />
@@ -238,7 +237,6 @@
                     style="@style/Widget.Toolbox.Input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/space_lg"
                     android:layout_weight="1"
                     android:hint="分钟"
                     android:inputType="number" />

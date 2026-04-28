@@ -165,7 +165,7 @@
     </style>
 
     <style name="Widget.Toolbox.Input" parent="Widget.Toolbox">
-        <item name="android:background">@drawable/app_input_bg</item>
+        <item name="android:background">@drawable/app_input_border_bg</item>
         <item name="android:paddingStart">@dimen/space_lg</item>
         <item name="android:paddingTop">@dimen/space_md</item>
         <item name="android:paddingEnd">@dimen/space_lg</item>

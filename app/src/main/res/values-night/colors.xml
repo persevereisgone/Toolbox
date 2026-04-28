@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#BB86FC</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03DAC5</color>
+    <color name="teal_700">#018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#6B7A8D</color>
+    <color name="blue">#5B8AFF</color>
+    <color name="light_blue_bg">#1A2230</color>
+    <color name="red">#FF7878</color>
+
+    <color name="app_bg">#121820</color>
+    <color name="app_bg_elevated">#1E2836</color>
+    <color name="app_surface">#1E2836</color>
+    <color name="app_surface_alt">#263040</color>
+    <color name="app_surface_soft">#2E3A4A</color>
+    <color name="app_surface_dark">#E0E0E0</color>
+    <color name="app_card_stroke">#334D6E</color>
+    <color name="app_divider">#334D6E</color>
+    <color name="app_divider_light">#2E4057</color>
+
+    <color name="app_primary">#5B8AFF</color>
+    <color name="app_primary_dark">#7AA2FF</color>
+    <color name="app_primary_light">#1A2E4D</color>
+    <color name="app_primary_overlay">#29427DFF</color>
+    <color name="app_accent">#9D8FFF</color>
+    <color name="app_accent_dark">#B5A6FF</color>
+    <color name="app_accent_light">#2D254D</color>
+    <color name="app_on_primary">#121820</color>
+    <color name="app_on_accent">#121820</color>
+
+    <color name="app_text_primary">#E8ECF4</color>
+    <color name="app_text_secondary">#9BA8B9</color>
+    <color name="app_text_tertiary">#6B7A8D</color>
+    <color name="app_text_disabled">#4A5568</color>
+    <color name="app_text_inverse">#121820</color>
+    <color name="app_text_inverse_secondary">#4A5568</color>
+
+    <color name="app_success">#3BC786</color>
+    <color name="app_success_light">#1A3D2E</color>
+    <color name="app_warning">#F0A84C</color>
+    <color name="app_warning_light">#3D2F1A</color>
+    <color name="app_danger">#FF7878</color>
+    <color name="app_danger_light">#4D2424</color>
+    <color name="app_info">#6BA3FF</color>
+    <color name="app_info_light">#1A2E4D</color>
+
+    <color name="app_nav_icon">#9BA8B9</color>
+    <color name="app_nav_checked">#5B8AFF</color>
+    <color name="app_nav_unchecked">#6B7A8D</color>
+    <color name="app_nav_bg">#1E2836</color>
+    <color name="app_nav_stroke">#334D6E</color>
+    <color name="app_overlay_bg">#2E3A4AFF</color>
+    <color name="app_overlay_dark">#B3BEC9CC</color>
+    <color name="app_overlay_scrim">#121820CC</color>
+
+    <color name="home_background">@color/app_bg</color>
+    <color name="home_title">@color/app_text_primary</color>
+    <color name="home_subtitle">@color/app_text_secondary</color>
+    <color name="home_beta_title">#FF9898</color>
+    <color name="home_card_stroke">@color/app_card_stroke</color>
+    <color name="home_item_bg">@color/app_surface_alt</color>
+    <color name="home_item_pressed">@color/app_primary_light</color>
+    <color name="home_item_stroke">#334D6E</color>
+    <color name="home_icon_tint">@color/app_primary</color>
+    <color name="home_text_primary">@color/app_text_primary</color>
+    <color name="home_header_subtitle">@color/app_text_secondary</color>
+    <color name="home_tip_bg">@color/app_surface_alt</color>
+    <color name="home_tip_stroke">#334D6E</color>
+    <color name="home_tip_title">#C8D4E4</color>
+    <color name="home_tip_text">@color/app_text_secondary</color>
+</resources>

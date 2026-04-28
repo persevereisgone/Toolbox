@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import Yu.code.toolbox.R;
+import Yu.code.toolbox.Utils.DialogUtils;
 
 /**
  * 抽奖功能管理器
@@ -296,47 +297,28 @@ public class LotteryManager {
      * 显示创建抽奖组对话框
      */
     private void showCreateGroupDialog() {
-        EditText etGroupName = new EditText(context);
-        etGroupName.setHint("请输入抽奖组名称");
-
-        new AlertDialog.Builder(context)
-                .setTitle("创建新抽奖组")
-                .setView(etGroupName)
-                .setPositiveButton("创建", (dialog, which) -> {
-                    String groupName = etGroupName.getText().toString().trim();
-                    if (!TextUtils.isEmpty(groupName)) {
-                        createNewGroup(groupName);
-                    } else {
-                        Toast.makeText(context, "请输入抽奖组名称", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("取消", null)
-                .show();
+        DialogUtils.showInputDialog(context, "创建新抽奖组", "请输入抽奖组名称", null, groupName -> {
+            if (!TextUtils.isEmpty(groupName)) {
+                createNewGroup(groupName);
+            } else {
+                Toast.makeText(context, "请输入抽奖组名称", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
      * 显示重命名抽奖组对话框
      */
     private void showRenameGroupDialog() {
-        EditText etGroupName = new EditText(context);
-        etGroupName.setText(currentGroupName);
-        etGroupName.setHint("请输入新的抽奖组名称");
-
-        new AlertDialog.Builder(context)
-                .setTitle("重命名抽奖组")
-                .setView(etGroupName)
-                .setPositiveButton("重命名", (dialog, which) -> {
-                    String newName = etGroupName.getText().toString().trim();
-                    if (!TextUtils.isEmpty(newName) && !newName.equals(currentGroupName)) {
-                        renameCurrentGroup(newName);
-                    } else if (newName.equals(currentGroupName)) {
-                        Toast.makeText(context, "名称没有变化", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(context, "请输入有效的抽奖组名称", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setNegativeButton("取消", null)
-                .show();
+        DialogUtils.showInputDialog(context, "重命名抽奖组", "请输入新的抽奖组名称", currentGroupName, newName -> {
+            if (!TextUtils.isEmpty(newName) && !newName.equals(currentGroupName)) {
+                renameCurrentGroup(newName);
+            } else if (newName.equals(currentGroupName)) {
+                Toast.makeText(context, "名称没有变化", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "请输入有效的抽奖组名称", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

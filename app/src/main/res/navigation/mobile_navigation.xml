@@ -29,4 +29,11 @@
         android:name="Yu.code.toolbox.ui.function.FunctionFragment"
         android:label="功能"
         tools:layout="@layout/fragment_function" />
+
+    <!-- 设置页面 -->
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="Yu.code.toolbox.ui.settings.SettingsFragment"
+        android:label="设置"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

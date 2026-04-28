@@ -29,6 +29,8 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import Yu.code.toolbox.Utils.DialogUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -994,46 +996,22 @@ public class ScreenRecorderManager {
     }
 
     private void showRenameDialog(File file) {
-        // 创建输入对话框
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(fragment.requireContext());
-        builder.setTitle("自定义录屏文件名");
-        
-        // 创建输入框容器，添加 padding
-        android.widget.LinearLayout container = new android.widget.LinearLayout(fragment.requireContext());
-        container.setOrientation(android.widget.LinearLayout.VERTICAL);
-        int padding = (int) (20 * fragment.getResources().getDisplayMetrics().density);
-        container.setPadding(padding, padding / 2, padding, 0);
-        
-        // 创建输入框
-        final android.widget.EditText input = new android.widget.EditText(fragment.requireContext());
-        input.setHint("输入文件名（不含扩展名）");
-        input.setSingleLine(true);
-        
-        // 设置默认文件名（去掉扩展名）
         String currentName = file.getName();
         if (currentName.endsWith(".mp4")) {
             currentName = currentName.substring(0, currentName.length() - 4);
         }
-        input.setText(currentName);
-        input.setSelection(currentName.length()); // 光标移到末尾
         
-        container.addView(input);
-        builder.setView(container);
-        
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            String newName = input.getText().toString().trim();
+        DialogUtils.showInputDialog(fragment.requireContext(), "自定义录屏文件名", "输入文件名（不含扩展名）", currentName, newName -> {
             if (newName.isEmpty()) {
                 Toast.makeText(context, "文件名不能为空", Toast.LENGTH_SHORT).show();
                 tvStatus.setText("已保存: " + file.getName());
                 return;
             }
             
-            // 添加 .mp4 扩展名
             if (!newName.endsWith(".mp4")) {
                 newName = newName + ".mp4";
             }
             
-            // 重命名文件
             File newFile = new File(file.getParent(), newName);
             if (newFile.exists()) {
                 Toast.makeText(context, "文件名已存在，使用原文件名", Toast.LENGTH_SHORT).show();
@@ -1047,25 +1025,10 @@ public class ScreenRecorderManager {
                     tvStatus.setText("已保存: " + file.getName());
                 }
             }
-        });
-        
-        builder.setNegativeButton("取消", (dialog, which) -> {
-            // 取消重命名，使用原文件名
+        }, () -> {
             tvStatus.setText("已保存: " + file.getName());
             Toast.makeText(context, "录屏已保存到: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         });
-        
-        // 创建并显示对话框
-        android.app.AlertDialog dialog = builder.create();
-        dialog.show();
-        
-        // 设置按钮文字颜色，确保在白色背景上可见
-        if (dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE) != null) {
-            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setTextColor(0xFF2196F3); // 蓝色
-        }
-        if (dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setTextColor(0xFF757575); // 灰色
-        }
     }
 
     private String generateFileName() {

@@ -1,10 +1,15 @@
 package Yu.code.toolbox.Utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.StringRes;
 
 import Yu.code.toolbox.R;
 
@@ -202,5 +207,155 @@ public class DialogUtils {
      */
     public interface OnDialogButtonClickListener {
         void onClick(DialogInterface dialog, int which);
+    }
+
+    /**
+     * 对话框确认监听器接口（用于输入对话框）
+     */
+    public interface OnDialogConfirmListener {
+        void onConfirm(String input);
+    }
+
+    /**
+     * 对话框取消监听器接口（用于输入对话框）
+     */
+    public interface OnDialogCancelListener {
+        void onCancel();
+    }
+
+    /**
+     * 显示通用输入对话框
+     * @param context 上下文
+     * @param title 标题
+     * @param hint 提示文字
+     * @param defaultValue 默认值
+     * @param confirmListener 确认监听器
+     * @return AlertDialog
+     */
+    public static AlertDialog showInputDialog(Context context, String title, String hint,
+                                              String defaultValue, OnDialogConfirmListener confirmListener) {
+        return showInputDialog(context, title, hint, defaultValue, confirmListener, null);
+    }
+
+    /**
+     * 显示通用输入对话框
+     * @param context 上下文
+     * @param title 标题
+     * @param hint 提示文字
+     * @param defaultValue 默认值
+     * @param confirmListener 确认监听器
+     * @param cancelListener 取消监听器
+     * @return AlertDialog
+     */
+    public static AlertDialog showInputDialog(Context context, String title, String hint,
+                                              String defaultValue, OnDialogConfirmListener confirmListener,
+                                              OnDialogCancelListener cancelListener) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_input_common, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .create();
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        TextView tvTitle = dialogView.findViewById(R.id.tv_dialog_title);
+        EditText etInput = dialogView.findViewById(R.id.et_dialog_input);
+        Button btnCancel = dialogView.findViewById(R.id.btn_dialog_cancel);
+        Button btnConfirm = dialogView.findViewById(R.id.btn_dialog_confirm);
+
+        tvTitle.setText(title);
+        etInput.setHint(hint);
+        if (defaultValue != null) {
+            etInput.setText(defaultValue);
+            etInput.setSelection(defaultValue.length());
+        }
+
+        btnCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (cancelListener != null) {
+                cancelListener.onCancel();
+            }
+        });
+
+        btnConfirm.setOnClickListener(v -> {
+            String input = etInput.getText().toString().trim();
+            if (confirmListener != null) {
+                confirmListener.onConfirm(input);
+            }
+            dialog.dismiss();
+        });
+
+        dialog.show();
+        return dialog;
+    }
+
+    /**
+     * 显示通用输入对话框（使用资源ID）
+     * @param context 上下文
+     * @param titleResId 标题资源ID
+     * @param hintResId 提示文字资源ID
+     * @param defaultValue 默认值
+     * @param confirmListener 确认监听器
+     * @return AlertDialog
+     */
+    public static AlertDialog showInputDialog(Context context, @StringRes int titleResId,
+                                              @StringRes int hintResId, String defaultValue,
+                                              OnDialogConfirmListener confirmListener) {
+        return showInputDialog(context,
+                context.getString(titleResId),
+                context.getString(hintResId),
+                defaultValue,
+                confirmListener,
+                null);
+    }
+
+    /**
+     * 显示数字输入对话框
+     * @param context 上下文
+     * @param title 标题
+     * @param hint 提示文字
+     * @param defaultValue 默认值
+     * @param confirmListener 确认监听器
+     * @return AlertDialog
+     */
+    public static AlertDialog showNumberInputDialog(Context context, String title, String hint,
+                                                   String defaultValue, OnDialogConfirmListener confirmListener) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_input_common, null);
+
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .create();
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        TextView tvTitle = dialogView.findViewById(R.id.tv_dialog_title);
+        EditText etInput = dialogView.findViewById(R.id.et_dialog_input);
+        Button btnCancel = dialogView.findViewById(R.id.btn_dialog_cancel);
+        Button btnConfirm = dialogView.findViewById(R.id.btn_dialog_confirm);
+
+        tvTitle.setText(title);
+        etInput.setHint(hint);
+        etInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        if (defaultValue != null) {
+            etInput.setText(defaultValue);
+            etInput.setSelection(defaultValue.length());
+        }
+
+        btnCancel.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+
+        btnConfirm.setOnClickListener(v -> {
+            String input = etInput.getText().toString().trim();
+            if (confirmListener != null) {
+                confirmListener.onConfirm(input);
+            }
+            dialog.dismiss();
+        });
+
+        dialog.show();
+        return dialog;
     }
 }

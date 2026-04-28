@@ -21,6 +21,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import Yu.code.toolbox.Utils.DialogUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -380,30 +382,12 @@ public class RecordingsListActivity extends AppCompatActivity {
      * 显示重命名对话框
      */
     private void showRenameDialog(File file, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("重命名文件");
-        
-        final EditText input = new EditText(this);
-        input.setHint("输入新文件名（不含扩展名）");
-        input.setSingleLine(true);
-        
         String currentName = file.getName();
         if (currentName.endsWith(".mp4")) {
             currentName = currentName.substring(0, currentName.length() - 4);
         }
-        input.setText(currentName);
-        input.setSelection(currentName.length());
         
-        android.widget.LinearLayout container = new android.widget.LinearLayout(this);
-        container.setOrientation(android.widget.LinearLayout.VERTICAL);
-        int padding = (int) (20 * getResources().getDisplayMetrics().density);
-        container.setPadding(padding, padding / 2, padding, 0);
-        container.addView(input);
-        
-        builder.setView(container);
-        
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            String newName = input.getText().toString().trim();
+        DialogUtils.showInputDialog(this, "重命名文件", "输入新文件名（不含扩展名）", currentName, newName -> {
             if (newName.isEmpty()) {
                 Toast.makeText(this, "文件名不能为空", Toast.LENGTH_SHORT).show();
                 return;
@@ -418,7 +402,6 @@ public class RecordingsListActivity extends AppCompatActivity {
                 Toast.makeText(this, "文件名已存在", Toast.LENGTH_SHORT).show();
             } else {
                 if (file.renameTo(newFile)) {
-                    // 更新列表
                     int index = recordingFiles.indexOf(file);
                     if (index >= 0) {
                         recordingFiles.set(index, newFile);
@@ -430,18 +413,6 @@ public class RecordingsListActivity extends AppCompatActivity {
                 }
             }
         });
-        
-        builder.setNegativeButton("取消", null);
-        
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        
-        if (dialog.getButton(AlertDialog.BUTTON_POSITIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(0xFF2196F3);
-        }
-        if (dialog.getButton(AlertDialog.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(0xFF757575);
-        }
     }
 
     /**
