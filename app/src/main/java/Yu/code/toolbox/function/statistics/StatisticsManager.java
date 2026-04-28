@@ -3,7 +3,11 @@ package Yu.code.toolbox.function.statistics;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,9 +27,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import Yu.code.toolbox.R;
 import Yu.code.toolbox.ui.home.HomeFragment;
@@ -53,6 +66,7 @@ public class StatisticsManager {
     private static final String KEY_STATISTICS_SETS = "statistics_sets";
     private static final String KEY_CURRENT_SET = "current_set";
     private static final String DEFAULT_SET_NAME = "默认统计组";
+    private static final int REQUEST_CODE_IMPORT_FILE = 6001;
 
     private Context context;
     private View rootView;
@@ -306,10 +320,123 @@ public class StatisticsManager {
             return;
         }
 
-        StringBuilder exportText = new StringBuilder();
-        for (StatisticsItem item : items) {
-            exportText.append(item.getName()).append(",").append(item.getQuantity()).append("\n");
+        // 显示导出选项对话框
+        String[] options = {"导出为 Excel 文件", "复制为文本", "分享到微信/QQ"};
+        new AlertDialog.Builder(context)
+                .setTitle("选择导出方式")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            exportToExcel();
+                            break;
+                        case 1:
+                            exportToText();
+                            break;
+                        case 2:
+                            shareData();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * 导出为 Excel 文件（使用 CSV 格式，Excel 可以直接打开）
+     */
+    private void exportToExcel() {
+        List<StatisticsItem> items = adapter.getItems();
+        if (items.isEmpty()) {
+            Toast.makeText(context, "没有数据可以导出", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        try {
+            // 生成文件名
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String fileName = "统计数据_" + currentSetName + "_" + timestamp + ".csv";
+
+            // 保存文件
+            File exportDir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "Statistics");
+            if (!exportDir.exists()) {
+                exportDir.mkdirs();
+            }
+
+            File csvFile = new File(exportDir, fileName);
+            
+            // 写入 CSV 内容（使用 UTF-8 BOM 确保 Excel 正确识别中文）
+            FileOutputStream fos = new FileOutputStream(csvFile);
+            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            
+            // 写入 UTF-8 BOM（Excel 需要这个来正确识别 UTF-8 编码）
+            writer.write('\ufeff');
+            
+            // 写入标题行
+            writer.write("物品名称,数量\n");
+            
+            // 写入数据行
+            int totalQuantity = 0;
+            for (StatisticsItem item : items) {
+                // 如果物品名称包含逗号，需要用引号包裹
+                String name = item.getName();
+                if (name.contains(",") || name.contains("\"") || name.contains("\n")) {
+                    name = "\"" + name.replace("\"", "\"\"") + "\"";
+                }
+                writer.write(name + "," + item.getQuantity() + "\n");
+                totalQuantity += item.getQuantity();
+            }
+            
+            // 写入总计行
+            writer.write("总计," + totalQuantity + "\n");
+            
+            writer.flush();
+            writer.close();
+            fos.close();
+
+            // 显示成功提示并询问是否分享
+            showExportSuccessDialog(csvFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(context, "导出失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * 显示导出成功对话框
+     */
+    private void showExportSuccessDialog(File excelFile) {
+        new AlertDialog.Builder(context)
+                .setTitle("导出成功")
+                .setMessage("文件已保存到:\n" + excelFile.getAbsolutePath() + "\n\n是否立即分享？")
+                .setPositiveButton("分享", (dialog, which) -> shareFile(excelFile))
+                .setNegativeButton("完成", null)
+                .show();
+    }
+
+    /**
+     * 导出为文本（复制到剪贴板）
+     */
+    private void exportToText() {
+        List<StatisticsItem> items = adapter.getItems();
+        if (items.isEmpty()) {
+            Toast.makeText(context, "没有数据可以导出", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        StringBuilder exportText = new StringBuilder();
+        exportText.append("统计数据 - ").append(currentSetName).append("\n");
+        exportText.append("导出时间: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date())).append("\n\n");
+        exportText.append("物品名称\t数量\n");
+        exportText.append("------------------------\n");
+        
+        int total = 0;
+        for (StatisticsItem item : items) {
+            exportText.append(item.getName()).append("\t").append(item.getQuantity()).append("\n");
+            total += item.getQuantity();
+        }
+        
+        exportText.append("------------------------\n");
+        exportText.append("总计\t").append(total);
 
         // 复制到剪贴板
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
@@ -320,9 +447,142 @@ public class StatisticsManager {
     }
 
     /**
+     * 分享数据
+     */
+    private void shareData() {
+        List<StatisticsItem> items = adapter.getItems();
+        if (items.isEmpty()) {
+            Toast.makeText(context, "没有数据可以分享", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 导出为 CSV 文件
+        try {
+            // 生成文件名
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+            String fileName = "统计数据_" + currentSetName + "_" + timestamp + ".csv";
+
+            // 保存文件到缓存目录
+            File cacheDir = new File(context.getCacheDir(), "share");
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
+            }
+
+            File csvFile = new File(cacheDir, fileName);
+            
+            // 写入 CSV 内容
+            FileOutputStream fos = new FileOutputStream(csvFile);
+            OutputStreamWriter writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
+            
+            // 写入 UTF-8 BOM
+            writer.write('\ufeff');
+            
+            // 写入标题行
+            writer.write("物品名称,数量\n");
+            
+            // 写入数据行
+            int totalQuantity = 0;
+            for (StatisticsItem item : items) {
+                String name = item.getName();
+                if (name.contains(",") || name.contains("\"") || name.contains("\n")) {
+                    name = "\"" + name.replace("\"", "\"\"") + "\"";
+                }
+                writer.write(name + "," + item.getQuantity() + "\n");
+                totalQuantity += item.getQuantity();
+            }
+            
+            // 写入总计行
+            writer.write("总计," + totalQuantity + "\n");
+            
+            writer.flush();
+            writer.close();
+            fos.close();
+
+            // 分享文件
+            shareFile(csvFile);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(context, "分享失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * 分享文件
+     */
+    private void shareFile(File file) {
+        try {
+            Uri fileUri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", file);
+            } else {
+                fileUri = Uri.fromFile(file);
+            }
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            // CSV 文件可以用多种 MIME 类型，使用通用类型确保兼容性
+            shareIntent.setType("text/comma-separated-values");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "统计数据 - " + currentSetName);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "分享统计数据（CSV 格式，可用 Excel 打开）");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            context.startActivity(Intent.createChooser(shareIntent, "分享到"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(context, "分享失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
      * 导入数据
      */
     private void importData() {
+        // 显示导入选项对话框
+        String[] options = {"从 Excel/CSV 文件导入", "手动输入数据"};
+        new AlertDialog.Builder(context)
+                .setTitle("选择导入方式")
+                .setItems(options, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            importFromFile();
+                            break;
+                        case 1:
+                            importFromText();
+                            break;
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * 从文件导入
+     */
+    private void importFromFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        
+        // 支持的文件类型
+        String[] mimeTypes = {"text/csv", "text/comma-separated-values", "application/vnd.ms-excel", 
+                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        
+        try {
+            ((FragmentActivity) context).startActivityForResult(
+                Intent.createChooser(intent, "选择 Excel/CSV 文件"), 
+                REQUEST_CODE_IMPORT_FILE
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(context, "无法打开文件选择器", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 手动输入数据导入
+     */
+    private void importFromText() {
         View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_import_data, null);
         EditText etImportData = dialogView.findViewById(R.id.et_import_data);
 
@@ -360,6 +620,99 @@ public class StatisticsManager {
                             null);
                 },
                 null);
+    }
+
+    /**
+     * 处理文件选择结果
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_IMPORT_FILE && resultCode == android.app.Activity.RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                Uri fileUri = data.getData();
+                importFromFileUri(fileUri);
+            }
+        }
+    }
+
+    /**
+     * 从文件 URI 导入数据（公开方法，供外部调用）
+     */
+    public void importFromFileUri(Uri fileUri) {
+        try {
+            java.io.InputStream inputStream = context.getContentResolver().openInputStream(fileUri);
+            if (inputStream == null) {
+                Toast.makeText(context, "无法读取文件", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 读取文件内容
+            java.io.BufferedReader reader = new java.io.BufferedReader(
+                new java.io.InputStreamReader(inputStream, StandardCharsets.UTF_8)
+            );
+            
+            StringBuilder content = new StringBuilder();
+            String line;
+            boolean isFirstLine = true;
+            
+            while ((line = reader.readLine()) != null) {
+                // 跳过 UTF-8 BOM
+                if (isFirstLine && line.startsWith("\ufeff")) {
+                    line = line.substring(1);
+                }
+                isFirstLine = false;
+                
+                // 跳过标题行（如果包含"物品名称"或"名称"）
+                if (line.contains("物品名称") || line.contains("名称") || 
+                    line.toLowerCase().contains("name") || line.toLowerCase().contains("item")) {
+                    continue;
+                }
+                
+                // 跳过总计行
+                if (line.startsWith("总计") || line.toLowerCase().startsWith("total")) {
+                    continue;
+                }
+                
+                content.append(line).append("\n");
+            }
+            
+            reader.close();
+            inputStream.close();
+
+            // 解析导入的数据
+            String importText = content.toString().trim();
+            if (TextUtils.isEmpty(importText)) {
+                Toast.makeText(context, "文件内容为空", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ImportResult result = parseImportData(importText);
+
+            if (result.hasErrors()) {
+                showImportErrors(result.getErrorDetails());
+                return;
+            }
+
+            if (result.getValidItems().isEmpty()) {
+                Toast.makeText(context, "没有有效的数据可以导入", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // 确认导入
+            DialogUtils.createConfirmDialog(context, "确认导入",
+                    "将导入 " + result.getValidItems().size() + " 个物品，这将覆盖当前数据。确定继续吗？",
+                    "确定", "取消",
+                    (confirmDialog, confirmWhich) -> {
+                        adapter.setItems(result.getValidItems());
+                        saveData();
+                        updateTotalCount();
+                        Toast.makeText(context, "成功导入 " + result.getValidItems().size() + " 个物品", Toast.LENGTH_SHORT).show();
+                    },
+                    null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(context, "导入失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -412,10 +765,16 @@ public class StatisticsManager {
      * 从右到左查找分隔符，避免物品名称中的分隔符干扰
      */
     private String[] parseLine(String line) {
-        // 支持的分隔符：逗号、空格、横杠、句号
-        String[] separators = {",", " ", "-", "."};
+        // 首先尝试解析 CSV 格式（处理引号包裹的字段）
+        String[] csvParts = parseCsvLine(line);
+        if (csvParts != null) {
+            return csvParts;
+        }
+        
+        // 支持的分隔符：逗号、空格、横杠、句号、制表符
+        String[] separators = {",", "\t", " ", "-", "."};
 
-        // 首先尝试使用分隔符解析
+        // 尝试使用分隔符解析
         for (String separator : separators) {
             int lastIndex = line.lastIndexOf(separator);
             if (lastIndex > 0 && lastIndex < line.length() - 1) {
@@ -431,6 +790,54 @@ public class StatisticsManager {
 
         // 如果没有找到分隔符，尝试从右到左查找数字
         return parseWithoutSeparator(line);
+    }
+
+    /**
+     * 解析标准 CSV 格式的行（处理引号包裹的字段）
+     */
+    private String[] parseCsvLine(String line) {
+        if (line == null || line.trim().isEmpty()) {
+            return null;
+        }
+        
+        List<String> fields = new ArrayList<>();
+        StringBuilder currentField = new StringBuilder();
+        boolean inQuotes = false;
+        
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+            
+            if (c == '"') {
+                // 检查是否是转义的引号
+                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                    currentField.append('"');
+                    i++; // 跳过下一个引号
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c == ',' && !inQuotes) {
+                // 字段分隔符
+                fields.add(currentField.toString().trim());
+                currentField = new StringBuilder();
+            } else {
+                currentField.append(c);
+            }
+        }
+        
+        // 添加最后一个字段
+        fields.add(currentField.toString().trim());
+        
+        // CSV 格式应该有至少 2 个字段
+        if (fields.size() >= 2) {
+            String name = fields.get(0);
+            String quantity = fields.get(1);
+            
+            if (!TextUtils.isEmpty(name) && isValidQuantity(quantity)) {
+                return new String[]{name, quantity};
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -702,20 +1109,17 @@ public class StatisticsManager {
     private void showCreateSetDialog() {
         EditText etSetName = new EditText(context);
         etSetName.setHint("请输入统计组名称");
-
-        new AlertDialog.Builder(context)
-                .setTitle("创建新统计组")
-                .setView(etSetName)
-                .setPositiveButton("创建", (dialog, which) -> {
+        DialogUtils.createCustomViewDialog(context, "创建新统计组", etSetName,
+                "创建", "取消",
+                (dialog, which) -> {
                     String setName = etSetName.getText().toString().trim();
                     if (!TextUtils.isEmpty(setName)) {
                         createNewSet(setName);
                     } else {
                         Toast.makeText(context, "请输入统计组名称", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .setNegativeButton("取消", null)
-                .show();
+                },
+                null);
     }
 
     /**
@@ -725,11 +1129,9 @@ public class StatisticsManager {
         EditText etSetName = new EditText(context);
         etSetName.setText(currentSetName);
         etSetName.setHint("请输入新的统计组名称");
-
-        new AlertDialog.Builder(context)
-                .setTitle("重命名统计组")
-                .setView(etSetName)
-                .setPositiveButton("重命名", (dialog, which) -> {
+        DialogUtils.createCustomViewDialog(context, "重命名统计组", etSetName,
+                "重命名", "取消",
+                (dialog, which) -> {
                     String newName = etSetName.getText().toString().trim();
                     if (!TextUtils.isEmpty(newName) && !newName.equals(currentSetName)) {
                         renameCurrentSet(newName);
@@ -738,9 +1140,8 @@ public class StatisticsManager {
                     } else {
                         Toast.makeText(context, "请输入有效的统计组名称", Toast.LENGTH_SHORT).show();
                     }
-                })
-                .setNegativeButton("取消", null)
-                .show();
+                },
+                null);
     }
 
     /**
@@ -752,12 +1153,11 @@ public class StatisticsManager {
             return;
         }
 
-        new AlertDialog.Builder(context)
-                .setTitle("删除统计组")
-                .setMessage("确定要删除统计组 \"" + currentSetName + "\" 吗？\n此操作不可撤销！")
-                .setPositiveButton("删除", (dialog, which) -> deleteCurrentSet())
-                .setNegativeButton("取消", null)
-                .show();
+        DialogUtils.createDangerConfirmDialog(context, "删除统计组",
+                "确定要删除统计组 \"" + currentSetName + "\" 吗？\n此操作不可撤销！",
+                "删除", "取消",
+                (dialog, which) -> deleteCurrentSet(),
+                null);
     }
 
     /**

@@ -28,6 +28,7 @@ public class TimerManager {
 
     private static final String PREFS_NAME = "lock_prefs";
     private static final String KEY_TRIGGER_AT = "lock_trigger_at";
+    private static final String KEY_AUTO_LOCK = "auto_lock_screen"; // 是否自动锁屏
     private static final int REQ_CODE_LOCK = 1001;
     private static final int REQ_CODE_POST_NOTI = 3001;
     private static final int REQ_CODE_EXACT_ALARM = 3002;
@@ -43,6 +44,7 @@ public class TimerManager {
     private EditText etCustomHours;
     private EditText etCustomMinutes;
     private Button btnCancelTimer;
+    private androidx.appcompat.widget.SwitchCompat switchAutoLock;
 
     public TimerManager(Context context, View rootView) {
         this.context = context;
@@ -62,6 +64,11 @@ public class TimerManager {
         etCustomHours = rootView.findViewById(R.id.et_custom_hours);
         etCustomMinutes = rootView.findViewById(R.id.et_custom_minutes);
         btnCancelTimer = rootView.findViewById(R.id.btn_cancel_timer);
+        switchAutoLock = rootView.findViewById(R.id.switch_auto_lock);
+        
+        // 每次都默认关闭自动锁屏，需要用户手动开启
+        switchAutoLock.setChecked(false);
+        prefs.edit().putBoolean(KEY_AUTO_LOCK, false).apply();
     }
 
     private void setupClickListeners() {
@@ -81,6 +88,49 @@ public class TimerManager {
 
         // 刷新状态按钮
         rootView.findViewById(R.id.btn_refresh_status).setOnClickListener(v -> updateTimerStatus());
+        
+        // 自动锁屏开关
+        switchAutoLock.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // 检查是否有设备管理员权限
+                if (!isDeviceAdminActive()) {
+                    // 没有权限，提示用户并引导到设置页面
+                    Toast.makeText(context, "需要设备管理员权限才能自动锁屏", Toast.LENGTH_LONG).show();
+                    requestDeviceAdminPermission();
+                    // 暂时不保存开关状态，等用户授权后再说
+                    buttonView.setChecked(false);
+                    return;
+                }
+                Toast.makeText(context, "已开启：定时结束后自动锁屏", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "已关闭：定时结束后仅返回桌面", Toast.LENGTH_SHORT).show();
+            }
+            prefs.edit().putBoolean(KEY_AUTO_LOCK, isChecked).apply();
+        });
+    }
+    
+    /**
+     * 检查是否已激活设备管理员
+     */
+    private boolean isDeviceAdminActive() {
+        android.app.admin.DevicePolicyManager dpm = 
+            (android.app.admin.DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        android.content.ComponentName adminComponent = 
+            new android.content.ComponentName(context, LockDeviceAdminReceiver.class);
+        return dpm != null && dpm.isAdminActive(adminComponent);
+    }
+    
+    /**
+     * 请求设备管理员权限
+     */
+    private void requestDeviceAdminPermission() {
+        Intent intent = new Intent(android.app.admin.DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        android.content.ComponentName adminComponent = 
+            new android.content.ComponentName(context, LockDeviceAdminReceiver.class);
+        intent.putExtra(android.app.admin.DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
+        intent.putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION, 
+            "授予设备管理员权限后，应用可以在定时结束时自动锁定屏幕");
+        context.startActivity(intent);
     }
 
     private void setTimer(long delayMillis) {

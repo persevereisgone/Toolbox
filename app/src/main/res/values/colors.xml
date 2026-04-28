@@ -7,8 +7,53 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray">#FFCCCCCC</color>
-    <color name="blue">#FF1296db</color>
-    <color name="light_blue_bg">#C5E0FF</color>
-    <color name="red">#F0FC5757</color>
+    <color name="gray">#FFB6C0CF</color>
+    <color name="blue">#FF3D7BFF</color>
+    <color name="light_blue_bg">#FFF2F6FF</color>
+    <color name="red">#FFF16565</color>
+
+    <color name="app_bg">#FFF3F7FC</color>
+    <color name="app_surface">#FFFFFFFF</color>
+    <color name="app_surface_alt">#FFF8FBFF</color>
+    <color name="app_surface_soft">#FFF0F5FF</color>
+    <color name="app_card_stroke">#16687DA8</color>
+    <color name="app_divider">#1F6C7E99</color>
+
+    <color name="app_primary">#FF427DFF</color>
+    <color name="app_primary_dark">#FF335FD1</color>
+    <color name="app_primary_light">#FFEAF1FF</color>
+    <color name="app_accent">#FF7567FF</color>
+    <color name="app_on_primary">#FFFFFFFF</color>
+
+    <color name="app_text_primary">#FF1B2538</color>
+    <color name="app_text_secondary">#FF67758D</color>
+    <color name="app_text_tertiary">#FF91A0B7</color>
+    <color name="app_text_inverse">#FFFFFFFF</color>
+
+    <color name="app_success">#FF25A06A</color>
+    <color name="app_warning">#FFDC8C2F</color>
+    <color name="app_danger">#FFE15A5A</color>
+    <color name="app_info">#FF4B83FF</color>
+
+    <color name="app_nav_icon">#FF6D7B93</color>
+    <color name="app_nav_checked">#FF3C73F0</color>
+    <color name="app_nav_unchecked">#FF8C98AE</color>
+    <color name="app_overlay_bg">#F7F9FCFF</color>
+    <color name="app_overlay_dark">#E7333D55</color>
+
+    <color name="home_background">@color/app_bg</color>
+    <color name="home_title">@color/app_text_primary</color>
+    <color name="home_subtitle">@color/app_text_secondary</color>
+    <color name="home_beta_title">#FFE35D5D</color>
+    <color name="home_card_stroke">@color/app_card_stroke</color>
+    <color name="home_item_bg">@color/app_surface_alt</color>
+    <color name="home_item_pressed">@color/app_primary_light</color>
+    <color name="home_item_stroke">#1A4D6BA3</color>
+    <color name="home_icon_tint">@color/app_primary_dark</color>
+    <color name="home_text_primary">@color/app_text_primary</color>
+    <color name="home_header_subtitle">#EAF3FFFF</color>
+    <color name="home_tip_bg">@color/app_surface_alt</color>
+    <color name="home_tip_stroke">#1F6782B5</color>
+    <color name="home_tip_title">#FF25406F</color>
+    <color name="home_tip_text">@color/app_text_secondary</color>
 </resources>

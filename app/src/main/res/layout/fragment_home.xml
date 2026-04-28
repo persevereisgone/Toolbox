@@ -1,66 +1,237 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/home_background"
     tools:context=".ui.home.HomeFragment">
 
-    <!-- 默认的Home界面：功能列表 -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:clipToPadding="false"
+        android:paddingStart="20dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="28dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- 可使用功能区域 -->
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="可使用"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="12dp" />
+                android:background="@drawable/home_header_bg"
+                android:elevation="3dp"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-            <GridView
-                android:id="@+id/home_panel_grid"
+                <TextView
+                    android:id="@+id/home_dev_entry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/home_chip_bg"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="TOOLBOX"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="让常用操作更简单"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="把常用功能放在最前面，少翻找、少等待，打开后就能快速开始。"
+                    android:textColor="@color/home_header_subtitle"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:orientation="horizontal"
+                    android:showDividers="middle"
+                    android:divider="@android:color/transparent"
+                    android:dividerPadding="10dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/home_chip_bg"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:layout_marginEnd="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="常用优先"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="常用功能会优先显示，打开后更容易直接找到"
+                            android:textColor="@color/home_header_subtitle"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/home_chip_bg"
+                        android:orientation="vertical"
+                        android:padding="12dp"
+                        android:layout_marginStart="3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="一眼就能找到"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="卡片式入口更清楚，想用什么点一下就能进入"
+                            android:textColor="@color/home_header_subtitle"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:numColumns="auto_fit"
-                android:columnWidth="70dp"
-                android:scrollbars="none"
-                android:horizontalSpacing="16dp"
-                android:verticalSpacing="16dp"
-                android:stretchMode="columnWidth" />
+                android:layout_marginTop="18dp"
+                android:background="@drawable/home_card_bg"
+                android:elevation="1dp"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <!-- 测试版功能区域 -->
-            <TextView
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="常用功能"
+                    android:textColor="@color/home_title"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="常用功能会排在前面，方便你更快找到并开始使用。"
+                    android:textColor="@color/home_subtitle"
+                    android:textSize="13sp" />
+
+                <GridView
+                    android:id="@+id/home_panel_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:columnWidth="104dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="12dp"
+                    android:numColumns="auto_fit"
+                    android:scrollbars="none"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="12dp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="测试版"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/red"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginTop="16dp"
+                android:background="@drawable/home_tip_bg"
+                android:elevation="1dp"
+                android:orientation="vertical"
+                android:padding="18dp">
 
-            <GridView
-                android:id="@+id/beta_panel_grid"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="使用小贴士"
+                    android:textColor="@color/home_tip_title"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="先从上面的常用功能开始，如果后续新增更多工具，也会继续放在容易找到的位置。"
+                    android:textColor="@color/home_tip_text"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/beta_section_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:numColumns="auto_fit"
-                android:scrollbars="none"
-                android:columnWidth="70dp"
-                android:horizontalSpacing="16dp"
-                android:verticalSpacing="16dp"
-                android:stretchMode="columnWidth" />
+                android:layout_marginTop="16dp"
+                android:background="@drawable/home_card_bg"
+                android:elevation="1dp"
+                android:orientation="vertical"
+                android:padding="18dp"
+                android:visibility="gone">
 
+                <TextView
+                    android:id="@+id/beta_section_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="更多功能"
+                    android:textColor="@color/home_beta_title"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/beta_section_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="部分功能仍在持续完善中，使用时如有异常请稍后再试。"
+                    android:textColor="@color/home_subtitle"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+                <GridView
+                    android:id="@+id/beta_panel_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:columnWidth="104dp"
+                    android:horizontalSpacing="12dp"
+                    android:numColumns="auto_fit"
+                    android:scrollbars="none"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="12dp"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-
 </FrameLayout>

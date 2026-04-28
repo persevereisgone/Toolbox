@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "android-testing": {
+      "source": "new-silvermoon/awesome-android-agent-skills",
+      "sourceType": "github",
+      "skillPath": ".github/skills/testing_and_automation/android-testing/SKILL.md",
+      "computedHash": "bc18f8cea2b7601cef52141845708ef674ba37dc05e7bf4b2d8fd08b11c2ab41"
+    }
+  }
+}

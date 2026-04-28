@@ -114,10 +114,13 @@ public class MainActivity extends AppCompatActivity {
 
         // 如从悬浮窗菜单带参跳回，自动弹出对话框
         handleOpenLockDialogIfNeeded(getIntent());
+        
+        // 处理文件分享
+        handleSharedFile(getIntent());
     }
 
     /**
-     * 处理新的Intent，用于处理从悬浮窗跳转回来的情况
+     * 处理新的Intent，用于处理从悬浮窗跳转回来的情况或文件分享
      * @param intent 新的Intent对象
      */
     @Override
@@ -125,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         handleOpenLockDialogIfNeeded(intent);
+        handleSharedFile(intent);
     }
 
     /**
@@ -164,6 +168,67 @@ public class MainActivity extends AppCompatActivity {
                 intent.removeExtra("NAVIGATE_TO_TIMER");
             }
         }
+    }
+
+    /**
+     * 处理从其他应用分享的文件
+     * @param intent 包含分享文件的Intent
+     */
+    private void handleSharedFile(Intent intent) {
+        if (intent == null) return;
+        
+        String action = intent.getAction();
+        String type = intent.getType();
+        
+        // 检查是否是文件分享或查看操作
+        if ((Intent.ACTION_SEND.equals(action) || Intent.ACTION_VIEW.equals(action)) && type != null) {
+            // 检查是否是CSV或Excel文件
+            if (type.startsWith("text/") || type.contains("csv") || type.contains("excel") || type.contains("spreadsheet")) {
+                Uri fileUri = null;
+                
+                if (Intent.ACTION_SEND.equals(action)) {
+                    fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                } else if (Intent.ACTION_VIEW.equals(action)) {
+                    fileUri = intent.getData();
+                }
+                
+                if (fileUri != null) {
+                    final Uri finalUri = fileUri;
+                    
+                    // 显示确认对话框
+                    new AlertDialog.Builder(this)
+                            .setTitle("导入统计数据")
+                            .setMessage("检测到 CSV/Excel 文件，是否导入到统计功能？")
+                            .setPositiveButton("导入", (dialog, which) -> {
+                                // 导航到统计页面并传递文件URI
+                                navigateToStatisticsWithFile(finalUri);
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+                    
+                    // 清除Intent，避免重复处理
+                    intent.setAction(null);
+                }
+            }
+        }
+    }
+
+    /**
+     * 导航到统计页面并导入文件
+     * @param fileUri 要导入的文件URI
+     */
+    private void navigateToStatisticsWithFile(Uri fileUri) {
+        // 先导航到统计页面
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        
+        // 创建Bundle传递功能ID和文件URI
+        Bundle args = new Bundle();
+        args.putInt("function_id", FunctionConstants.FUNCTION_STATISTICS);
+        args.putParcelable("import_file_uri", fileUri);
+        
+        navController.navigate(R.id.nav_function, args);
+        
+        Toast.makeText(this, "正在导入文件...", Toast.LENGTH_SHORT).show();
     }
 
     /**

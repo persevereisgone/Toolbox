@@ -16,6 +16,15 @@ public class FunctionConstants {
     // 定时返回功能
     public static final int FUNCTION_TIMER = R.layout.function_timer;
 
+    // 抽奖功能
+    public static final int FUNCTION_LOTTERY = R.layout.function_lottery;
+
+    // 抽奖内容管理功能
+    public static final int FUNCTION_LOTTERY_MANAGE = R.layout.function_lottery_manage;
+
+    // 定时录屏功能
+    public static final int FUNCTION_SCREEN_RECORDER = R.layout.function_screen_recorder;
+
     // 在这里可以添加更多功能的常量
     // public static final int FUNCTION_CALCULATOR = R.layout.function_calculator;
     // public static final int FUNCTION_NOTES = R.layout.function_notes;

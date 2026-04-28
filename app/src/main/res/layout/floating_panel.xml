@@ -3,22 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="@drawable/popup_bg"
     android:elevation="8dp"
+    android:orientation="vertical"
     android:padding="16dp"
     app:shapeAppearanceOverlay="@style/RoundedCornerShape">
 
-    <!-- 网格布局，统一列宽，自动适配列数 -->
     <GridView
         android:id="@+id/panel_grid"
         android:layout_width="match_parent"
         android:layout_height="260dp"
-        android:scrollbars="none"
-        android:horizontalSpacing="16dp"
-        android:verticalSpacing="16dp"
-        android:numColumns="auto_fit"
         android:columnWidth="70dp"
-        android:stretchMode="columnWidth" />
-
+        android:horizontalSpacing="16dp"
+        android:numColumns="auto_fit"
+        android:scrollbars="none"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="16dp" />
 </LinearLayout>

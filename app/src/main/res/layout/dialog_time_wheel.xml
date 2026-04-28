@@ -2,74 +2,38 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/app_overlay_card_bg"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="18dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="小时和分钟"
+        android:textColor="@color/app_text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="小时"
-                android:textColor="@android:color/black"/>
-            <NumberPicker
-                android:id="@+id/np_hours"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="小时" android:textColor="@color/app_text_secondary" android:textSize="13sp" />
+            <NumberPicker android:id="@+id/np_hours" android:layout_width="wrap_content" android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="分钟"
-                android:textColor="@android:color/black"/>
-            <NumberPicker
-                android:id="@+id/np_minutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="分钟" android:textColor="@color/app_text_secondary" android:textSize="13sp" />
+            <NumberPicker android:id="@+id/np_minutes" android:layout_width="wrap_content" android:layout_height="wrap_content" />
         </LinearLayout>
-
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end">
-
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="取消"/>
-
-        <View
-            android:layout_width="12dp"
-            android:layout_height="0dp"/>
-
-        <Button
-            android:id="@+id/btn_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="确定"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:gravity="end" android:orientation="horizontal">
+        <Button android:id="@+id/btn_cancel" style="@style/Widget.Toolbox.Button.Secondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="取消" />
+        <Button android:id="@+id/btn_ok" style="@style/Widget.Toolbox.Button.Primary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:text="确定" />
     </LinearLayout>
-
 </LinearLayout>

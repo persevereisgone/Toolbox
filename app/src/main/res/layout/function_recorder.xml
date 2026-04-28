@@ -2,80 +2,51 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@color/app_bg"
     android:gravity="center_horizontal"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:padding="20dp">
 
-    <!-- 标题栏 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
+        android:background="@drawable/app_card_bg"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <Button
-            android:id="@+id/btn_back"
+        <TextView
+            android:id="@+id/tv_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:text="返回"
-            android:layout_marginEnd="16dp"/>
+            android:text="准备就绪"
+            android:textColor="@color/app_text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="一键开始录音，停止后自动保存。"
+            android:textColor="@color/app_text_secondary"
+            android:textSize="13sp" />
 
+        <Button
+            android:id="@+id/btn_record"
+            style="@style/Widget.Toolbox.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="开始录音" />
+
+        <Button
+            android:id="@+id/btn_stop"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:enabled="false"
+            android:text="停止并保存" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="准备就绪"
-        android:textSize="18sp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"/>
-
-    <Button
-        android:id="@+id/btn_record"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="开始录音"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="12dp"/>
-
-    <Button
-        android:id="@+id/btn_stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="停止并保存"
-        android:enabled="false"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="12dp"/>
-
-    <Button
-        android:id="@+id/btn_play_recordings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="播放录音"
-        android:background="@drawable/button_ripple"
-        android:textColor="@android:color/black"
-        android:backgroundTint="@android:color/holo_blue_dark"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="12dp"/>
-
-    <Button
-        android:id="@+id/btn_take_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="拍照"
-        android:background="@drawable/button_ripple"
-        android:textColor="@android:color/black"
-        android:backgroundTint="@android:color/holo_green_dark"
-        android:enabled="false"/>
-
 </LinearLayout>

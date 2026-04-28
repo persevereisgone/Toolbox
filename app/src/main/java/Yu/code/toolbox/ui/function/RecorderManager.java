@@ -71,8 +71,6 @@ public class RecorderManager {
         btnRecord = recorderView.findViewById(R.id.btn_record);
         btnStop = recorderView.findViewById(R.id.btn_stop);
         btnBack = recorderView.findViewById(R.id.btn_back);
-        btnPlayRecordings = recorderView.findViewById(R.id.btn_play_recordings);
-        btnTakePhoto = recorderView.findViewById(R.id.btn_take_photo);
 
         // 设置录音按钮点击事件
         btnRecord.setOnClickListener(v -> tryStartRecording());

@@ -6,15 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import Yu.code.toolbox.R;
+import Yu.code.toolbox.function.recorder_photo.ScreenRecorderManager;
 import Yu.code.toolbox.function.statistics.StatisticsManager;
 import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
 import Yu.code.toolbox.function.time.TimerManager;
+import Yu.code.toolbox.function.lottery.LotteryManager;
+import Yu.code.toolbox.function.lottery.LotteryManageManager;
 
 public class FunctionFragment extends Fragment {
 
@@ -24,6 +28,9 @@ public class FunctionFragment extends Fragment {
     private StatisticsManager statisticsManager;
     private RecordingPlaylistManager recordingPlaylistManager;
     private TimerManager timerManager;
+    private LotteryManager lotteryManager;
+    private LotteryManageManager lotteryManageManager;
+    private ScreenRecorderManager screenRecorderManager;
 
     @Nullable
     @Override
@@ -36,6 +43,19 @@ public class FunctionFragment extends Fragment {
             int functionId = getArguments().getInt("function_id", -1);
             if (functionId != -1) {
                 showFunction(functionId);
+                
+                // 检查是否有要导入的文件URI（用于统计功能）
+                if (functionId == R.layout.function_statistics) {
+                    android.net.Uri importFileUri = getArguments().getParcelable("import_file_uri");
+                    if (importFileUri != null && statisticsManager != null) {
+                        // 延迟一下，确保StatisticsManager已经初始化完成
+                        new android.os.Handler().postDelayed(() -> {
+                            if (statisticsManager != null) {
+                                statisticsManager.importFromFileUri(importFileUri);
+                            }
+                        }, 300);
+                    }
+                }
             }
         }
 
@@ -81,6 +101,21 @@ public class FunctionFragment extends Fragment {
             recordingPlaylistManager = new RecordingPlaylistManager(this, functionView);
         } else if (layoutId == R.layout.function_timer) {
             timerManager = new TimerManager(requireContext(), functionView);
+        } else if (layoutId == R.layout.function_lottery) {
+            lotteryManager = new LotteryManager(requireContext(), functionView);
+        } else if (layoutId == R.layout.function_lottery_manage) {
+            lotteryManageManager = new LotteryManageManager(requireContext(), functionView);
+            // 设置数据回传监听器
+            lotteryManageManager.setOnDataChangeListener(items -> {
+                // 当管理页面的数据发生变化时，更新抽奖页面的数据
+                if (lotteryManager != null) {
+                    // 这里需要实现数据同步逻辑
+                    // 暂时用Toast提示
+                    Toast.makeText(requireContext(), "数据已更新", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else if (layoutId == R.layout.function_screen_recorder) {
+            screenRecorderManager = new ScreenRecorderManager(this, functionView);
         }
         // 在这里可以添加其他功能的管理器
     }
@@ -102,6 +137,17 @@ public class FunctionFragment extends Fragment {
             timerManager.onDestroy();
             timerManager = null;
         }
+        if (lotteryManager != null) {
+            lotteryManager.onDestroy();
+            lotteryManager = null;
+        }
+        if (lotteryManageManager != null) {
+            lotteryManageManager = null;
+        }
+        if (screenRecorderManager != null) {
+            screenRecorderManager.onDestroy();
+            screenRecorderManager = null;
+        }
         // 在这里可以清理其他功能的管理器
     }
 
@@ -113,6 +159,9 @@ public class FunctionFragment extends Fragment {
         }
         if (recordingPlaylistManager != null) {
             recordingPlaylistManager.onPause();
+        }
+        if (screenRecorderManager != null) {
+            screenRecorderManager.onPause();
         }
     }
 
@@ -128,6 +177,9 @@ public class FunctionFragment extends Fragment {
         if (recorderManager != null) {
             recorderManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+        if (screenRecorderManager != null) {
+            screenRecorderManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     @Override
@@ -135,6 +187,12 @@ public class FunctionFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (recorderManager != null) {
             recorderManager.onActivityResult(requestCode, resultCode, data);
+        }
+        if (screenRecorderManager != null) {
+            screenRecorderManager.onActivityResult(requestCode, resultCode, data);
+        }
+        if (statisticsManager != null) {
+            statisticsManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

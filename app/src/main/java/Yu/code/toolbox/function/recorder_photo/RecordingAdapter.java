@@ -89,7 +89,7 @@ public class RecordingAdapter extends RecyclerView.Adapter<RecordingAdapter.View
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            btnPlayPause = itemView.findViewById(R.id.btn_play_pause);
+            btnPlayPause = itemView.findViewById(R.id.btn_play);
             tvFileName = itemView.findViewById(R.id.tv_file_name);
             tvFileInfo = itemView.findViewById(R.id.tv_file_info);
             btnDelete = itemView.findViewById(R.id.btn_delete);

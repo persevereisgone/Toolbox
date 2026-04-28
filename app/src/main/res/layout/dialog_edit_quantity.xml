@@ -2,26 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/app_overlay_card_bg"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="18dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="点击数量数字可以直接编辑"
-        android:textSize="12sp"
-        android:textColor="#666666"
         android:gravity="center"
-        android:layout_marginBottom="8dp" />
+        android:text="点击数量数字可以直接编辑"
+        android:textColor="@color/app_text_secondary"
+        android:textSize="12sp" />
 
     <EditText
         android:id="@+id/et_quantity"
+        style="@style/Widget.Toolbox.Input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:hint="请输入数量"
-        android:inputType="number"
-        android:padding="12dp"
-        android:background="@drawable/shape_10_white"
-        android:textSize="16sp" />
-
+        android:inputType="number" />
 </LinearLayout>
