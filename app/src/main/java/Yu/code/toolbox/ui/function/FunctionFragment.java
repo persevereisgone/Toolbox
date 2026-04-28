@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import Yu.code.toolbox.R;
+import Yu.code.toolbox.function.changelog.ChangelogManager;
 import Yu.code.toolbox.function.recorder_photo.ScreenRecorderManager;
 import Yu.code.toolbox.function.statistics.StatisticsManager;
 import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
@@ -31,6 +32,7 @@ public class FunctionFragment extends Fragment {
     private LotteryManager lotteryManager;
     private LotteryManageManager lotteryManageManager;
     private ScreenRecorderManager screenRecorderManager;
+    private ChangelogManager changelogManager;
 
     @Nullable
     @Override
@@ -116,6 +118,8 @@ public class FunctionFragment extends Fragment {
             });
         } else if (layoutId == R.layout.function_screen_recorder) {
             screenRecorderManager = new ScreenRecorderManager(this, functionView);
+        } else if (layoutId == R.layout.function_changelog) {
+            changelogManager = new ChangelogManager(requireContext(), functionView);
         }
         // 在这里可以添加其他功能的管理器
     }
@@ -147,6 +151,9 @@ public class FunctionFragment extends Fragment {
         if (screenRecorderManager != null) {
             screenRecorderManager.onDestroy();
             screenRecorderManager = null;
+        }
+        if (changelogManager != null) {
+            changelogManager = null;
         }
         // 在这里可以清理其他功能的管理器
     }
