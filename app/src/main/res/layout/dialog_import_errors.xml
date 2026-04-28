@@ -4,20 +4,76 @@
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
     android:orientation="vertical"
-    android:padding="18dp">
+    android:padding="@dimen/space_lg">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="以下数据格式有误，请检查并修正：" android:textColor="@color/app_text_primary" android:textSize="14sp" />
+    <TextView
+        style="@style/TextAppearance.Toolbox.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="以下数据格式有误，请检查并修正：" />
 
-    <ScrollView android:layout_width="match_parent" android:layout_height="200dp" android:layout_marginTop="12dp" android:background="@drawable/app_card_alt_bg">
-        <TextView android:id="@+id/tv_error_details" android:layout_width="match_parent" android:layout_height="wrap_content" android:lineSpacingExtra="2dp" android:padding="12dp" android:textColor="@color/app_danger" android:textSize="12sp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/space_md"
+        android:background="@drawable/app_card_alt_bg">
+
+        <TextView
+            android:id="@+id/tv_error_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="2dp"
+            android:padding="@dimen/space_md"
+            android:textColor="@color/app_danger"
+            android:textSize="@dimen/text_caption" />
     </ScrollView>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:text="正确格式示例：" android:textColor="@color/app_success" android:textSize="12sp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:text="正确格式示例："
+        android:textColor="@color/app_success"
+        android:textSize="@dimen/text_caption" />
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:background="@drawable/app_card_alt_bg" android:orientation="vertical" android:padding="10dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="苹果,5" android:textColor="@color/app_success" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="可乐15" android:textColor="@color/app_success" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="脉动2 23" android:textColor="@color/app_success" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="脉动 c 30" android:textColor="@color/app_success" android:textSize="12sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:background="@drawable/app_card_alt_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/space_md">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="苹果,5"
+            android:textColor="@color/app_success"
+            android:textSize="@dimen/text_caption" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="可乐15"
+            android:textColor="@color/app_success"
+            android:textSize="@dimen/text_caption" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="脉动2 23"
+            android:textColor="@color/app_success"
+            android:textSize="@dimen/text_caption" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="脉动 c 30"
+            android:textColor="@color/app_success"
+            android:textSize="@dimen/text_caption" />
     </LinearLayout>
 </LinearLayout>

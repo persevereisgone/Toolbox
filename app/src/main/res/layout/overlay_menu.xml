@@ -3,28 +3,28 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
-    android:elevation="8dp"
+    android:elevation="@dimen/elevation_lg"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="@dimen/space_sm">
 
     <TextView
         android:id="@+id/menu_open_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/app_menu_item_bg"
-        android:padding="8dp"
+        android:padding="@dimen/space_sm"
         android:text="调整时长"
         android:textColor="@color/app_text_primary"
-        android:textSize="14sp" />
+        android:textSize="@dimen/text_body" />
 
     <TextView
         android:id="@+id/menu_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/space_xs"
         android:background="@drawable/app_menu_item_bg"
-        android:padding="8dp"
+        android:padding="@dimen/space_sm"
         android:text="取消定时"
         android:textColor="@color/app_danger"
-        android:textSize="14sp" />
+        android:textSize="@dimen/text_body" />
 </LinearLayout>

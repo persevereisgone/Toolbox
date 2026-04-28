@@ -3,9 +3,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
-    android:elevation="10dp"
+    android:elevation="@dimen/elevation_xl"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="@dimen/space_sm">
 
     <TextView
         android:id="@+id/menu_pause"
@@ -15,16 +15,16 @@
         android:clickable="true"
         android:focusable="true"
         android:minWidth="120dp"
-        android:padding="10dp"
+        android:padding="@dimen/space_sm"
         android:text="暂停录制"
         android:textColor="@color/app_text_primary"
-        android:textSize="14sp" />
+        android:textSize="@dimen/text_body" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="@dimen/space_xs"
+        android:layout_marginBottom="@dimen/space_xs"
         android:background="@color/app_divider" />
 
     <TextView
@@ -35,8 +35,8 @@
         android:clickable="true"
         android:focusable="true"
         android:minWidth="120dp"
-        android:padding="10dp"
+        android:padding="@dimen/space_sm"
         android:text="停止录制"
         android:textColor="@color/app_danger"
-        android:textSize="14sp" />
+        android:textSize="@dimen/text_body" />
 </LinearLayout>

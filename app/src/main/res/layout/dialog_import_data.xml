@@ -4,16 +4,73 @@
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
     android:orientation="vertical"
-    android:padding="18dp">
+    android:padding="@dimen/space_lg">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="请粘贴需要导入的数据文本：" android:textColor="@color/app_text_primary" android:textSize="14sp" />
-    <EditText android:id="@+id/et_import_data" style="@style/Widget.Toolbox.Input" android:layout_width="match_parent" android:layout_height="120dp" android:layout_marginTop="12dp" android:gravity="top|start" android:hint="粘贴数据文本..." android:inputType="textMultiLine" android:scrollbars="vertical" />
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:text="支持格式：" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:background="@drawable/app_card_alt_bg" android:orientation="vertical" android:padding="10dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="• 物品名称,数量" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="• 物品名称 数量" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="• 物品名称-数量" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="• 物品名称.数量" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:text="• 物品名称数量 (无分隔符)" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
+    <TextView
+        style="@style/TextAppearance.Toolbox.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="请粘贴需要导入的数据文本：" />
+
+    <EditText
+        android:id="@+id/et_import_data"
+        style="@style/Widget.Toolbox.Input"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="@dimen/space_md"
+        android:gravity="top|start"
+        android:hint="粘贴数据文本..."
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical" />
+
+    <TextView
+        style="@style/TextAppearance.Toolbox.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="支持格式：" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:background="@drawable/app_card_alt_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/space_md">
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="• 物品名称,数量" />
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="• 物品名称 数量" />
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="• 物品名称-数量" />
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="• 物品名称.数量" />
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:text="• 物品名称数量 (无分隔符)" />
     </LinearLayout>
 </LinearLayout>

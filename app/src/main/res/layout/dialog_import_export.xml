@@ -4,19 +4,71 @@
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
     android:orientation="vertical"
-    android:padding="18dp">
+    android:padding="@dimen/space_lg">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="导入/导出抽奖内容" android:textColor="@color/app_text_primary" android:textSize="18sp" android:textStyle="bold" />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="格式说明：每行一个项目，格式为：项目名称|权重|颜色" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="示例：一等奖|1|#FF6B6B" android:textColor="@color/app_text_secondary" android:textSize="12sp" />
+    <TextView
+        style="@style/TextAppearance.Toolbox.TitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="导入/导出抽奖内容" />
 
-    <ScrollView android:layout_width="match_parent" android:layout_height="200dp" android:layout_marginTop="14dp">
-        <EditText android:id="@+id/et_import_export" style="@style/Widget.Toolbox.Input" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="top" android:hint="在此输入或粘贴内容..." android:minLines="5" />
+    <TextView
+        style="@style/TextAppearance.Toolbox.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="格式说明：每行一个项目，格式为：项目名称|权重|颜色" />
+
+    <TextView
+        style="@style/TextAppearance.Toolbox.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="示例：一等奖|1|#FF6B6B" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="@dimen/space_lg">
+
+        <EditText
+            android:id="@+id/et_import_export"
+            style="@style/Widget.Toolbox.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="在此输入或粘贴内容..."
+            android:minLines="5" />
     </ScrollView>
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" android:gravity="end" android:orientation="horizontal">
-        <Button android:id="@+id/btn_clear" style="@style/Widget.Toolbox.Button.Secondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="清空" />
-        <Button android:id="@+id/btn_import" style="@style/Widget.Toolbox.Button.Secondary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="导入" />
-        <Button android:id="@+id/btn_export" style="@style/Widget.Toolbox.Button.Primary" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="导出" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_clear"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清空" />
+
+        <Button
+            android:id="@+id/btn_import"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:text="导入" />
+
+        <Button
+            android:id="@+id/btn_export"
+            style="@style/Widget.Toolbox.Button.Primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:text="导出" />
     </LinearLayout>
 </LinearLayout>

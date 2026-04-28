@@ -4,22 +4,21 @@
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
     android:orientation="vertical"
-    android:padding="18dp">
+    android:padding="@dimen/space_lg">
 
     <TextView
+        style="@style/TextAppearance.Toolbox.Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="点击数量数字可以直接编辑"
-        android:textColor="@color/app_text_secondary"
-        android:textSize="12sp" />
+        android:text="点击数量数字可以直接编辑" />
 
     <EditText
         android:id="@+id/et_quantity"
         style="@style/Widget.Toolbox.Input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/space_md"
         android:hint="请输入数量"
         android:inputType="number" />
 </LinearLayout>

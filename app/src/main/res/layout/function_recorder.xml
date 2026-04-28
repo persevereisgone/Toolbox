@@ -5,47 +5,43 @@
     android:background="@color/app_bg"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="@dimen/space_xl">
 
     <LinearLayout
+        style="@style/Widget.Toolbox.CardContainer.Large"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/app_card_bg"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_status"
+            style="@style/TextAppearance.Toolbox.Heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="准备就绪"
-            android:textColor="@color/app_text_primary"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            android:text="准备就绪" />
 
         <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="一键开始录音，停止后自动保存。"
-            android:textColor="@color/app_text_secondary"
-            android:textSize="13sp" />
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="一键开始录音，停止后自动保存。" />
 
         <Button
             android:id="@+id/btn_record"
-            style="@style/Widget.Toolbox.Button.Primary"
+            style="@style/Widget.Toolbox.Button.Primary.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/space_xl"
             android:text="开始录音" />
 
         <Button
             android:id="@+id/btn_stop"
-            style="@style/Widget.Toolbox.Button.Secondary"
+            style="@style/Widget.Toolbox.Button.Secondary.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/space_lg"
             android:enabled="false"
             android:text="停止并保存" />
     </LinearLayout>

@@ -4,35 +4,33 @@
     android:layout_height="match_parent"
     android:background="@color/app_bg"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="@dimen/space_lg">
 
     <TextView
+        style="@style/TextAppearance.Toolbox.Heading"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="全屏物品列表"
-        android:textColor="@color/app_text_primary"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:text="全屏物品列表" />
 
     <TextView
         android:id="@+id/tv_fullscreen_total_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/space_sm"
         android:background="@drawable/app_chip_bg"
-        android:paddingStart="12dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="8dp"
+        android:paddingStart="@dimen/space_md"
+        android:paddingTop="@dimen/space_sm"
+        android:paddingEnd="@dimen/space_md"
+        android:paddingBottom="@dimen/space_sm"
         android:text="总计: 0"
         android:textColor="@color/app_primary_dark"
-        android:textSize="15sp"
+        android:textSize="@dimen/text_body_lg"
         android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/space_md"
         android:orientation="horizontal">
 
         <EditText
@@ -40,24 +38,26 @@
             style="@style/Widget.Toolbox.Input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/space_md"
             android:layout_weight="1"
             android:hint="搜索物品名" />
 
         <Spinner
             android:id="@+id/spinner_fullscreen_sort"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="@dimen/button_height_md"
+            android:background="@drawable/app_input_bg"
+            android:paddingStart="@dimen/space_md" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/lv_fullscreen_statistics"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="@dimen/space_md"
         android:layout_weight="1"
         android:background="@drawable/app_card_bg"
         android:divider="@android:color/transparent"
-        android:dividerHeight="8dp"
-        android:padding="10dp" />
+        android:dividerHeight="@dimen/space_md"
+        android:padding="@dimen/space_md" />
 </LinearLayout>

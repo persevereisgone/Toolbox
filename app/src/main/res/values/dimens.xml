@@ -5,27 +5,72 @@
     <dimen name="nav_header_height">196dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="space_xxs">4dp</dimen>
     <dimen name="space_xs">6dp</dimen>
     <dimen name="space_sm">8dp</dimen>
     <dimen name="space_md">12dp</dimen>
     <dimen name="space_lg">16dp</dimen>
     <dimen name="space_xl">20dp</dimen>
     <dimen name="space_2xl">24dp</dimen>
+    <dimen name="space_3xl">32dp</dimen>
+    <dimen name="space_4xl">40dp</dimen>
 
+    <dimen name="radius_xs">4dp</dimen>
     <dimen name="radius_sm">8dp</dimen>
     <dimen name="radius_md">12dp</dimen>
     <dimen name="radius_lg">16dp</dimen>
     <dimen name="radius_xl">20dp</dimen>
     <dimen name="radius_2xl">24dp</dimen>
+    <dimen name="radius_full">9999dp</dimen>
 
     <dimen name="text_caption">12sp</dimen>
+    <dimen name="text_caption_lg">13sp</dimen>
     <dimen name="text_body">14sp</dimen>
-    <dimen name="text_title">18sp</dimen>
+    <dimen name="text_body_lg">15sp</dimen>
+    <dimen name="text_title">16sp</dimen>
+    <dimen name="text_title_lg">18sp</dimen>
     <dimen name="text_heading">20sp</dimen>
+    <dimen name="text_heading_lg">24sp</dimen>
     <dimen name="text_hero">28sp</dimen>
+    <dimen name="text_hero_lg">32sp</dimen>
 
-    <dimen name="button_height">48dp</dimen>
+    <dimen name="button_height">44dp</dimen>
+    <dimen name="button_height_md">48dp</dimen>
     <dimen name="button_height_lg">56dp</dimen>
+    <dimen name="button_height_xl">64dp</dimen>
     <dimen name="input_height">48dp</dimen>
-    <dimen name="toolbar_height">60dp</dimen>
+    <dimen name="input_height_lg">56dp</dimen>
+    <dimen name="toolbar_height">56dp</dimen>
+    <dimen name="toolbar_height_lg">64dp</dimen>
+    <dimen name="bottom_nav_height">64dp</dimen>
+
+    <dimen name="elevation_none">0dp</dimen>
+    <dimen name="elevation_low">2dp</dimen>
+    <dimen name="elevation_md">4dp</dimen>
+    <dimen name="elevation_high">8dp</dimen>
+    <dimen name="elevation_lg">6dp</dimen>
+    <dimen name="elevation_xl">12dp</dimen>
+
+    <dimen name="stroke_width_thin">1dp</dimen>
+    <dimen name="stroke_width_md">2dp</dimen>
+    <dimen name="stroke_width_thick">3dp</dimen>
+
+    <dimen name="icon_size_xs">16dp</dimen>
+    <dimen name="icon_size_sm">20dp</dimen>
+    <dimen name="icon_size_md">24dp</dimen>
+    <dimen name="icon_size_lg">32dp</dimen>
+    <dimen name="icon_size_xl">40dp</dimen>
+
+    <dimen name="avatar_size_sm">32dp</dimen>
+    <dimen name="avatar_size_md">40dp</dimen>
+    <dimen name="avatar_size_lg">48dp</dimen>
+    <dimen name="avatar_size_xl">56dp</dimen>
+
+    <dimen name="card_padding_sm">@dimen/space_md</dimen>
+    <dimen name="card_padding_md">@dimen/space_lg</dimen>
+    <dimen name="card_padding_lg">@dimen/space_xl</dimen>
+
+    <dimen name="item_height_sm">48dp</dimen>
+    <dimen name="item_height_md">56dp</dimen>
+    <dimen name="item_height_lg">64dp</dimen>
 </resources>

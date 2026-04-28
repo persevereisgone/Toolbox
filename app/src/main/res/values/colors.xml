@@ -13,33 +13,49 @@
     <color name="red">#FFF16565</color>
 
     <color name="app_bg">#FFF3F7FC</color>
+    <color name="app_bg_elevated">#FFFFFFFF</color>
     <color name="app_surface">#FFFFFFFF</color>
     <color name="app_surface_alt">#FFF8FBFF</color>
     <color name="app_surface_soft">#FFF0F5FF</color>
+    <color name="app_surface_dark">#FF1B2538</color>
     <color name="app_card_stroke">#16687DA8</color>
     <color name="app_divider">#1F6C7E99</color>
+    <color name="app_divider_light">#0D6C7EA3</color>
 
     <color name="app_primary">#FF427DFF</color>
     <color name="app_primary_dark">#FF335FD1</color>
     <color name="app_primary_light">#FFEAF1FF</color>
+    <color name="app_primary_overlay">#29427DFF</color>
     <color name="app_accent">#FF7567FF</color>
+    <color name="app_accent_dark">#FF5D4EE6</color>
+    <color name="app_accent_light">#FFF0EEFF</color>
     <color name="app_on_primary">#FFFFFFFF</color>
+    <color name="app_on_accent">#FFFFFFFF</color>
 
     <color name="app_text_primary">#FF1B2538</color>
     <color name="app_text_secondary">#FF67758D</color>
     <color name="app_text_tertiary">#FF91A0B7</color>
+    <color name="app_text_disabled">#FFC4CAD4</color>
     <color name="app_text_inverse">#FFFFFFFF</color>
+    <color name="app_text_inverse_secondary">#B8C4D4FF</color>
 
     <color name="app_success">#FF25A06A</color>
+    <color name="app_success_light">#FFE8F5F0</color>
     <color name="app_warning">#FFDC8C2F</color>
+    <color name="app_warning_light">#FFF8F0E0</color>
     <color name="app_danger">#FFE15A5A</color>
+    <color name="app_danger_light">#FFFFECEC</color>
     <color name="app_info">#FF4B83FF</color>
+    <color name="app_info_light">#FFEDF4FF</color>
 
     <color name="app_nav_icon">#FF6D7B93</color>
     <color name="app_nav_checked">#FF3C73F0</color>
     <color name="app_nav_unchecked">#FF8C98AE</color>
+    <color name="app_nav_bg">#FFFFFFFF</color>
+    <color name="app_nav_stroke">#1A4D6BA3</color>
     <color name="app_overlay_bg">#F7F9FCFF</color>
     <color name="app_overlay_dark">#E7333D55</color>
+    <color name="app_overlay_scrim">#1B25384D</color>
 
     <color name="home_background">@color/app_bg</color>
     <color name="home_title">@color/app_text_primary</color>

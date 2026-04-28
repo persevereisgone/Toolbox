@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/popup_bg"
-    android:elevation="8dp"
+    android:background="@drawable/app_overlay_card_bg"
+    android:elevation="@dimen/elevation_lg"
     android:orientation="vertical"
-    android:padding="16dp"
-    app:shapeAppearanceOverlay="@style/RoundedCornerShape">
+    android:padding="@dimen/space_md">
 
     <GridView
         android:id="@+id/panel_grid"
         android:layout_width="match_parent"
         android:layout_height="260dp"
         android:columnWidth="70dp"
-        android:horizontalSpacing="16dp"
+        android:horizontalSpacing="@dimen/space_md"
         android:numColumns="auto_fit"
         android:scrollbars="none"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="16dp" />
+        android:verticalSpacing="@dimen/space_md" />
 </LinearLayout>
