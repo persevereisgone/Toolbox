@@ -25,6 +25,22 @@
             android:text="今日可食菜谱"
             style="@style/TextAppearance.Toolbox.TitleLarge" />
 
+        <EditText
+            android:id="@+id/et_cookbook_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:hint="搜索菜谱名称"
+            android:inputType="text"
+            android:singleLine="true"
+            style="@style/Widget.Toolbox.Input" />
+
+        <Spinner
+            android:id="@+id/spinner_cookbook_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cookbook_grid"
             android:layout_width="match_parent"

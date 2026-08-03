@@ -1,7 +1,9 @@
 package Yu.code.toolbox.ui.function.cookbook;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +20,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -64,10 +68,37 @@ public class CookBookFragment extends Fragment {
     private RecyclerView rvCookbooks;
     private BottomNavigationView bottomNav;
     private ActivityResultLauncher<PickVisualMediaRequest> coverPickerLauncher;
+    private ActivityResultLauncher<String> cameraPermissionLauncher;
+    private ActivityResultLauncher<Uri> cameraLauncher;
+    private Uri pendingCameraUri;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        cameraPermissionLauncher = registerForActivityResult(new RequestPermission(), granted -> {
+            if (Boolean.TRUE.equals(granted)) {
+                launchCamera();
+            } else {
+                Toast.makeText(requireContext(), "未授予相机权限", Toast.LENGTH_SHORT).show();
+            }
+        });
+        cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
+            if (Boolean.TRUE.equals(success) && pendingCameraUri != null) {
+                String storedPath = copyImageToInternalStorage(pendingCameraUri);
+                if (storedPath == null) {
+                    Toast.makeText(requireContext(), "图片保存失败", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                pendingImageUri = storedPath;
+                if (pendingImageTarget != null) {
+                    pendingImageTarget.setImageUri(storedPath);
+                }
+                if (pendingImagePreview != null) {
+                    CookbookImageLoader.load(requireContext(), storedPath, pendingImagePreview, Yu.code.toolbox.R.drawable.recipe);
+                }
+                Toast.makeText(requireContext(), "封面已选择", Toast.LENGTH_SHORT).show();
+            }
+        });
         coverPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
                 uri -> {
@@ -308,7 +339,7 @@ public class CookBookFragment extends Fragment {
             ivCoverPreview.setImageResource(Yu.code.toolbox.R.drawable.recipe);
         }
 
-        btnPickCover.setOnClickListener(v -> pickCoverImage());
+        btnPickCover.setOnClickListener(v -> showCoverSourceDialog());
         btnOnlineCover.setOnClickListener(v -> Toast.makeText(requireContext(), "在线找图功能稍后接入图片源", Toast.LENGTH_SHORT).show());
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
@@ -349,6 +380,34 @@ public class CookBookFragment extends Fragment {
         coverPickerLauncher.launch(new PickVisualMediaRequest.Builder()
                 .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                 .build());
+    }
+
+    private void showCoverSourceDialog() {
+        Yu.code.toolbox.Utils.DialogUtils.showCommonConfirmDialog(requireContext(),
+                "选择封面来源",
+                "请选择从相册选择图片，或直接使用相机拍摄。",
+                "相册选择",
+                "直接拍照",
+                (dialog, which) -> pickCoverImage(),
+                (dialog, which) -> takeCoverPhoto());
+    }
+
+    private void takeCoverPhoto() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+            return;
+        }
+        launchCamera();
+    }
+
+    private void launchCamera() {
+        try {
+            File photoFile = new File(requireContext().getCacheDir(), "cookbook_camera_" + System.currentTimeMillis() + ".jpg");
+            pendingCameraUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".fileprovider", photoFile);
+            cameraLauncher.launch(pendingCameraUri);
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "无法打开相机", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showDeleteConfirmDialog(CookItem item) {

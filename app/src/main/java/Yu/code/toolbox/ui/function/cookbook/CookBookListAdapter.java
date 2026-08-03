@@ -60,6 +60,14 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
         if (item == null) {
             return;
         }
+        boolean hasCustomImage = item.getImageUri() != null && !item.getImageUri().isEmpty();
+        holder.ivIcon.setScaleType(hasCustomImage ? ImageView.ScaleType.CENTER_CROP : ImageView.ScaleType.CENTER_INSIDE);
+        holder.ivIcon.setPadding(
+                hasCustomImage ? 0 : context.getResources().getDimensionPixelSize(Yu.code.toolbox.R.dimen.space_xs),
+                hasCustomImage ? 0 : context.getResources().getDimensionPixelSize(Yu.code.toolbox.R.dimen.space_xs),
+                hasCustomImage ? 0 : context.getResources().getDimensionPixelSize(Yu.code.toolbox.R.dimen.space_xs),
+                hasCustomImage ? 0 : context.getResources().getDimensionPixelSize(Yu.code.toolbox.R.dimen.space_xs)
+        );
         holder.ivIcon.setImageResource(Yu.code.toolbox.R.drawable.recipe);
         CookbookImageLoader.load(context, item.getImageUri(), holder.ivIcon, Yu.code.toolbox.R.drawable.recipe);
         holder.tvName.setText(item.getName());
