@@ -28,7 +28,7 @@ public class HomeFragment extends Fragment {
 
     private static final String PREFS_HOME_DEBUG = "home_debug_prefs";
     private static final String KEY_BETA_UNLOCKED = "beta_unlocked";
-    private static final String KEY_CHANGELOG_LAST_SEEN_VERSION = "changelog_last_seen_version";
+    private static final String KEY_CHANGELOG_LAST_SEEN_SIGNATURE = "changelog_last_seen_signature";
     private static final int DEV_TAP_REQUIRED = 5;
     private static final long DEV_TAP_TIMEOUT_MS = 1200L;
 
@@ -133,28 +133,30 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateChangelogBadgeVisibility() {
-        int lastSeenVersion = debugPreferences.getInt(KEY_CHANGELOG_LAST_SEEN_VERSION, 0);
-        boolean hasUnread = getCurrentVersionCode() > lastSeenVersion;
+        String lastSeenSignature = debugPreferences.getString(KEY_CHANGELOG_LAST_SEEN_SIGNATURE, "");
+        boolean hasUnread = !getCurrentChangelogSignature().equals(lastSeenSignature);
         binding.homeChangelogBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
     }
 
     private void markChangelogAsSeen() {
-        debugPreferences.edit().putInt(KEY_CHANGELOG_LAST_SEEN_VERSION, getCurrentVersionCode()).apply();
+        debugPreferences.edit().putString(KEY_CHANGELOG_LAST_SEEN_SIGNATURE, getCurrentChangelogSignature()).apply();
         binding.homeChangelogBadge.setVisibility(View.GONE);
     }
 
-    private int getCurrentVersionCode() {
+    private String getCurrentChangelogSignature() {
         try {
-            android.content.pm.PackageInfo packageInfo = requireContext()
-                    .getPackageManager()
-                    .getPackageInfo(requireContext().getPackageName(), 0);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                return (int) packageInfo.getLongVersionCode();
-            } else {
-                return packageInfo.versionCode;
+            java.io.InputStream inputStream = requireContext().getResources().openRawResource(R.raw.changelog_entries);
+            java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(inputStream, java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
             }
+            reader.close();
+            inputStream.close();
+            return String.valueOf(builder.toString().hashCode());
         } catch (Exception e) {
-            return 0;
+            return "";
         }
     }
 
