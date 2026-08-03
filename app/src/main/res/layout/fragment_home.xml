@@ -269,17 +269,11 @@
                     android:textSize="13sp"
                     android:visibility="gone" />
 
-                <GridView
-                    android:id="@+id/beta_panel_grid"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/beta_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:columnWidth="104dp"
-                    android:horizontalSpacing="12dp"
-                    android:numColumns="auto_fit"
-                    android:scrollbars="none"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="12dp"
                     android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>

@@ -14,12 +14,14 @@ import androidx.fragment.app.Fragment;
 
 import Yu.code.toolbox.R;
 import Yu.code.toolbox.function.changelog.ChangelogManager;
+import Yu.code.toolbox.function.lottery.LotteryManageManager;
+import Yu.code.toolbox.function.lottery.LotteryManager;
+import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
 import Yu.code.toolbox.function.recorder_photo.ScreenRecorderManager;
 import Yu.code.toolbox.function.statistics.StatisticsManager;
-import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
 import Yu.code.toolbox.function.time.TimerManager;
-import Yu.code.toolbox.function.lottery.LotteryManager;
-import Yu.code.toolbox.function.lottery.LotteryManageManager;
+import Yu.code.toolbox.ui.function.RecorderManager;
+import Yu.code.toolbox.ui.function.cookbook.CookBookFragment;
 
 public class FunctionFragment extends Fragment {
 
@@ -33,6 +35,7 @@ public class FunctionFragment extends Fragment {
     private LotteryManageManager lotteryManageManager;
     private ScreenRecorderManager screenRecorderManager;
     private ChangelogManager changelogManager;
+    private CookBookFragment cookBookFragment;
 
     @Nullable
     @Override
@@ -40,17 +43,14 @@ public class FunctionFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_function, container, false);
         this.container = root.findViewById(R.id.function_container);
 
-        // 检查是否有传递的功能ID
         if (getArguments() != null) {
             int functionId = getArguments().getInt("function_id", -1);
             if (functionId != -1) {
                 showFunction(functionId);
-                
-                // 检查是否有要导入的文件URI（用于统计功能）
+
                 if (functionId == R.layout.function_statistics) {
                     android.net.Uri importFileUri = getArguments().getParcelable("import_file_uri");
                     if (importFileUri != null && statisticsManager != null) {
-                        // 延迟一下，确保StatisticsManager已经初始化完成
                         new android.os.Handler().postDelayed(() -> {
                             if (statisticsManager != null) {
                                 statisticsManager.importFromFileUri(importFileUri);
@@ -64,64 +64,72 @@ public class FunctionFragment extends Fragment {
         return root;
     }
 
-    // 显示指定的功能布局
     public void showFunction(int layoutId) {
-        if (currentLayoutId != layoutId) {
-            container.removeAllViews();
-            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, true);
-            currentLayoutId = layoutId;
-
-            // 根据布局ID初始化相应的功能管理器
-            initFunctionManager(layoutId, functionView);
+        if (currentLayoutId == layoutId) {
+            return;
         }
+        container.removeAllViews();
+        currentLayoutId = layoutId;
+        initFunctionManager(layoutId);
     }
 
-    // 隐藏功能界面
     public void hideFunction() {
-        // 清理当前功能管理器
         cleanupCurrentManager();
-
         container.removeAllViews();
         currentLayoutId = -1;
     }
 
-    // 获取当前显示的功能布局ID
     public int getCurrentLayoutId() {
         return currentLayoutId;
     }
 
-    private void initFunctionManager(int layoutId, View functionView) {
-        // 清理之前的管理器
+    private void initFunctionManager(int layoutId) {
         cleanupCurrentManager();
 
-        // 根据布局ID初始化相应的管理器
         if (layoutId == R.layout.function_recorder) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             recorderManager = new RecorderManager(this, functionView);
         } else if (layoutId == R.layout.function_statistics) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             statisticsManager = new StatisticsManager(requireContext(), functionView);
         } else if (layoutId == R.layout.function_recorder_playlist) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             recordingPlaylistManager = new RecordingPlaylistManager(this, functionView);
         } else if (layoutId == R.layout.function_timer) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             timerManager = new TimerManager(requireContext(), functionView);
         } else if (layoutId == R.layout.function_lottery) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             lotteryManager = new LotteryManager(requireContext(), functionView);
         } else if (layoutId == R.layout.function_lottery_manage) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             lotteryManageManager = new LotteryManageManager(requireContext(), functionView);
-            // 设置数据回传监听器
             lotteryManageManager.setOnDataChangeListener(items -> {
-                // 当管理页面的数据发生变化时，更新抽奖页面的数据
                 if (lotteryManager != null) {
-                    // 这里需要实现数据同步逻辑
-                    // 暂时用Toast提示
                     Toast.makeText(requireContext(), "数据已更新", Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (layoutId == R.layout.function_screen_recorder) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             screenRecorderManager = new ScreenRecorderManager(this, functionView);
         } else if (layoutId == R.layout.function_changelog) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
             changelogManager = new ChangelogManager(requireContext(), functionView);
+        } else if (layoutId == R.layout.function_cookbook) {
+            cookBookFragment = new CookBookFragment();
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.function_container, cookBookFragment)
+                    .commitNowAllowingStateLoss();
         }
-        // 在这里可以添加其他功能的管理器
     }
 
     private void cleanupCurrentManager() {
@@ -145,17 +153,16 @@ public class FunctionFragment extends Fragment {
             lotteryManager.onDestroy();
             lotteryManager = null;
         }
-        if (lotteryManageManager != null) {
-            lotteryManageManager = null;
-        }
+        lotteryManageManager = null;
         if (screenRecorderManager != null) {
             screenRecorderManager.onDestroy();
             screenRecorderManager = null;
         }
-        if (changelogManager != null) {
-            changelogManager = null;
+        changelogManager = null;
+        if (cookBookFragment != null) {
+            getChildFragmentManager().beginTransaction().remove(cookBookFragment).commitNowAllowingStateLoss();
+            cookBookFragment = null;
         }
-        // 在这里可以清理其他功能的管理器
     }
 
     @Override

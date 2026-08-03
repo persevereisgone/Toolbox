@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/space_lg"
+    android:background="@drawable/dialog_rounded_bg">
+
+    <TextView
+        android:id="@+id/tv_bulk_delete_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="批量删除菜谱"
+        android:textColor="@color/app_text_primary"
+        android:textSize="@dimen/text_title_lg"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_bulk_delete_selected_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xs"
+        android:text="已选择 0 项"
+        android:textColor="@color/app_text_secondary"
+        android:textSize="@dimen/text_body" />
+
+    <EditText
+        android:id="@+id/et_bulk_delete_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:hint="搜索菜谱"
+        android:inputType="text"
+        style="@style/Widget.Toolbox.Input" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_bulk_delete_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全选"
+            style="@style/Widget.Toolbox.Button.Text" />
+
+        <Button
+            android:id="@+id/btn_bulk_delete_invert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_xs"
+            android:text="反选"
+            style="@style/Widget.Toolbox.Button.Text" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_bulk_delete_cookbooks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/space_md"
+        android:paddingBottom="@dimen/space_sm"
+        android:clipToPadding="false"
+        android:divider="@color/app_divider"
+        android:dividerHeight="1dp"
+        android:choiceMode="multipleChoice"
+        android:nestedScrollingEnabled="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_bulk_delete_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            style="@style/Widget.Toolbox.Button.Secondary" />
+
+        <Button
+            android:id="@+id/btn_bulk_delete_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/space_md"
+            android:text="删除选中"
+            style="@style/Widget.Toolbox.Button.Danger" />
+    </LinearLayout>
+
+</LinearLayout>

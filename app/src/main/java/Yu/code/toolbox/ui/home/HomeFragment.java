@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +34,8 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private GridView gridView;
-    private GridView betaGridView;
-    private PanelGridAdapter betaAdapter;
+    private RecyclerView betaRecyclerView;
+    private BetaGridAdapter betaAdapter;
     private SharedPreferences debugPreferences;
     private boolean betaUnlocked;
     private int devTapCount;
@@ -50,20 +52,38 @@ public class HomeFragment extends Fragment {
         betaUnlocked = debugPreferences.getBoolean(KEY_BETA_UNLOCKED, false);
 
         gridView = root.findViewById(R.id.home_panel_grid);
-        betaGridView = root.findViewById(R.id.beta_panel_grid);
+        betaRecyclerView = root.findViewById(R.id.beta_recycler_view);
 
         List<PanelGridAdapter.PanelItem> stableItems = new ArrayList<>();
         stableItems.add(new PanelGridAdapter.PanelItem(R.drawable.time, "定时返回"));
         stableItems.add(new PanelGridAdapter.PanelItem(R.drawable.statistics, "统计"));
+        stableItems.add(new PanelGridAdapter.PanelItem(R.drawable.recipe, "我的菜谱"));
         PanelGridAdapter stableAdapter = new PanelGridAdapter(requireContext(), stableItems);
         gridView.setAdapter(stableAdapter);
 
-        List<PanelGridAdapter.PanelItem> betaItems = new ArrayList<>();
-        betaItems.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "录音机"));
-        betaItems.add(new PanelGridAdapter.PanelItem(R.drawable.extract, "转盘抽奖"));
-        betaItems.add(new PanelGridAdapter.PanelItem(R.drawable.sound_recorder, "定时录屏"));
-        betaAdapter = new PanelGridAdapter(requireContext(), betaItems);
-        betaGridView.setAdapter(betaAdapter);
+        // Beta 区 - 使用 RecyclerView + GridLayoutManager
+        List<BetaGridAdapter.Item> betaItems = new ArrayList<>();
+        betaItems.add(new BetaGridAdapter.Item(R.drawable.sound_recorder, "录音机"));
+        betaItems.add(new BetaGridAdapter.Item(R.drawable.extract, "转盘抽奖"));
+        betaItems.add(new BetaGridAdapter.Item(R.drawable.sound_recorder, "定时录屏"));
+        betaAdapter = new BetaGridAdapter(requireContext(), betaItems);
+        betaRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 4));
+        betaRecyclerView.setAdapter(betaAdapter);
+
+        // 为 Beta 网格项设置点击监听（通过 Adapter 内部的回调）
+        betaAdapter.setOnItemClickListener((position, item) -> {
+            switch (position) {
+                case 0: // 录音机
+                    navigateToFunction(FunctionConstants.FUNCTION_RECORDER);
+                    break;
+                case 1: // 转盘抽奖
+                    navigateToFunction(FunctionConstants.FUNCTION_LOTTERY);
+                    break;
+                case 2: // 定时录屏
+                    navigateToFunction(FunctionConstants.FUNCTION_SCREEN_RECORDER);
+                    break;
+            }
+        });
 
         updateBetaSectionVisibility();
         setupDeveloperEntry();
@@ -77,21 +97,8 @@ public class HomeFragment extends Fragment {
                     navigateToFunction(FunctionConstants.FUNCTION_TIMER);
                 } else if ("统计".equals(name)) {
                     navigateToFunction(FunctionConstants.FUNCTION_STATISTICS);
-                }
-            }
-        });
-
-        betaGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PanelGridAdapter.PanelItem item = (PanelGridAdapter.PanelItem) betaAdapter.getItem(position);
-                String name = item.getName();
-                if ("录音机".equals(name)) {
-                    navigateToFunction(FunctionConstants.FUNCTION_RECORDER);
-                } else if ("转盘抽奖".equals(name)) {
-                    navigateToFunction(FunctionConstants.FUNCTION_LOTTERY);
-                } else if ("定时录屏".equals(name)) {
-                    navigateToFunction(FunctionConstants.FUNCTION_SCREEN_RECORDER);
+                } else if ("我的菜谱".equals(name)) {
+                    navigateToFunction(FunctionConstants.FUNCTION_COOKBOOK);
                 }
             }
         });
@@ -158,8 +165,12 @@ public class HomeFragment extends Fragment {
         int visible = betaUnlocked ? View.VISIBLE : View.GONE;
         binding.betaSectionCard.setVisibility(visible);
         binding.betaSectionTitle.setVisibility(visible);
-        binding.betaPanelGrid.setVisibility(visible);
         binding.betaSectionSubtitle.setVisibility(visible);
+        betaRecyclerView.setVisibility(visible);
+        if (visible == View.VISIBLE) {
+            betaRecyclerView.setAdapter(betaAdapter);
+            betaRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 4));
+        }
     }
 
     private void navigateToFunction(int layoutId) {

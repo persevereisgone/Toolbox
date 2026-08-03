@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_cookbooks"
+        android:icon="@drawable/recipe"
+        android:title="@string/tab_cookbooks" />
+    <item
+        android:id="@+id/nav_menu"
+        android:icon="@drawable/recipe_menu"
+        android:title="@string/tab_menu" />
+    <item
+        android:id="@+id/nav_purchase"
+        android:icon="@drawable/recipe_list"
+        android:title="@string/tab_purchase" />
+    <item
+        android:id="@+id/nav_manage"
+        android:icon="@drawable/recipe_manegement"
+        android:title="@string/tab_manage" />
+</menu>

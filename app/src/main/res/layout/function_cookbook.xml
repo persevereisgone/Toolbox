@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg">
+
+    <LinearLayout
+        android:id="@+id/tab_cookbooks"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xl"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_xl"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="今日可食菜谱"
+            style="@style/TextAppearance.Toolbox.TitleLarge" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cookbook_grid"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/space_md" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tab_menu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xl"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_md"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="今日菜单"
+            style="@style/TextAppearance.Toolbox.TitleLarge" />
+
+        <TextView
+            android:id="@+id/tv_menu_empty_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="暂无菜品加入菜单，请在菜谱详情页点击 &quot;加入菜单&quot;"
+            android:textColor="@color/app_text_secondary"
+            android:textSize="@dimen/text_body" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_menu_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:layout_weight="1"
+            android:background="@drawable/app_card_bg"
+            android:clipToPadding="false"
+            android:padding="@dimen/space_md"
+            android:paddingBottom="@dimen/space_md" />
+
+        <Button
+            android:id="@+id/btn_clear_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="清空菜单"
+            style="@style/Widget.Toolbox.Button.Danger" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tab_purchase"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xl"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_md"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="食材采购清单"
+            style="@style/TextAppearance.Toolbox.TitleLarge" />
+
+        <TextView
+            android:id="@+id/tv_purchase_empty_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="今日菜单为空，无需采购"
+            android:textColor="@color/app_text_secondary"
+            android:textSize="@dimen/text_body" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_purchase_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:layout_weight="1"
+            android:background="@drawable/app_card_bg"
+            android:clipToPadding="false"
+            android:padding="@dimen/space_md"
+            android:paddingBottom="@dimen/space_md" />
+
+        <Button
+            android:id="@+id/btn_clear_purchased"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="清除已购买"
+            style="@style/Widget.Toolbox.Button.Secondary" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tab_manage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/space_xl"
+        android:paddingTop="@dimen/space_lg"
+        android:paddingEnd="@dimen/space_xl"
+        android:paddingBottom="@dimen/space_md"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/space_md">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="菜谱管理"
+                style="@style/TextAppearance.Toolbox.TitleLarge" />
+
+            <TextView
+                android:id="@+id/tv_manage_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_md"
+                android:background="@drawable/app_chip_bg"
+                android:paddingStart="@dimen/space_sm"
+                android:paddingEnd="@dimen/space_sm"
+                android:text="0"
+                android:textColor="@color/app_primary"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_add_custom_cookbook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_lg"
+            android:text="+ 自定义菜谱"
+            style="@style/Widget.Toolbox.Button.Primary" />
+
+        <Button
+            android:id="@+id/btn_bulk_delete_cookbook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="批量删除菜谱"
+            style="@style/Widget.Toolbox.Button.Danger" />
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_nav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/home_card_bg"
+        app:menu="@menu/menu_cookbook_bottomnav"
+        style="@style/Widget.Toolbox.BottomNavigation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

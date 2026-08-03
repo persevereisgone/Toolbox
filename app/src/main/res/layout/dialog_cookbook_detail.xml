@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:background="@drawable/dialog_rounded_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/space_lg">
+
+        <ImageView
+            android:id="@+id/iv_detail_cover"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/recipe"
+            android:background="@drawable/app_card_bg"
+            android:contentDescription="菜品封面"
+            android:layout_marginBottom="@dimen/space_md" />
+
+        <TextView
+            android:id="@+id/tv_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_hero"
+            android:textStyle="bold"
+            android:textColor="@color/app_text_primary"
+            android:layout_marginBottom="@dimen/space_md" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/app_card_bg"
+            android:padding="@dimen/space_md"
+            android:layout_marginBottom="@dimen/space_md">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="分类"
+                style="@style/TextAppearance.Toolbox.Caption"
+                android:textColor="@color/app_text_tertiary" />
+
+            <TextView
+                android:id="@+id/tv_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                style="@style/TextAppearance.Toolbox.Body"
+                android:textColor="@color/app_text_primary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="食材"
+                style="@style/TextAppearance.Toolbox.Caption"
+                android:textColor="@color/app_text_tertiary"
+                android:layout_marginTop="@dimen/space_md" />
+
+            <TextView
+                android:id="@+id/tv_ingredients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                style="@style/TextAppearance.Toolbox.Body"
+                android:textColor="@color/app_text_primary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="配料"
+                style="@style/TextAppearance.Toolbox.Caption"
+                android:textColor="@color/app_text_tertiary"
+                android:layout_marginTop="@dimen/space_md" />
+
+            <TextView
+                android:id="@+id/tv_seasonings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                style="@style/TextAppearance.Toolbox.Body"
+                android:textColor="@color/app_text_primary" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="制作步骤"
+                style="@style/TextAppearance.Toolbox.Caption"
+                android:textColor="@color/app_text_tertiary"
+                android:layout_marginTop="@dimen/space_md" />
+
+            <TextView
+                android:id="@+id/tv_steps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:maxLines="6"
+                android:ellipsize="end"
+                style="@style/TextAppearance.Toolbox.Body"
+                android:textColor="@color/app_text_primary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="返回"
+                style="@style/Widget.Toolbox.Button.Secondary" />
+
+            <Button
+                android:id="@+id/btn_edit_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/space_md"
+                android:text="编辑菜谱"
+                style="@style/Widget.Toolbox.Button.Primary" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -19,6 +19,35 @@ import Yu.code.toolbox.R;
  */
 public class DialogUtils {
 
+    public static AlertDialog showCommonConfirmDialog(Context context, String title, String message,
+                                                       String positiveText, String negativeText,
+                                                       OnDialogButtonClickListener positiveListener,
+                                                       OnDialogButtonClickListener negativeListener) {
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm_common, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(context).setView(dialogView).create();
+        TextView titleView = dialogView.findViewById(R.id.tv_confirm_title);
+        TextView messageView = dialogView.findViewById(R.id.tv_confirm_message);
+        Button negativeButton = dialogView.findViewById(R.id.btn_confirm_negative);
+        Button positiveButton = dialogView.findViewById(R.id.btn_confirm_positive);
+        titleView.setText(title);
+        messageView.setText(message);
+        negativeButton.setText(negativeText);
+        positiveButton.setText(positiveText);
+        negativeButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (negativeListener != null) negativeListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+        });
+        positiveButton.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (positiveListener != null) positiveListener.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+        });
+        dialog.show();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+        return dialog;
+    }
+
     /**
      * 创建确认对话框
      * @param context 上下文

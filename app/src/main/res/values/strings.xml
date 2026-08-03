@@ -11,4 +11,20 @@
     <string name="menu_gallery">收藏</string>
     <string name="menu_slideshow">我的</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- 菜谱相关字符串 -->
+    <string name="menu_cookbook">我的菜谱</string>
+    <string name="tab_cookbooks">菜谱库</string>
+    <string name="tab_menu">今日菜单</string>
+    <string name="tab_purchase">采购清单</string>
+    <string name="tab_manage">管理</string>
+    <string name="empty_menu">暂无菜品加入菜单，请在菜谱详情页点击"加入菜单"</string>
+    <string name="empty_purchase">今日菜单为空，无需采购</string>
+    <string name="add_cookbook_hint">例如：红烧肉</string>
+    <string name="ingredients_hint">例如：五花肉500g,冰糖30g</string>
+    <string name="seasonings_hint">例如：姜5片,八角2颗,料酒2勺</string>
+    <string name="steps_hint">例如：1.焯水；2.炒糖色；3.炖煮...</string>
+    <string name="btn_add_to_menu">加入菜单</string>
+    <string name="btn_clear_menu">清空菜单</string>
+    <string name="btn_new_cookbook">+ 新建菜谱</string>
 </resources>

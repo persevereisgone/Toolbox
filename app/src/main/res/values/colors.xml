@@ -32,9 +32,9 @@
     <color name="app_on_primary">#FFFFFFFF</color>
     <color name="app_on_accent">#FFFFFFFF</color>
 
-    <color name="app_text_primary">#FF1B2538</color>
-    <color name="app_text_secondary">#FF67758D</color>
-    <color name="app_text_tertiary">#FF91A0B7</color>
+    <color name="app_text_primary">#FF000000</color>
+    <color name="app_text_secondary">#FF4C4C4C</color>
+    <color name="app_text_tertiary">#FF6A6A6A</color>
     <color name="app_text_disabled">#FFC4CAD4</color>
     <color name="app_text_inverse">#FFFFFFFF</color>
     <color name="app_text_inverse_secondary">#B8C4D4FF</color>

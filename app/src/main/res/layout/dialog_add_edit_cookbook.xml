@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_rounded_bg"
+    android:padding="@dimen/space_lg">
+
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/space_md"
+        android:text="新建菜谱"
+        android:textColor="@color/app_text_primary"
+        android:textSize="@dimen/text_hero"
+        android:textStyle="bold" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingBottom="@dimen/space_md">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="封面图片"
+                android:layout_marginBottom="@dimen/space_xs"
+                android:textColor="@color/app_text_primary"
+                style="@style/TextAppearance.Toolbox.Body" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="@dimen/space_md">
+
+                <ImageView
+                    android:id="@+id/iv_cover_preview"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="封面预览"
+                    android:src="@drawable/recipe"
+                    android:background="@drawable/app_card_bg" />
+
+                <Button
+                    android:id="@+id/btn_pick_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_md"
+                    android:text="本地上传"
+                    style="@style/Widget.Toolbox.Button.Secondary" />
+
+                <Button
+                    android:id="@+id/btn_online_cover"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_sm"
+                    android:text="在线找图"
+                    style="@style/Widget.Toolbox.Button.Primary" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="菜品名称"
+                android:layout_marginBottom="@dimen/space_xs"
+                android:textColor="@color/app_text_primary"
+                style="@style/TextAppearance.Toolbox.Body" />
+
+            <EditText
+                android:id="@+id/et_cookbook_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="例如：红烧肉"
+                android:inputType="textCapSentences"
+                style="@style/Widget.Toolbox.Input.Large"
+                android:layout_marginBottom="@dimen/space_md" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="菜品分类"
+                android:layout_marginBottom="@dimen/space_xs"
+                android:textColor="@color/app_text_primary"
+                style="@style/TextAppearance.Toolbox.Body" />
+
+            <Spinner
+                android:id="@+id/et_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/space_md" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="食材（逗号或中文逗号分隔）"
+                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xs"
+                android:textColor="@color/app_text_primary"
+                style="@style/TextAppearance.Toolbox.Body" />
+
+            <EditText
+                android:id="@+id/et_ingredients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="例如：五花肉500g,冰糖30g"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:maxLines="6"
+                android:gravity="top"
+                style="@style/Widget.Toolbox.Input.Large"
+                android:layout_marginBottom="@dimen/space_md" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="配料（调味料）"
+                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xs"
+                android:textColor="@color/app_text_primary"
+                style="@style/TextAppearance.Toolbox.Body" />
+
+            <EditText
+                android:id="@+id/et_seasonings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="例如：姜5片,八角2颗,料酒2勺"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:maxLines="6"
+                android:gravity="top"
+                style="@style/Widget.Toolbox.Input.Large"
+                android:layout_marginBottom="@dimen/space_md" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="制作步骤"
+                android:layout_marginTop="@dimen/space_md"
+                android:layout_marginBottom="@dimen/space_xs"
+                android:textColor="@color/app_text_primary"
+                style="@style/TextAppearance.Toolbox.Body" />
+
+            <EditText
+                android:id="@+id/et_steps"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:hint="例如：1.焯水；2.炒糖色；3.炖煮...&#10;建议每步用分号或换行分隔"
+                android:inputType="textMultiLine|textCapSentences"
+                android:minLines="5"
+                android:maxLines="12"
+                android:gravity="top"
+                style="@style/Widget.Toolbox.Input.Large" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="取消"
+            style="@style/Widget.Toolbox.Button.Secondary" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/space_md"
+            android:text="保存"
+            style="@style/Widget.Toolbox.Button.Primary" />
+    </LinearLayout>
+
+</LinearLayout>
