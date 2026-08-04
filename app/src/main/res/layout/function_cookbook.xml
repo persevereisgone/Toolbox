@@ -209,6 +209,22 @@
             android:layout_marginTop="@dimen/space_md"
             android:text="批量删除菜谱"
             style="@style/Widget.Toolbox.Button.Danger" />
+
+        <Button
+            android:id="@+id/btn_import_cookbook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_md"
+            android:text="导入菜谱库"
+            style="@style/Widget.Toolbox.Button.Secondary" />
+
+        <Button
+            android:id="@+id/btn_export_cookbook"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="导出菜谱库"
+            style="@style/Widget.Toolbox.Button.Primary" />
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

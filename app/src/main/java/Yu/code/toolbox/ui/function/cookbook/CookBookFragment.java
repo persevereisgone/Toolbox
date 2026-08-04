@@ -3,6 +3,7 @@ package Yu.code.toolbox.ui.function.cookbook;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -30,9 +31,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -65,11 +69,15 @@ public class CookBookFragment extends Fragment {
     private Button btnBulkDeleteCookbook;
     private Button btnClearPurchased;
     private Button btnClearMenu;
+    private Button btnImportCookbook;
+    private Button btnExportCookbook;
     private RecyclerView rvCookbooks;
     private BottomNavigationView bottomNav;
     private ActivityResultLauncher<PickVisualMediaRequest> coverPickerLauncher;
     private ActivityResultLauncher<String> cameraPermissionLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
+    private ActivityResultLauncher<String[]> importCookbookLauncher;
+    private ActivityResultLauncher<String> exportCookbookLauncher;
     private Uri pendingCameraUri;
 
     @Override
@@ -98,6 +106,14 @@ public class CookBookFragment extends Fragment {
                 }
                 Toast.makeText(requireContext(), "封面已选择", Toast.LENGTH_SHORT).show();
             }
+        });
+        importCookbookLauncher = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
+            if (uri == null) return;
+            importCookbookFromUri(uri);
+        });
+        exportCookbookLauncher = registerForActivityResult(new ActivityResultContracts.CreateDocument("application/json"), uri -> {
+            if (uri == null) return;
+            exportCookbookToUri(uri);
         });
         coverPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
@@ -146,6 +162,8 @@ public class CookBookFragment extends Fragment {
         btnBulkDeleteCookbook = rootView.findViewById(Yu.code.toolbox.R.id.btn_bulk_delete_cookbook);
         btnClearPurchased = rootView.findViewById(Yu.code.toolbox.R.id.btn_clear_purchased);
         btnClearMenu = rootView.findViewById(Yu.code.toolbox.R.id.btn_clear_menu);
+        btnImportCookbook = rootView.findViewById(Yu.code.toolbox.R.id.btn_import_cookbook);
+        btnExportCookbook = rootView.findViewById(Yu.code.toolbox.R.id.btn_export_cookbook);
     }
 
     private void initData() {
@@ -207,6 +225,12 @@ public class CookBookFragment extends Fragment {
                 refreshMenu();
                 refreshPurchaseList();
             });
+        }
+        if (btnImportCookbook != null) {
+            btnImportCookbook.setOnClickListener(v -> importCookbookLauncher.launch(new String[]{"application/json", "text/*"}));
+        }
+        if (btnExportCookbook != null) {
+            btnExportCookbook.setOnClickListener(v -> exportCookbookLauncher.launch("cookbook_export.json"));
         }
     }
 
@@ -576,6 +600,79 @@ public class CookBookFragment extends Fragment {
         cookBookManager.removeFromMenu(cookbookId);
         refreshMenu();
         refreshPurchaseList();
+    }
+
+    private void importCookbookFromUri(Uri uri) {
+        try {
+            StringBuilder builder = new StringBuilder();
+            try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+                 BufferedReader reader = inputStream == null ? null : new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                if (reader == null) {
+                    Toast.makeText(requireContext(), "无法读取导入文件", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            }
+            org.json.JSONArray array = new org.json.JSONArray(builder.toString());
+            List<CookItem> imported = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                org.json.JSONObject obj = array.getJSONObject(i);
+                CookItem item = new CookItem();
+                item.setName(obj.optString("name", ""));
+                item.setIngredients(obj.optString("ingredients", ""));
+                item.setSeasonings(obj.optString("seasonings", ""));
+                item.setSteps(obj.optString("steps", ""));
+                item.setCategory(obj.optString("category", CookBookManager.CATEGORY_MAIN));
+                item.setImageUri(obj.optString("imageUri", ""));
+                if (!item.getName().isEmpty()) {
+                    imported.add(item);
+                }
+            }
+            if (imported.isEmpty()) {
+                Toast.makeText(requireContext(), "没有可导入的菜谱", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            List<CookItem> current = cookBookManager.getAllCookbooks();
+            for (CookItem item : imported) {
+                item.setId(0);
+                cookBookManager.addCookbook(item);
+            }
+            refreshCookbooks();
+            updateManagePanel();
+            Toast.makeText(requireContext(), "已导入 " + imported.size() + " 个菜谱", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "导入失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void exportCookbookToUri(Uri uri) {
+        try {
+            org.json.JSONArray array = new org.json.JSONArray();
+            for (CookItem item : cookBookManager.getAllCookbooks()) {
+                org.json.JSONObject obj = new org.json.JSONObject();
+                obj.put("name", item.getName());
+                obj.put("ingredients", item.getIngredients());
+                obj.put("seasonings", item.getSeasonings());
+                obj.put("steps", item.getSteps());
+                obj.put("category", item.getCategory());
+                obj.put("imageUri", item.getImageUri());
+                array.put(obj);
+            }
+            try (FileOutputStream outputStream = (FileOutputStream) requireContext().getContentResolver().openOutputStream(uri)) {
+                if (outputStream == null) {
+                    Toast.makeText(requireContext(), "无法写入导出文件", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                outputStream.write(array.toString(2).getBytes(StandardCharsets.UTF_8));
+                outputStream.flush();
+            }
+            Toast.makeText(requireContext(), "菜谱库已导出", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "导出失败", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String copyImageToInternalStorage(android.net.Uri sourceUri) {

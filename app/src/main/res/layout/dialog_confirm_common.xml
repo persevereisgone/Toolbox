@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_md"
-            android:textColor="@color/app_text_primary"
-            style="@style/Widget.Toolbox.Button.Secondary" />
+            android:textColor="@color/app_text_inverse"
+            style="@style/Widget.Toolbox.Button.Primary" />
     </LinearLayout>
 </LinearLayout>
