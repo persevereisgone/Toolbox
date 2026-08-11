@@ -96,4 +96,18 @@
     <string name="cookbook_import_done_title">导入完成</string>
     <string name="cookbook_import_fail_title">导入失败</string>
     <string name="cookbook_purchased">已买</string>
+    <string name="cookbook_filter_chip">筛选：%1$s ×</string>
+    <string name="cookbook_empty_filtered">没有匹配的菜谱</string>
+    <string name="cookbook_clear_filters">清除筛选</string>
+    <string name="cookbook_purchase_progress">已买 %1$d / 共 %2$d</string>
+    <string name="cookbook_already_in_menu">已在今日菜单中</string>
+    <string name="cookbook_clear_menu_confirm_title">清空菜单</string>
+    <string name="cookbook_clear_menu_confirm_message">确定清空今日菜单吗？采购清单与已买标记也会一并清除。</string>
+    <string name="cookbook_clear_purchased_confirm_title">清除已购买</string>
+    <string name="cookbook_clear_purchased_confirm_message">确定清除所有已买标记吗？</string>
+    <string name="cookbook_confirm">确定</string>
+    <string name="cookbook_favorite">收藏</string>
+    <string name="cookbook_unfavorite">取消收藏</string>
+    <string name="cookbook_favorited">已收藏</string>
+    <string name="cookbook_unfavorited">已取消收藏</string>
 </resources>

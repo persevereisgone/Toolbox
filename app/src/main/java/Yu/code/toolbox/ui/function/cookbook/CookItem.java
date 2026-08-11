@@ -11,6 +11,8 @@ public class CookItem {
     private String steps; // 制作步骤
     private String category; // 分类（主菜、汤品、凉菜等）
     private String imageUri; // 本地选择的封面图片 URI
+    private boolean favorite;
+    private int useCount;
 
     public CookItem() {
     }
@@ -38,6 +40,10 @@ public class CookItem {
     public void setCategory(String category) { this.category = category; }
     public String getImageUri() { return imageUri; }
     public void setImageUri(String imageUri) { this.imageUri = imageUri; }
+    public boolean isFavorite() { return favorite; }
+    public void setFavorite(boolean favorite) { this.favorite = favorite; }
+    public int getUseCount() { return useCount; }
+    public void setUseCount(int useCount) { this.useCount = useCount; }
 
     public String[] getIngredientArray() {
         if (ingredients == null || ingredients.isEmpty()) {

@@ -260,15 +260,68 @@ public class CookBookManager {
         return menuItems == null ? new ArrayList<>() : menuItems;
     }
 
-    public void addToMenu(CookItem cookbook) {
+    private void copyCookbookFields(CookItem source, CookItem target) {
+        target.setName(source.getName());
+        target.setIngredients(source.getIngredients());
+        target.setSeasonings(source.getSeasonings());
+        target.setSteps(source.getSteps());
+        target.setCategory(source.getCategory());
+        target.setImageUri(source.getImageUri());
+        target.setFavorite(source.isFavorite());
+        target.setUseCount(source.getUseCount());
+    }
+
+    public boolean isInMenu(int cookbookId) {
+        for (CookItem item : getMenuItems()) {
+            if (item != null && item.getId() == cookbookId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return true if newly added, false if already in menu
+     */
+    public boolean addToMenu(CookItem cookbook) {
+        if (cookbook == null) {
+            return false;
+        }
         List<CookItem> menuItems = getMenuItems();
         for (CookItem item : menuItems) {
             if (item.getId() == cookbook.getId()) {
-                return;
+                return false;
             }
         }
         menuItems.add(cookbook);
         saveMenuItems(menuItems);
+        bumpUseCount(cookbook.getId());
+        return true;
+    }
+
+    public boolean toggleFavorite(int cookbookId) {
+        List<CookItem> cookbooks = getAllCookbooks();
+        for (CookItem item : cookbooks) {
+            if (item.getId() == cookbookId) {
+                item.setFavorite(!item.isFavorite());
+                saveCookbooks(cookbooks);
+                syncMenuItem(item);
+                return item.isFavorite();
+            }
+        }
+        return false;
+    }
+
+    private void bumpUseCount(int cookbookId) {
+        List<CookItem> cookbooks = getAllCookbooks();
+        for (CookItem item : cookbooks) {
+            if (item.getId() == cookbookId) {
+                item.setUseCount(item.getUseCount() + 1);
+                saveCookbooks(cookbooks);
+                syncMenuItem(item);
+                return;
+            }
+        }
     }
 
     public void removeFromMenu(int id) {
@@ -306,15 +359,6 @@ public class CookBookManager {
         }
     }
 
-    private void copyCookbookFields(CookItem source, CookItem target) {
-        target.setName(source.getName());
-        target.setIngredients(source.getIngredients());
-        target.setSeasonings(source.getSeasonings());
-        target.setSteps(source.getSteps());
-        target.setCategory(source.getCategory());
-        target.setImageUri(source.getImageUri());
-    }
-
     public boolean isMenuEmpty() {
         return getMenuItems().isEmpty();
     }
@@ -322,26 +366,78 @@ public class CookBookManager {
     public Map<String, Integer> generatePurchaseList() {
         List<CookItem> menuItems = getMenuItems();
         Map<String, Integer> purchaseMap = new HashMap<>();
+        Map<String, String> displayNames = new HashMap<>();
 
         for (CookItem item : menuItems) {
-            String[] ingredients = item.getIngredientArray();
-            for (String ing : ingredients) {
-                String key = ing.trim();
-                if (!key.isEmpty()) {
-                    purchaseMap.put(key, purchaseMap.getOrDefault(key, 0) + 1);
-                }
-            }
-
-            String[] seasonings = item.getSeasoningArray();
-            for (String sea : seasonings) {
-                String key = sea.trim();
-                if (!key.isEmpty()) {
-                    purchaseMap.put(key, purchaseMap.getOrDefault(key, 0) + 1);
-                }
-            }
+            accumulateIngredients(item.getIngredientArray(), purchaseMap, displayNames);
+            accumulateIngredients(item.getSeasoningArray(), purchaseMap, displayNames);
         }
 
-        return purchaseMap;
+        Map<String, Integer> result = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : purchaseMap.entrySet()) {
+            String display = displayNames.get(entry.getKey());
+            if (display == null || display.isEmpty()) {
+                display = entry.getKey();
+            }
+            result.put(display, entry.getValue());
+        }
+        return result;
+    }
+
+    private void accumulateIngredients(String[] rawItems, Map<String, Integer> purchaseMap,
+                                       Map<String, String> displayNames) {
+        if (rawItems == null) {
+            return;
+        }
+        for (String raw : rawItems) {
+            String trimmed = raw == null ? "" : raw.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            String key = normalizeIngredientKey(trimmed);
+            if (key.isEmpty()) {
+                key = trimmed;
+            }
+            purchaseMap.put(key, purchaseMap.getOrDefault(key, 0) + 1);
+            String existingDisplay = displayNames.get(key);
+            if (existingDisplay == null || preferDisplayName(trimmed, existingDisplay)) {
+                displayNames.put(key, preferredDisplayName(trimmed, key));
+            }
+        }
+    }
+
+    /**
+     * 去掉空格与常见数量单位，便于「鸡蛋」「鸡蛋2个」合并。
+     */
+    public static String normalizeIngredientKey(String raw) {
+        if (raw == null) {
+            return "";
+        }
+        String s = raw.trim().toLowerCase(java.util.Locale.ROOT);
+        s = s.replaceAll("\\s+", "");
+        s = s.replaceAll("^[0-9]+(\\.[0-9]+)?", "");
+        s = s.replaceAll("[0-9]+(\\.[0-9]+)?(g|kg|ml|l|克|千克|毫升|升|两|斤)?$", "");
+        s = s.replaceAll("(适量|少许|若干|各|左右)$", "");
+        s = s.replaceAll("(个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)+$", "");
+        return s.trim();
+    }
+
+    private static boolean preferDisplayName(String candidate, String current) {
+        return candidate.length() < current.length();
+    }
+
+    private static String preferredDisplayName(String raw, String key) {
+        String cleaned = raw.replaceAll("\\s+", "");
+        if (cleaned.matches(".*[0-9].*") && !key.isEmpty() && key.length() < cleaned.length()) {
+            // 尽量展示去数量后的名称；若清洗后为空则退回原文
+            String withoutQty = cleaned.replaceAll("^[0-9]+(\\.[0-9]+)?(g|kg|ml|l|克|千克|毫升|升)?", "");
+            withoutQty = withoutQty.replaceAll("[0-9]+(\\.[0-9]+)?(g|kg|ml|l|克|千克|毫升|升)?$", "");
+            withoutQty = withoutQty.replaceAll("(适量|少许)$", "");
+            if (!withoutQty.isEmpty()) {
+                return withoutQty;
+            }
+        }
+        return cleaned.isEmpty() ? key : cleaned;
     }
 
     public Set<String> getPurchasedItems() {

@@ -107,6 +107,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/space_sm">
+
+            <Button
+                android:id="@+id/btn_add_to_menu_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_add_to_menu"
+                style="@style/Widget.Toolbox.Button.Primary" />
+
+            <Button
+                android:id="@+id/btn_favorite_detail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/space_md"
+                android:text="@string/cookbook_favorite"
+                style="@style/Widget.Toolbox.Button.Secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button

@@ -28,18 +28,25 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
         void onDeleteCookbook(CookItem item);
     }
 
+    public interface OnFavoriteListener {
+        void onToggleFavorite(CookItem item);
+    }
+
     private final Context context;
     private List<CookItem> cookbooks = new ArrayList<>();
     private final OnCookBookItemClickListener itemClickListener;
     private final OnAddToMenuListener addToMenuListener;
     private final OnDeleteCookbookListener deleteCookbookListener;
+    private final OnFavoriteListener favoriteListener;
 
     public CookBookListAdapter(Context context, OnCookBookItemClickListener itemClickListener,
-                               OnAddToMenuListener addToMenuListener, OnDeleteCookbookListener deleteCookbookListener) {
+                               OnAddToMenuListener addToMenuListener, OnDeleteCookbookListener deleteCookbookListener,
+                               OnFavoriteListener favoriteListener) {
         this.context = context;
         this.itemClickListener = itemClickListener;
         this.addToMenuListener = addToMenuListener;
         this.deleteCookbookListener = deleteCookbookListener;
+        this.favoriteListener = favoriteListener;
     }
 
     public void setData(List<CookItem> cookbooks) {
@@ -72,9 +79,18 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
         CookbookImageLoader.load(context, item.getImageUri(), holder.ivIcon, Yu.code.toolbox.R.drawable.recipe);
         holder.tvName.setText(item.getName());
         holder.tvCategory.setText(item.getCategory());
+        holder.btnFavorite.setText(item.isFavorite() ? "★" : "☆");
+        holder.btnFavorite.setContentDescription(item.isFavorite()
+                ? context.getString(Yu.code.toolbox.R.string.cookbook_unfavorite)
+                : context.getString(Yu.code.toolbox.R.string.cookbook_favorite));
         holder.itemView.setOnClickListener(v -> {
             if (itemClickListener != null) {
                 itemClickListener.onItemClickListener(item);
+            }
+        });
+        holder.btnFavorite.setOnClickListener(v -> {
+            if (favoriteListener != null) {
+                favoriteListener.onToggleFavorite(item);
             }
         });
         holder.btnAddToMenu.setOnClickListener(v -> {
@@ -87,6 +103,8 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
                 deleteCookbookListener.onDeleteCookbook(item);
             }
         });
+        holder.btnFavorite.setFocusable(false);
+        holder.btnFavorite.setClickable(true);
         holder.btnAddToMenu.setFocusable(false);
         holder.btnAddToMenu.setClickable(true);
         holder.btnDeleteCookbook.setFocusable(false);
@@ -102,6 +120,7 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
         ImageView ivIcon;
         TextView tvName;
         TextView tvCategory;
+        Button btnFavorite;
         Button btnAddToMenu;
         Button btnDeleteCookbook;
 
@@ -110,6 +129,7 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
             ivIcon = itemView.findViewById(Yu.code.toolbox.R.id.iv_cookbook_icon);
             tvName = itemView.findViewById(Yu.code.toolbox.R.id.tv_cookbook_name);
             tvCategory = itemView.findViewById(Yu.code.toolbox.R.id.tv_category);
+            btnFavorite = itemView.findViewById(Yu.code.toolbox.R.id.btn_favorite_cookbook);
             btnAddToMenu = itemView.findViewById(Yu.code.toolbox.R.id.btn_add_to_menu);
             btnDeleteCookbook = itemView.findViewById(Yu.code.toolbox.R.id.btn_delete_cookbook);
         }

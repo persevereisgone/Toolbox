@@ -77,6 +77,41 @@
                 app:tint="@color/app_text_secondary" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/tv_active_filter_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@drawable/app_chip_bg"
+            android:paddingStart="@dimen/space_md"
+            android:paddingTop="@dimen/space_xs"
+            android:paddingEnd="@dimen/space_md"
+            android:paddingBottom="@dimen/space_xs"
+            android:textColor="@color/app_primary"
+            android:textSize="@dimen/text_caption"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_cookbook_empty_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xl"
+            android:gravity="center"
+            android:text="@string/cookbook_empty_filtered"
+            android:textColor="@color/app_text_secondary"
+            android:textSize="@dimen/text_body"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_clear_cookbook_filters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/cookbook_clear_filters"
+            android:visibility="gone"
+            style="@style/Widget.Toolbox.Button.Text" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cookbook_grid"
             android:layout_width="match_parent"
@@ -158,6 +193,15 @@
             android:layout_height="wrap_content"
             android:text="@string/cookbook_purchase_title"
             style="@style/TextAppearance.Toolbox.TitleLarge" />
+
+        <TextView
+            android:id="@+id/tv_purchase_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:textColor="@color/app_text_secondary"
+            android:textSize="@dimen/text_caption"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_purchase_empty_hint"

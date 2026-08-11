@@ -62,12 +62,16 @@ public class CookBookFragment extends Fragment {
     private TextView tvMenuEmptyHint;
     private RecyclerView rvMenuList;
     private TextView tvPurchaseEmptyHint;
+    private TextView tvPurchaseProgress;
     private RecyclerView rvPurchaseList;
     private TextView tvManageCount;
+    private TextView tvActiveFilterChip;
+    private TextView tvCookbookEmptyHint;
     private EditText etCookbookSearch;
     private Button btnAddCustomCookbook;
     private Button btnClearPurchased;
     private Button btnClearMenu;
+    private Button btnClearCookbookFilters;
     private Button btnImportCookbook;
     private Button btnExportCookbook;
     private Button btnDownloadCookbookTemplate;
@@ -170,11 +174,15 @@ public class CookBookFragment extends Fragment {
         tvMenuEmptyHint = rootView.findViewById(Yu.code.toolbox.R.id.tv_menu_empty_hint);
         rvMenuList = rootView.findViewById(Yu.code.toolbox.R.id.rv_menu_list);
         tvPurchaseEmptyHint = rootView.findViewById(Yu.code.toolbox.R.id.tv_purchase_empty_hint);
+        tvPurchaseProgress = rootView.findViewById(Yu.code.toolbox.R.id.tv_purchase_progress);
         rvPurchaseList = rootView.findViewById(Yu.code.toolbox.R.id.rv_purchase_list);
         tvManageCount = rootView.findViewById(Yu.code.toolbox.R.id.tv_manage_count);
+        tvActiveFilterChip = rootView.findViewById(Yu.code.toolbox.R.id.tv_active_filter_chip);
+        tvCookbookEmptyHint = rootView.findViewById(Yu.code.toolbox.R.id.tv_cookbook_empty_hint);
         btnAddCustomCookbook = rootView.findViewById(Yu.code.toolbox.R.id.btn_add_custom_cookbook);
         btnClearPurchased = rootView.findViewById(Yu.code.toolbox.R.id.btn_clear_purchased);
         btnClearMenu = rootView.findViewById(Yu.code.toolbox.R.id.btn_clear_menu);
+        btnClearCookbookFilters = rootView.findViewById(Yu.code.toolbox.R.id.btn_clear_cookbook_filters);
         btnImportCookbook = rootView.findViewById(Yu.code.toolbox.R.id.btn_import_cookbook);
         btnExportCookbook = rootView.findViewById(Yu.code.toolbox.R.id.btn_export_cookbook);
         btnDownloadCookbookTemplate = rootView.findViewById(Yu.code.toolbox.R.id.btn_download_cookbook_template);
@@ -209,7 +217,8 @@ public class CookBookFragment extends Fragment {
         cookbookAdapter = new CookBookListAdapter(requireContext(),
                 this::showCookbookDetailDialog,
                 this::addToMenu,
-                this::showDeleteConfirmDialog);
+                this::showDeleteConfirmDialog,
+                this::toggleFavorite);
         menuAdapter = new MenuListAdapter(new MenuListAdapter.OnMenuItemActionListener() {
             @Override
             public void onRemoveFromMenu(int cookbookId) {
@@ -248,17 +257,10 @@ public class CookBookFragment extends Fragment {
             btnAddCustomCookbook.setOnClickListener(v -> showCustomCookbookActions());
         }
         if (btnClearPurchased != null) {
-            btnClearPurchased.setOnClickListener(v -> {
-                cookBookManager.clearPurchased();
-                refreshPurchaseList();
-            });
+            btnClearPurchased.setOnClickListener(v -> confirmClearPurchased());
         }
         if (btnClearMenu != null) {
-            btnClearMenu.setOnClickListener(v -> {
-                cookBookManager.clearMenu();
-                refreshMenu();
-                refreshPurchaseList();
-            });
+            btnClearMenu.setOnClickListener(v -> confirmClearMenu());
         }
         if (btnImportCookbook != null) {
             btnImportCookbook.setOnClickListener(v -> importCookbookLauncher.launch(new String[]{"application/zip", "text/csv", "text/*"}));
@@ -271,6 +273,12 @@ public class CookBookFragment extends Fragment {
         }
         if (btnCookbookFilter != null) {
             btnCookbookFilter.setOnClickListener(v -> showCookbookFilterDialog());
+        }
+        if (tvActiveFilterChip != null) {
+            tvActiveFilterChip.setOnClickListener(v -> clearCookbookFilters(false));
+        }
+        if (btnClearCookbookFilters != null) {
+            btnClearCookbookFilters.setOnClickListener(v -> clearCookbookFilters(true));
         }
         if (btnCookbookSearchClear != null) {
             btnCookbookSearchClear.setOnClickListener(v -> {
@@ -340,8 +348,64 @@ public class CookBookFragment extends Fragment {
                 filtered.add(item);
             }
         }
+        filtered.sort((a, b) -> {
+            if (a.isFavorite() != b.isFavorite()) {
+                return a.isFavorite() ? -1 : 1;
+            }
+            if (a.getUseCount() != b.getUseCount()) {
+                return Integer.compare(b.getUseCount(), a.getUseCount());
+            }
+            String nameA = a.getName() == null ? "" : a.getName();
+            String nameB = b.getName() == null ? "" : b.getName();
+            return nameA.compareToIgnoreCase(nameB);
+        });
         cookbooks = filtered;
         cookbookAdapter.setData(cookbooks);
+        updateFilterUiState();
+        boolean empty = cookbooks.isEmpty();
+        boolean hasActiveFilter = !allLabel.equals(currentCookbookFilter) || !search.isEmpty();
+        if (tvCookbookEmptyHint != null) {
+            tvCookbookEmptyHint.setVisibility(empty && hasActiveFilter ? View.VISIBLE : View.GONE);
+        }
+        if (btnClearCookbookFilters != null) {
+            btnClearCookbookFilters.setVisibility(empty && hasActiveFilter ? View.VISIBLE : View.GONE);
+        }
+        if (rvCookbooks != null) {
+            rvCookbooks.setVisibility(empty ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    private void updateFilterUiState() {
+        String allLabel = getString(Yu.code.toolbox.R.string.cookbook_category_all);
+        boolean filtered = !allLabel.equals(currentCookbookFilter);
+        if (tvActiveFilterChip != null) {
+            if (filtered) {
+                tvActiveFilterChip.setText(getString(Yu.code.toolbox.R.string.cookbook_filter_chip, currentCookbookFilter));
+                tvActiveFilterChip.setVisibility(View.VISIBLE);
+            } else {
+                tvActiveFilterChip.setVisibility(View.GONE);
+            }
+        }
+        if (btnCookbookFilter != null) {
+            androidx.core.widget.ImageViewCompat.setImageTintList(
+                    btnCookbookFilter,
+                    android.content.res.ColorStateList.valueOf(
+                            androidx.core.content.ContextCompat.getColor(
+                                    requireContext(),
+                                    filtered ? Yu.code.toolbox.R.color.app_primary : Yu.code.toolbox.R.color.app_text_secondary
+                            )
+                    )
+            );
+        }
+    }
+
+    private void clearCookbookFilters(boolean clearSearch) {
+        currentCookbookFilter = getString(Yu.code.toolbox.R.string.cookbook_category_all);
+        if (clearSearch && etCookbookSearch != null) {
+            etCookbookSearch.setText("");
+            currentCookbookSearchQuery = "";
+        }
+        refreshCookbooks();
     }
 
     private void refreshMenu() {
@@ -355,9 +419,14 @@ public class CookBookFragment extends Fragment {
         Map<String, Integer> purchaseMap = cookBookManager.generatePurchaseList();
         Set<String> purchased = cookBookManager.getPurchasedItems();
         List<PurchaseListAdapter.PurchaseItem> items = new ArrayList<>();
+        int purchasedCount = 0;
         for (Map.Entry<String, Integer> entry : purchaseMap.entrySet()) {
             PurchaseListAdapter.PurchaseItem purchaseItem = new PurchaseListAdapter.PurchaseItem(entry.getKey(), entry.getValue());
-            purchaseItem.purchased = purchased.contains(entry.getKey());
+            boolean done = isPurchasedMatch(purchased, entry.getKey());
+            purchaseItem.purchased = done;
+            if (done) {
+                purchasedCount++;
+            }
             items.add(purchaseItem);
         }
         items.sort((a, b) -> {
@@ -369,6 +438,36 @@ public class CookBookFragment extends Fragment {
         purchaseAdapter.setData(items);
         tvPurchaseEmptyHint.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
         rvPurchaseList.setVisibility(items.isEmpty() ? View.GONE : View.VISIBLE);
+        if (tvPurchaseProgress != null) {
+            if (items.isEmpty()) {
+                tvPurchaseProgress.setVisibility(View.GONE);
+            } else {
+                tvPurchaseProgress.setVisibility(View.VISIBLE);
+                tvPurchaseProgress.setText(getString(
+                        Yu.code.toolbox.R.string.cookbook_purchase_progress,
+                        purchasedCount,
+                        items.size()));
+            }
+        }
+    }
+
+    private boolean isPurchasedMatch(Set<String> purchased, String displayName) {
+        if (purchased == null || displayName == null) {
+            return false;
+        }
+        if (purchased.contains(displayName)) {
+            return true;
+        }
+        String normalized = CookBookManager.normalizeIngredientKey(displayName);
+        if (purchased.contains(normalized)) {
+            return true;
+        }
+        for (String stored : purchased) {
+            if (normalized.equals(CookBookManager.normalizeIngredientKey(stored))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateManagePanel() {
@@ -565,14 +664,16 @@ public class CookBookFragment extends Fragment {
         TextView tvSeasonings = view.findViewById(Yu.code.toolbox.R.id.tv_seasonings);
         TextView tvSteps = view.findViewById(Yu.code.toolbox.R.id.tv_steps);
         Button btnBack = view.findViewById(Yu.code.toolbox.R.id.btn_back);
+        Button btnAddToMenu = view.findViewById(Yu.code.toolbox.R.id.btn_add_to_menu_detail);
+        Button btnFavorite = view.findViewById(Yu.code.toolbox.R.id.btn_favorite_detail);
+        Button btnEdit = view.findViewById(Yu.code.toolbox.R.id.btn_edit_detail);
         tvTitle.setText(item.getName());
         tvCategory.setText(item.getCategory());
         tvIngredients.setText(item.getIngredients());
         tvSeasonings.setText(item.getSeasonings());
         tvSteps.setText(item.getSteps());
         CookbookImageLoader.load(requireContext(), item.getImageUri(), ivCover, Yu.code.toolbox.R.drawable.recipe);
-
-        Button btnEdit = view.findViewById(Yu.code.toolbox.R.id.btn_edit_detail);
+        updateFavoriteButton(btnFavorite, item.isFavorite());
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setView(view)
@@ -581,6 +682,16 @@ public class CookBookFragment extends Fragment {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         btnBack.setOnClickListener(v -> dialog.dismiss());
+        btnAddToMenu.setOnClickListener(v -> addToMenu(item));
+        btnFavorite.setOnClickListener(v -> {
+            boolean favorite = cookBookManager.toggleFavorite(item.getId());
+            item.setFavorite(favorite);
+            updateFavoriteButton(btnFavorite, favorite);
+            refreshCookbooks();
+            Toast.makeText(requireContext(),
+                    favorite ? Yu.code.toolbox.R.string.cookbook_favorited : Yu.code.toolbox.R.string.cookbook_unfavorited,
+                    Toast.LENGTH_SHORT).show();
+        });
         btnEdit.setOnClickListener(v -> {
             dialog.dismiss();
             showAddOrEditDialog(item, true);
@@ -592,6 +703,15 @@ public class CookBookFragment extends Fragment {
                     (int) (getResources().getDisplayMetrics().heightPixels * 0.85)
             );
         }
+    }
+
+    private void updateFavoriteButton(Button button, boolean favorite) {
+        if (button == null) {
+            return;
+        }
+        button.setText(favorite
+                ? getString(Yu.code.toolbox.R.string.cookbook_unfavorite)
+                : getString(Yu.code.toolbox.R.string.cookbook_favorite));
     }
 
     private void showAddOrEditDialog(CookItem editingItem, boolean isEditing) {
@@ -731,10 +851,55 @@ public class CookBookFragment extends Fragment {
     }
 
     private void addToMenu(CookItem item) {
-        cookBookManager.addToMenu(item);
-        Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_added_to_menu, Toast.LENGTH_SHORT).show();
+        if (item == null) {
+            return;
+        }
+        boolean added = cookBookManager.addToMenu(item);
+        Toast.makeText(requireContext(),
+                added ? Yu.code.toolbox.R.string.cookbook_added_to_menu : Yu.code.toolbox.R.string.cookbook_already_in_menu,
+                Toast.LENGTH_SHORT).show();
+        refreshCookbooks();
         refreshMenu();
         refreshPurchaseList();
+    }
+
+    private void toggleFavorite(CookItem item) {
+        if (item == null) {
+            return;
+        }
+        boolean favorite = cookBookManager.toggleFavorite(item.getId());
+        item.setFavorite(favorite);
+        refreshCookbooks();
+        Toast.makeText(requireContext(),
+                favorite ? Yu.code.toolbox.R.string.cookbook_favorited : Yu.code.toolbox.R.string.cookbook_unfavorited,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void confirmClearMenu() {
+        Yu.code.toolbox.Utils.DialogUtils.showCommonConfirmDialog(requireContext(),
+                getString(Yu.code.toolbox.R.string.cookbook_clear_menu_confirm_title),
+                getString(Yu.code.toolbox.R.string.cookbook_clear_menu_confirm_message),
+                getString(Yu.code.toolbox.R.string.cookbook_confirm),
+                getString(Yu.code.toolbox.R.string.cookbook_cancel),
+                (dialog, which) -> {
+                    cookBookManager.clearMenu();
+                    refreshMenu();
+                    refreshPurchaseList();
+                },
+                null);
+    }
+
+    private void confirmClearPurchased() {
+        Yu.code.toolbox.Utils.DialogUtils.showCommonConfirmDialog(requireContext(),
+                getString(Yu.code.toolbox.R.string.cookbook_clear_purchased_confirm_title),
+                getString(Yu.code.toolbox.R.string.cookbook_clear_purchased_confirm_message),
+                getString(Yu.code.toolbox.R.string.cookbook_confirm),
+                getString(Yu.code.toolbox.R.string.cookbook_cancel),
+                (dialog, which) -> {
+                    cookBookManager.clearPurchased();
+                    refreshPurchaseList();
+                },
+                null);
     }
 
     private void showBulkDeleteCookbookDialog() {
