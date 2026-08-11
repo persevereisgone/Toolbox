@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingTop="@dimen/space_sm"
+    android:paddingBottom="@dimen/space_sm"
+    android:background="?attr/selectableItemBackground"
+    android:minHeight="@dimen/button_height">
+
+    <TextView
+        android:id="@+id/tv_category_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/app_text_primary"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_delete_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/space_sm"
+        android:minWidth="0dp"
+        android:text="删除"
+        style="@style/Widget.Toolbox.Button.Danger" />
+
+</LinearLayout>

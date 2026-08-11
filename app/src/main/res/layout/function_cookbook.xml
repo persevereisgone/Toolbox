@@ -22,24 +22,60 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="今日可食菜谱"
+            android:text="@string/cookbook_library_title"
             style="@style/TextAppearance.Toolbox.TitleLarge" />
 
-        <EditText
-            android:id="@+id/et_cookbook_search"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
-            android:hint="搜索菜谱名称"
-            android:inputType="text"
-            android:singleLine="true"
-            style="@style/Widget.Toolbox.Input" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/input_height"
+            android:background="@drawable/app_input_border_bg"
+            android:paddingStart="@dimen/space_md"
+            android:paddingEnd="@dimen/space_sm">
 
-        <Spinner
-            android:id="@+id/spinner_cookbook_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_sm" />
+            <EditText
+                android:id="@+id/et_cookbook_search"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="@string/cookbook_search_hint"
+                android:inputType="text"
+                android:singleLine="true"
+                android:minHeight="@dimen/input_height"
+                android:paddingTop="@dimen/space_sm"
+                android:paddingBottom="@dimen/space_sm"
+                android:textColor="@color/app_text_primary"
+                android:textColorHint="@color/app_text_tertiary"
+                android:textSize="@dimen/text_body" />
+
+            <ImageButton
+                android:id="@+id/btn_cookbook_search_clear"
+                android:layout_width="@dimen/icon_size_lg"
+                android:layout_height="@dimen/icon_size_lg"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cookbook_clear_search"
+                android:padding="@dimen/space_xxs"
+                android:scaleType="centerInside"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:visibility="gone"
+                app:tint="@color/app_text_tertiary" />
+
+            <ImageButton
+                android:id="@+id/btn_cookbook_filter"
+                android:layout_width="@dimen/icon_size_lg"
+                android:layout_height="@dimen/icon_size_lg"
+                android:layout_marginStart="@dimen/space_xxs"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cookbook_filter"
+                android:padding="@dimen/space_xxs"
+                android:scaleType="centerInside"
+                android:src="@drawable/filter"
+                app:tint="@color/app_text_secondary" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cookbook_grid"
@@ -69,7 +105,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="今日菜单"
+            android:text="@string/tab_menu"
             style="@style/TextAppearance.Toolbox.TitleLarge" />
 
         <TextView
@@ -78,7 +114,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginTop="@dimen/space_md"
-            android:text="暂无菜品加入菜单，请在菜谱详情页点击 &quot;加入菜单&quot;"
+            android:text="@string/empty_menu"
             android:textColor="@color/app_text_secondary"
             android:textSize="@dimen/text_body" />
 
@@ -98,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
-            android:text="清空菜单"
+            android:text="@string/btn_clear_menu"
             style="@style/Widget.Toolbox.Button.Danger" />
     </LinearLayout>
 
@@ -120,7 +156,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="食材采购清单"
+            android:text="@string/cookbook_purchase_title"
             style="@style/TextAppearance.Toolbox.TitleLarge" />
 
         <TextView
@@ -129,7 +165,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginTop="@dimen/space_md"
-            android:text="今日菜单为空，无需采购"
+            android:text="@string/empty_purchase"
             android:textColor="@color/app_text_secondary"
             android:textSize="@dimen/text_body" />
 
@@ -149,8 +185,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
-            android:text="清除已购买"
-            style="@style/Widget.Toolbox.Button.Secondary" />
+            android:text="@string/btn_clear_purchased"
+            style="@style/Widget.Toolbox.Button.Danger" />
     </LinearLayout>
 
     <LinearLayout
@@ -171,27 +207,23 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
+            android:orientation="vertical"
             android:padding="@dimen/space_md">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="菜谱管理"
+                android:text="@string/cookbook_manage_title"
                 style="@style/TextAppearance.Toolbox.TitleLarge" />
 
             <TextView
                 android:id="@+id/tv_manage_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/space_md"
-                android:background="@drawable/app_chip_bg"
-                android:paddingStart="@dimen/space_sm"
-                android:paddingEnd="@dimen/space_sm"
-                android:text="0"
-                android:textColor="@color/app_primary"
-                android:textStyle="bold" />
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="@string/cookbook_manage_count"
+                android:textColor="@color/app_text_secondary"
+                android:textSize="@dimen/text_caption" />
         </LinearLayout>
 
         <Button
@@ -199,23 +231,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_lg"
-            android:text="+ 自定义菜谱"
+            android:text="@string/cookbook_custom_actions"
             style="@style/Widget.Toolbox.Button.Primary" />
-
-        <Button
-            android:id="@+id/btn_bulk_delete_cookbook"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_md"
-            android:text="批量删除菜谱"
-            style="@style/Widget.Toolbox.Button.Danger" />
 
         <Button
             android:id="@+id/btn_import_cookbook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_md"
-            android:text="导入菜谱库"
+            android:text="@string/cookbook_import"
             style="@style/Widget.Toolbox.Button.Secondary" />
 
         <Button
@@ -223,8 +247,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
-            android:text="导出菜谱库"
+            android:text="@string/cookbook_export"
             style="@style/Widget.Toolbox.Button.Primary" />
+
+        <Button
+            android:id="@+id/btn_download_cookbook_template"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/cookbook_download_template"
+            style="@style/Widget.Toolbox.Button.Text" />
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

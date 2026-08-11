@@ -67,17 +67,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/space_sm"
-                    android:text="在线找图"
+                    android:enabled="false"
+                    android:alpha="0.5"
+                    android:text="@string/cookbook_online_cover_disabled"
                     style="@style/Widget.Toolbox.Button.Primary" />
             </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_camera_cover"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:text="直接拍照"
-                style="@style/Widget.Toolbox.Button.Secondary" />
 
             <TextView
                 android:layout_width="match_parent"

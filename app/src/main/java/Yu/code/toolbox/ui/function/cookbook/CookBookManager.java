@@ -2,12 +2,18 @@ package Yu.code.toolbox.ui.function.cookbook;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 菜谱管理类：负责持久化存储和 CRUD 操作
@@ -17,6 +23,7 @@ public class CookBookManager {
     private static final String KEY_COOKBOOKS = "cookbooks_list";
     private static final String KEY_MENU_ITEMS = "menu_items_list";
     private static final String KEY_PURCHASED_ITEMS = "purchased_items_list";
+    private static final String KEY_CATEGORIES = "categories_list";
 
     private final SharedPreferences preferences;
     private final Gson gson;
@@ -40,6 +47,7 @@ public class CookBookManager {
         if (json.isEmpty()) {
             List<CookItem> defaults = getDefaultCookbooks();
             syncNextId(defaults);
+            saveCookbooks(defaults);
             return defaults;
         }
         List<CookItem> cookbooks = gson.fromJson(json, listType);
@@ -68,25 +76,27 @@ public class CookBookManager {
 
     public boolean updateCookbook(CookItem updatedCookbook) {
         List<CookItem> cookbooks = getAllCookbooks();
+        boolean found = false;
         for (CookItem item : cookbooks) {
             if (item.getId() == updatedCookbook.getId()) {
-                item.setName(updatedCookbook.getName());
-                item.setIngredients(updatedCookbook.getIngredients());
-                item.setSeasonings(updatedCookbook.getSeasonings());
-                item.setSteps(updatedCookbook.getSteps());
-                item.setCategory(updatedCookbook.getCategory());
-                item.setImageUri(updatedCookbook.getImageUri());
-                saveCookbooks(cookbooks);
-                return true;
+                copyCookbookFields(updatedCookbook, item);
+                found = true;
+                break;
             }
         }
-        return false;
+        if (!found) {
+            return false;
+        }
+        saveCookbooks(cookbooks);
+        syncMenuItem(updatedCookbook);
+        return true;
     }
 
     public boolean deleteCookbook(int id) {
         List<CookItem> cookbooks = getAllCookbooks();
         cookbooks.removeIf(item -> item.getId() == id);
         saveCookbooks(cookbooks);
+        removeFromMenu(id);
         return true;
     }
 
@@ -98,6 +108,146 @@ public class CookBookManager {
             }
         }
         return null;
+    }
+
+    public List<String> getCategories() {
+        Type listType = new TypeToken<List<String>>(){}.getType();
+        String json = preferences.getString(KEY_CATEGORIES, "");
+        if (json.isEmpty()) {
+            List<String> defaults = getDefaultCategories();
+            saveCategories(defaults);
+            return defaults;
+        }
+        List<String> categories = gson.fromJson(json, listType);
+        if (categories == null || categories.isEmpty()) {
+            List<String> defaults = getDefaultCategories();
+            saveCategories(defaults);
+            return defaults;
+        }
+        return categories;
+    }
+
+    public List<String> getFilterCategories() {
+        List<String> result = new ArrayList<>();
+        result.add("全部");
+        result.addAll(getCategories());
+        return result;
+    }
+
+    public boolean addCategory(String name) {
+        String normalized = normalizeCategoryName(name);
+        if (normalized.isEmpty()) {
+            return false;
+        }
+        List<String> categories = getCategories();
+        for (String existing : categories) {
+            if (existing.equalsIgnoreCase(normalized)) {
+                return false;
+            }
+        }
+        categories.add(normalized);
+        saveCategories(categories);
+        return true;
+    }
+
+    public boolean renameCategory(String oldName, String newName) {
+        if (TextUtils.isEmpty(oldName)) {
+            return false;
+        }
+        String normalized = normalizeCategoryName(newName);
+        if (normalized.isEmpty()) {
+            return false;
+        }
+        List<String> categories = getCategories();
+        int index = -1;
+        for (int i = 0; i < categories.size(); i++) {
+            if (oldName.equals(categories.get(i))) {
+                index = i;
+            } else if (normalized.equalsIgnoreCase(categories.get(i))) {
+                return false;
+            }
+        }
+        if (index < 0) {
+            return false;
+        }
+        categories.set(index, normalized);
+        saveCategories(categories);
+        migrateCategoryName(oldName, normalized);
+        return true;
+    }
+
+    public boolean deleteCategory(String name) {
+        if (TextUtils.isEmpty(name)) {
+            return false;
+        }
+        List<String> categories = getCategories();
+        if (categories.size() <= 1) {
+            return false;
+        }
+        boolean removed = categories.removeIf(item -> name.equals(item));
+        if (!removed) {
+            return false;
+        }
+        String fallback = categories.get(0);
+        saveCategories(categories);
+        migrateCategoryName(name, fallback);
+        return true;
+    }
+
+    public String getFallbackCategory(String excluding) {
+        List<String> categories = getCategories();
+        for (String category : categories) {
+            if (!category.equals(excluding)) {
+                return category;
+            }
+        }
+        return CATEGORY_MAIN;
+    }
+
+    private void migrateCategoryName(String from, String to) {
+        List<CookItem> cookbooks = getAllCookbooks();
+        boolean changed = false;
+        for (CookItem item : cookbooks) {
+            if (item != null && from.equals(item.getCategory())) {
+                item.setCategory(to);
+                changed = true;
+            }
+        }
+        if (changed) {
+            saveCookbooks(cookbooks);
+        }
+
+        List<CookItem> menuItems = getMenuItems();
+        boolean menuChanged = false;
+        for (CookItem item : menuItems) {
+            if (item != null && from.equals(item.getCategory())) {
+                item.setCategory(to);
+                menuChanged = true;
+            }
+        }
+        if (menuChanged) {
+            saveMenuItems(menuItems);
+        }
+    }
+
+    private void saveCategories(List<String> categories) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(KEY_CATEGORIES, gson.toJson(categories));
+        editor.apply();
+    }
+
+    private List<String> getDefaultCategories() {
+        List<String> defaults = new ArrayList<>();
+        defaults.add(CATEGORY_MAIN);
+        defaults.add(CATEGORY_SOUP);
+        defaults.add(CATEGORY_COLD);
+        defaults.add(CATEGORY_DESSERT);
+        defaults.add(CATEGORY_SIDE);
+        return defaults;
+    }
+
+    private String normalizeCategoryName(String name) {
+        return name == null ? "" : name.trim();
     }
 
     public List<CookItem> getMenuItems() {
@@ -130,6 +280,7 @@ public class CookBookManager {
     public void clearMenu() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(KEY_MENU_ITEMS);
+        editor.remove(KEY_PURCHASED_ITEMS);
         editor.apply();
     }
 
@@ -140,19 +291,32 @@ public class CookBookManager {
         editor.apply();
     }
 
-    public boolean isMenuEmpty() {
-        return getMenuItems().isEmpty();
-    }
-
-    public int getMenuItemCount(int cookbookId) {
+    private void syncMenuItem(CookItem updatedCookbook) {
         List<CookItem> menuItems = getMenuItems();
-        int count = 0;
+        boolean changed = false;
         for (CookItem item : menuItems) {
-            if (item.getId() == cookbookId) {
-                count++;
+            if (item.getId() == updatedCookbook.getId()) {
+                copyCookbookFields(updatedCookbook, item);
+                changed = true;
+                break;
             }
         }
-        return count;
+        if (changed) {
+            saveMenuItems(menuItems);
+        }
+    }
+
+    private void copyCookbookFields(CookItem source, CookItem target) {
+        target.setName(source.getName());
+        target.setIngredients(source.getIngredients());
+        target.setSeasonings(source.getSeasonings());
+        target.setSteps(source.getSteps());
+        target.setCategory(source.getCategory());
+        target.setImageUri(source.getImageUri());
+    }
+
+    public boolean isMenuEmpty() {
+        return getMenuItems().isEmpty();
     }
 
     public Map<String, Integer> generatePurchaseList() {
@@ -178,35 +342,6 @@ public class CookBookManager {
         }
 
         return purchaseMap;
-    }
-
-    public Map<String, List<String>> generateGroupedPurchaseList() {
-        Map<String, List<String>> grouped = new HashMap<>();
-        Map<String, Integer> purchaseMap = generatePurchaseList();
-
-        for (String ingredient : purchaseMap.keySet()) {
-            String category = classifyIngredient(ingredient);
-            grouped.computeIfAbsent(category, k -> new ArrayList<>()).add(ingredient);
-        }
-
-        return grouped;
-    }
-
-    private String classifyIngredient(String ingredient) {
-        ingredient = ingredient.toLowerCase();
-        if (ingredient.contains("肉") || ingredient.contains("鸡") || ingredient.contains("猪") ||
-            ingredient.contains("牛") || ingredient.contains("羊") || ingredient.contains("鱼")) {
-            return "肉类";
-        } else if (ingredient.contains("菜") || ingredient.contains("瓜") || ingredient.contains("豆") ||
-                   ingredient.contains("叶") || ingredient.contains("椒")) {
-            return "蔬菜";
-        } else if (ingredient.contains("油") || ingredient.contains("盐") || ingredient.contains("糖") ||
-                   ingredient.contains("酱油") || ingredient.contains("醋") || ingredient.contains("粉") ||
-                   ingredient.contains("酱")) {
-            return "调味品";
-        } else {
-            return "其他";
-        }
     }
 
     public Set<String> getPurchasedItems() {

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_rounded_bg"
+    android:padding="@dimen/space_lg">
+
+    <TextView
+        android:id="@+id/tv_edit_categories_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cookbook_edit_categories_title"
+        android:textColor="@color/app_text_primary"
+        android:textSize="@dimen/text_hero"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_edit_categories_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="@string/cookbook_edit_categories_desc"
+        android:textColor="@color/app_text_secondary"
+        android:textSize="@dimen/text_body" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_edit_categories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:overScrollMode="never" />
+
+    <Button
+        android:id="@+id/btn_add_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:text="@string/cookbook_add_category"
+        style="@style/Widget.Toolbox.Button.Secondary" />
+
+    <Button
+        android:id="@+id/btn_edit_categories_close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="@android:string/ok"
+        style="@style/Widget.Toolbox.Button.Primary" />
+
+</LinearLayout>

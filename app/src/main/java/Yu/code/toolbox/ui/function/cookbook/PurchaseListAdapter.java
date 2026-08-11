@@ -47,12 +47,9 @@ public class PurchaseListAdapter extends RecyclerView.Adapter<PurchaseListAdapte
         PurchaseItem item = items.get(position);
         holder.tvName.setText(item.name);
         holder.tvQty.setText(String.valueOf(item.quantity));
-        holder.checkPurchased.setText("已买");
         holder.checkPurchased.setOnCheckedChangeListener(null);
         holder.checkPurchased.setChecked(item.purchased);
-        holder.itemView.setAlpha(item.purchased ? 0.58f : 1f);
-        holder.tvName.setPaintFlags(item.purchased ? holder.tvName.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG : holder.tvName.getPaintFlags() & ~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
-        holder.tvQty.setPaintFlags(item.purchased ? holder.tvQty.getPaintFlags() | android.graphics.Paint.STRIKE_THRU_TEXT_FLAG : holder.tvQty.getPaintFlags() & ~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
+        applyPurchasedStyle(holder, item.purchased);
         holder.checkPurchased.setOnCheckedChangeListener((buttonView, isChecked) -> {
             int pos = holder.getBindingAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) {
@@ -61,11 +58,17 @@ public class PurchaseListAdapter extends RecyclerView.Adapter<PurchaseListAdapte
             PurchaseItem current = items.get(pos);
             if (current != null) {
                 current.purchased = isChecked;
+                applyPurchasedStyle(holder, isChecked);
                 if (listener != null) {
                     listener.onPurchaseCheckedChanged(current.name, isChecked);
                 }
             }
         });
+    }
+
+    private void applyPurchasedStyle(PurchaseViewHolder holder, boolean purchased) {
+        holder.itemView.setAlpha(purchased ? 0.72f : 1f);
+        holder.strikeLine.setVisibility(purchased ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -77,12 +80,14 @@ public class PurchaseListAdapter extends RecyclerView.Adapter<PurchaseListAdapte
         TextView tvName;
         TextView tvQty;
         CheckBox checkPurchased;
+        View strikeLine;
 
         PurchaseViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(Yu.code.toolbox.R.id.tv_purchase_item);
             tvQty = itemView.findViewById(Yu.code.toolbox.R.id.tv_purchase_qty);
             checkPurchased = itemView.findViewById(Yu.code.toolbox.R.id.cb_purchase_done);
+            strikeLine = itemView.findViewById(Yu.code.toolbox.R.id.view_purchased_strike);
         }
     }
 

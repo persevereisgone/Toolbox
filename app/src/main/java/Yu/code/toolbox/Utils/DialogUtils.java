@@ -3,13 +3,21 @@ package Yu.code.toolbox.Utils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.StringRes;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 import Yu.code.toolbox.R;
 
@@ -231,11 +239,56 @@ public class DialogUtils {
         return dialog;
     }
 
+    public static AlertDialog showBottomListDialog(Context context, String title, String description,
+                                                   List<String> items, String selectedValue,
+                                                   OnBottomListItemClickListener itemClickListener) {
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_bottom_list, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .create();
+
+        TextView titleView = dialogView.findViewById(R.id.tv_bottom_list_title);
+        TextView descView = dialogView.findViewById(R.id.tv_bottom_list_desc);
+        Button cancelButton = dialogView.findViewById(R.id.btn_bottom_list_cancel);
+        RecyclerView recyclerView = dialogView.findViewById(R.id.rv_bottom_list_options);
+
+        titleView.setText(title);
+        descView.setText(description);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
+        BottomListDialogAdapter adapter = new BottomListDialogAdapter(context, value -> {
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(value);
+            }
+            dialog.dismiss();
+        });
+        adapter.setData(items, selectedValue);
+        recyclerView.setAdapter(adapter);
+
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            window.setGravity(Gravity.BOTTOM);
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(params);
+        }
+        return dialog;
+    }
+
     /**
      * 对话框按钮点击监听器接口
      */
     public interface OnDialogButtonClickListener {
         void onClick(DialogInterface dialog, int which);
+    }
+
+    public interface OnBottomListItemClickListener {
+        void onItemClick(String value);
     }
 
     /**
