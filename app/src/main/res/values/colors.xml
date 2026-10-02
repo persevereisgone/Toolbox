@@ -32,7 +32,7 @@
     <color name="app_on_primary">#FFFFFFFF</color>
     <color name="app_on_accent">#FFFFFFFF</color>
 
-    <color name="app_text_primary">#FF000000</color>
+    <color name="app_text_primary">#FF1A1C1E</color>
     <color name="app_text_secondary">#FF4C4C4C</color>
     <color name="app_text_tertiary">#FF6A6A6A</color>
     <color name="app_text_disabled">#FFC4CAD4</color>
@@ -45,6 +45,10 @@
     <color name="app_warning_light">#FFF8F0E0</color>
     <color name="app_danger">#FFE15A5A</color>
     <color name="app_danger_light">#FFFFECEC</color>
+
+    <!-- 闹钟 hero 空闲态 -->
+    <color name="hero_alarm_sub_idle">#FF8CA0C2</color>
+    <color name="hero_alarm_main_idle">#FF1A2340</color>
     <color name="app_info">#FF4B83FF</color>
     <color name="app_info_light">#FFEDF4FF</color>
 
@@ -60,16 +64,25 @@
     <color name="home_background">@color/app_bg</color>
     <color name="home_title">@color/app_text_primary</color>
     <color name="home_subtitle">@color/app_text_secondary</color>
-    <color name="home_beta_title">#FFE35D5D</color>
+    <color name="home_beta_title">@color/app_danger</color>
     <color name="home_card_stroke">@color/app_card_stroke</color>
     <color name="home_item_bg">@color/app_surface_alt</color>
     <color name="home_item_pressed">@color/app_primary_light</color>
     <color name="home_item_stroke">#1A4D6BA3</color>
     <color name="home_icon_tint">@color/app_primary_dark</color>
     <color name="home_text_primary">@color/app_text_primary</color>
-    <color name="home_header_subtitle">#EAF3FFFF</color>
+    <color name="home_header_subtitle">#FFD6E4F7</color>
     <color name="home_tip_bg">@color/app_surface_alt</color>
     <color name="home_tip_stroke">#1F6782B5</color>
-    <color name="home_tip_title">#FF25406F</color>
+    <color name="home_tip_title">@color/app_text_primary</color>
     <color name="home_tip_text">@color/app_text_secondary</color>
+
+    <!-- 小组件专用不透明色: RemoteViews 解析不了 ?attr, 必须用实色 -->
+    <color name="widget_surface">#FFFFFFFF</color>
+    <color name="widget_surface_row">#FFF0F5FF</color>
+    <color name="widget_stroke">#FFE0EAF5</color>
+    <color name="widget_on_surface">#FF0F172A</color>
+    <color name="widget_on_variant">#FF475569</color>
+    <color name="widget_mode_cd">#FF0F172A</color>
+    <color name="widget_on_mode">#FFFFFFFF</color>
 </resources>

@@ -1,6 +1,5 @@
 package Yu.code.toolbox.Utils;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.Gravity;
@@ -14,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,20 +58,12 @@ public class DialogUtils {
 
     /**
      * 创建确认对话框
-     * @param context 上下文
-     * @param title 标题
-     * @param message 消息
-     * @param positiveText 确认按钮文字
-     * @param negativeText 取消按钮文字
-     * @param positiveListener 确认按钮监听器
-     * @param negativeListener 取消按钮监听器
-     * @return AlertDialog
      */
     public static AlertDialog createConfirmDialog(Context context, String title, String message,
                                                   String positiveText, String negativeText,
                                                   OnDialogButtonClickListener positiveListener,
                                                   OnDialogButtonClickListener negativeListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppDialogStyle)
                 .setTitle(title)
                 .setMessage(message);
 
@@ -93,36 +85,17 @@ public class DialogUtils {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-        // 设置按钮文字颜色
-        if (positiveText != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                    context.getResources().getColor(android.R.color.holo_blue_dark));
-        }
-        if (negativeText != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
-                    context.getResources().getColor(android.R.color.black));
-        }
-
         return dialog;
     }
 
     /**
      * 创建危险操作确认对话框（删除、清空等）
-     * @param context 上下文
-     * @param title 标题
-     * @param message 消息
-     * @param positiveText 确认按钮文字
-     * @param negativeText 取消按钮文字
-     * @param positiveListener 确认按钮监听器
-     * @param negativeListener 取消按钮监听器
-     * @return AlertDialog
      */
     public static AlertDialog createDangerConfirmDialog(Context context, String title, String message,
                                                         String positiveText, String negativeText,
                                                         OnDialogButtonClickListener positiveListener,
                                                         OnDialogButtonClickListener negativeListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppDialogStyle_Danger)
                 .setTitle(title)
                 .setMessage(message);
 
@@ -144,36 +117,17 @@ public class DialogUtils {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-        // 设置按钮文字颜色（危险操作用红色）
-        if (positiveText != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                    context.getResources().getColor(android.R.color.holo_red_dark));
-        }
-        if (negativeText != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
-                    context.getResources().getColor(android.R.color.black));
-        }
-
         return dialog;
     }
 
     /**
      * 创建带自定义视图的对话框
-     * @param context 上下文
-     * @param title 标题
-     * @param view 自定义视图
-     * @param positiveText 确认按钮文字
-     * @param negativeText 取消按钮文字
-     * @param positiveListener 确认按钮监听器
-     * @param negativeListener 取消按钮监听器
-     * @return AlertDialog
      */
     public static AlertDialog createCustomViewDialog(Context context, String title, View view,
                                                      String positiveText, String negativeText,
                                                      OnDialogButtonClickListener positiveListener,
                                                      OnDialogButtonClickListener negativeListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppDialogStyle)
                 .setTitle(title)
                 .setView(view);
 
@@ -195,32 +149,15 @@ public class DialogUtils {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-        // 设置按钮文字颜色
-        if (positiveText != null) {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                    context.getResources().getColor(android.R.color.holo_blue_dark));
-        }
-        if (negativeText != null) {
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(
-                    context.getResources().getColor(android.R.color.black));
-        }
-
         return dialog;
     }
 
     /**
      * 创建信息提示对话框
-     * @param context 上下文
-     * @param title 标题
-     * @param message 消息
-     * @param buttonText 按钮文字
-     * @param listener 按钮监听器
-     * @return AlertDialog
      */
     public static AlertDialog createInfoDialog(Context context, String title, String message,
                                                String buttonText, OnDialogButtonClickListener listener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AppDialogStyle)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton(buttonText, (dialog, which) -> {
@@ -231,11 +168,6 @@ public class DialogUtils {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-        // 设置按钮文字颜色
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(
-                context.getResources().getColor(android.R.color.black));
-
         return dialog;
     }
 

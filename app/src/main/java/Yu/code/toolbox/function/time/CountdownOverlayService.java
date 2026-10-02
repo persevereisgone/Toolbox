@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import android.util.DisplayMetrics;
@@ -39,6 +41,8 @@ public class CountdownOverlayService extends Service {
     private View menuView;
     private WindowManager.LayoutParams overlayParams;
     private WindowManager.LayoutParams menuParams;
+    private View edgeView;
+    private WindowManager.LayoutParams edgeParams;
     private Handler handler;
     private Runnable ticker;
 
@@ -117,6 +121,7 @@ public class CountdownOverlayService extends Service {
                 .setContentText(contentText)
                 .setOngoing(true)
                 .setOnlyAlertOnce(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentIntent(openPi)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
@@ -261,6 +266,9 @@ public class CountdownOverlayService extends Service {
             cancelScheduledLockInternal();
             removeMenu();
         });
+        menuView.findViewById(R.id.menu_hide_edge).setOnClickListener(v -> {
+            collapseToEdge();
+        });
 
         windowManager.addView(menuView, menuParams);
     }
@@ -284,9 +292,85 @@ public class CountdownOverlayService extends Service {
     }
 
     private void updateOverlayText() {
+        String shortText = getShortRemainingText();
         if (overlayView != null) {
             TextView tv = overlayView.findViewById(R.id.tv_countdown);
-            tv.setText(getRemainingText());
+            tv.setText(shortText);
+        }
+        if (edgeView != null) {
+            TextView tv = edgeView.findViewById(R.id.tv_edge_time);
+            tv.setText(shortText);
+        }
+    }
+
+    private String getShortRemainingText() {
+        long remaining = getRemainingMs();
+        if (remaining <= 0) return "00:00";
+        long totalSeconds = remaining / 1000;
+        long h = totalSeconds / 3600;
+        long m = (totalSeconds % 3600) / 60;
+        long s = totalSeconds % 60;
+        if (h > 0) return h + ":" + String.format(Locale.getDefault(), "%02d", m);
+        return String.format(Locale.getDefault(), "%02d:%02d", m, s);
+    }
+
+    /** 收起到侧边:藏起主悬浮窗,只留窄边小标签,点标签恢复 */
+    private void collapseToEdge() {
+        removeMenu();
+        if (edgeView != null) return;
+        int[] screen = getScreenSize();
+        int sw = screen[0];
+        int sh = screen[1];
+        int margin = dp(8);
+        int topInset = getStatusBarHeight();
+        boolean toRight = overlayParams != null && overlayParams.x + 100 > sw / 2;
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        edgeView = inflater.inflate(R.layout.overlay_edge_tab, null);
+        TextView tv = edgeView.findViewById(R.id.tv_edge_time);
+        tv.setText(getRemainingText());
+
+        int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                : WindowManager.LayoutParams.TYPE_PHONE;
+        edgeParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                type,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT
+        );
+        edgeParams.gravity = Gravity.TOP | Gravity.START;
+        edgeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int ew = edgeView.getMeasuredWidth();
+        int eh = edgeView.getMeasuredHeight();
+        int y = overlayParams != null ? overlayParams.y : (topInset + margin);
+        y = Math.max(topInset + margin, Math.min(y, Math.max(topInset + margin, sh - eh - margin)));
+        edgeParams.x = toRight ? Math.max(margin, sw - ew - 2) : 2;
+        edgeParams.y = y;
+
+        edgeView.setOnClickListener(v -> expandFromEdge());
+        windowManager.addView(edgeView, edgeParams);
+        removeOverlay();
+    }
+
+    private void expandFromEdge() {
+        removeEdgeTab();
+        showOrUpdateOverlay();
+        if (overlayView != null && edgeParams != null) {
+            overlayParams.x = edgeParams.x;
+            overlayParams.y = edgeParams.y;
+            windowManager.updateViewLayout(overlayView, overlayParams);
+            saveOverlayPosition(overlayParams.x, overlayParams.y);
+        }
+    }
+
+    private void removeEdgeTab() {
+        if (edgeView != null) {
+            try { windowManager.removeView(edgeView); } catch (Exception ignored) {}
+            edgeView = null;
         }
     }
 
@@ -299,6 +383,8 @@ public class CountdownOverlayService extends Service {
                 NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 nm.notify(NOTIFICATION_ID, notification);
                 updateOverlayText();
+                long sec = getRemainingMs() / 1000;
+                if (sec >= 0 && (sec % 30) == 0) TimerHomeWidgetProvider.refreshAll(CountdownOverlayService.this);
                 handler.postDelayed(this, 1000);
             }
         };
@@ -347,6 +433,7 @@ public class CountdownOverlayService extends Service {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(NOTIFICATION_ID);
         removeMenu();
+        removeEdgeTab();
         removeOverlay();
         stopSelf();
     }
@@ -373,6 +460,7 @@ public class CountdownOverlayService extends Service {
         );
         if (am != null) am.cancel(pi);
         getSharedPreferences("lock_prefs", MODE_PRIVATE).edit().remove("lock_trigger_at").apply();
+        TimerHomeWidgetProvider.refreshAll(this);
         stopSelfSafely();
     }
 

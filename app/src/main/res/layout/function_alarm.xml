@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:paddingStart="@dimen/space_lg" android:paddingEnd="@dimen/space_lg"
+    android:paddingTop="@dimen/space_lg" android:paddingBottom="@dimen/space_lg">
+
+    <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/alarm_page_title"
+        android:textAppearance="@style/TextAppearance.Toolbox.TitleLarge" />
+
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xxs"
+        android:text="@string/alarm_page_desc"
+        android:textAppearance="@style/TextAppearance.Toolbox.Body.Secondary" />
+
+    <!-- hero 状态条：运行蓝底白字 / 空闲浅底 -->
+    <LinearLayout
+        android:id="@+id/hero_alarm"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_lg"
+        android:orientation="vertical" android:gravity="center"
+        android:padding="@dimen/space_lg"
+        android:background="@drawable/bg_alarm_hero_idle">
+
+        <TextView
+            android:id="@+id/tv_alarm_hero_mode"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/alarm_mode_none"
+            android:textAppearance="@style/TextAppearance.Toolbox.Caption"
+            android:textColor="@color/app_text_tertiary" />
+
+        <TextView
+            android:id="@+id/tv_alarm_status"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xxs"
+            android:fontFamily="monospace"
+            android:text="@string/alarm_hero_idle"
+            android:textColor="@color/app_primary_dark"
+            android:textSize="@dimen/text_hero_lg" />
+
+        <TextView
+            android:id="@+id/tv_alarm_hero_sub"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xxs"
+            android:gravity="center"
+            android:text="@string/alarm_hero_idle_sub"
+            android:textAppearance="@style/TextAppearance.Toolbox.Caption"
+            android:textColor="@color/app_text_tertiary" />
+
+        <Button
+            android:id="@+id/btn_alarm_cancel"
+            style="@style/Widget.Toolbox.Button.Danger"
+            android:layout_width="match_parent" android:layout_height="40dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:enabled="false"
+            android:text="@string/alarm_btn_cancel"
+            android:textSize="@dimen/text_caption_lg" />
+
+        <TextView
+            android:id="@+id/tv_alarm_permission_hint"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:gravity="center"
+            android:padding="@dimen/space_sm"
+            android:background="@drawable/bg_alarm_hint"
+            android:text="@string/alarm_permission_hint"
+            android:textAppearance="@style/TextAppearance.Toolbox.Caption"
+            android:textColor="@color/app_danger"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Widget.Toolbox.CardContainer"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/alarm_quick_title"
+            android:textAppearance="@style/TextAppearance.Toolbox.Body" />
+
+        <GridLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:columnCount="2"
+            android:useDefaultMargins="false">
+
+            <Button
+                android:id="@+id/btn_preset_1"
+                style="@style/Widget.Toolbox.Button.Secondary"
+                android:layout_width="0dp" android:layout_height="@dimen/button_height_md"
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="@dimen/space_xxs"
+                android:layout_marginBottom="@dimen/space_xxs"
+                android:text="@string/alarm_preset_1" />
+
+            <Button
+                android:id="@+id/btn_preset_5"
+                style="@style/Widget.Toolbox.Button.Secondary"
+                android:layout_width="0dp" android:layout_height="@dimen/button_height_md"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="@dimen/space_xxs"
+                android:layout_marginBottom="@dimen/space_xxs"
+                android:text="@string/alarm_preset_5" />
+
+            <Button
+                android:id="@+id/btn_preset_10"
+                style="@style/Widget.Toolbox.Button.Secondary"
+                android:layout_width="0dp" android:layout_height="@dimen/button_height_md"
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="@dimen/space_xxs"
+                android:text="@string/alarm_preset_10" />
+
+            <Button
+                android:id="@+id/btn_preset_30"
+                style="@style/Widget.Toolbox.Button.Secondary"
+                android:layout_width="0dp" android:layout_height="@dimen/button_height_md"
+                android:layout_columnWeight="1"
+                android:layout_marginStart="@dimen/space_xxs"
+                android:text="@string/alarm_preset_30" />
+        </GridLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/Widget.Toolbox.CardContainer"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/alarm_more_title"
+            android:textAppearance="@style/TextAppearance.Toolbox.Body" />
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_alarm_minutes"
+                style="@style/Widget.Toolbox.Input"
+                android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="@dimen/input_height"
+                android:hint="@string/alarm_custom_hint"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:maxLength="6" />
+
+            <Button
+                android:id="@+id/btn_alarm_clear_input"
+                style="@style/Widget.Toolbox.Button.Secondary"
+                android:layout_width="48dp" android:layout_height="@dimen/input_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:contentDescription="@string/alarm_btn_clear_input"
+                android:minWidth="48dp"
+                android:text="✕" />
+
+            <Button
+                android:id="@+id/btn_alarm_start_countdown"
+                style="@style/Widget.Toolbox.Button.Primary"
+                android:layout_width="wrap_content" android:layout_height="@dimen/input_height"
+                android:layout_marginStart="@dimen/space_sm"
+                android:minWidth="96dp"
+                android:text="@string/alarm_btn_start" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/alarm_custom_unit"
+            android:textAppearance="@style/TextAppearance.Toolbox.Caption.Tertiary" />
+
+        <Button
+            android:id="@+id/btn_alarm_pick_time"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="match_parent" android:layout_height="@dimen/button_height_md"
+            android:layout_marginTop="@dimen/space_sm"
+            android:text="@string/alarm_btn_pick_time" />
+    </LinearLayout>
+</LinearLayout>

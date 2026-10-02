@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/space_xl">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/space_md"
+        android:background="@drawable/home_grab_bg" />
+
+    <TextView
+        style="@style/TextAppearance.Toolbox.TitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="新增物品" />
+
+    <EditText
+        android:id="@+id/et_sheet_name"
+        style="@style/Widget.Toolbox.Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:ellipsize="end"
+        android:hint="名称"
+        android:inputType="text"
+        android:maxLines="1"
+        android:minHeight="@dimen/button_height_md" />
+
+    <EditText
+        android:id="@+id/et_sheet_quantity"
+        style="@style/Widget.Toolbox.Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:hint="数量，默认 1"
+        android:inputType="number"
+        android:maxLines="1"
+        android:minHeight="@dimen/button_height_md" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_sheet_cancel"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_md"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:layout_weight="1"
+            android:text="取消" />
+
+        <Button
+            android:id="@+id/btn_sheet_add"
+            style="@style/Widget.Toolbox.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height_md"
+            android:layout_weight="1"
+            android:text="添加" />
+    </LinearLayout>
+</LinearLayout>

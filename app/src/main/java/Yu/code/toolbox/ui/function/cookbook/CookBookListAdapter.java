@@ -2,9 +2,12 @@ package Yu.code.toolbox.ui.function.cookbook;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,10 +82,29 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
         CookbookImageLoader.load(context, item.getImageUri(), holder.ivIcon, Yu.code.toolbox.R.drawable.recipe);
         holder.tvName.setText(item.getName());
         holder.tvCategory.setText(item.getCategory());
-        holder.btnFavorite.setText(item.isFavorite() ? "★" : "☆");
+        // P0/P3: 收藏用图标 + tint 区分状态,不用文字符号
+        holder.btnFavorite.setImageResource(Yu.code.toolbox.R.drawable.ic_favorite_24);
+        holder.btnFavorite.setColorFilter(item.isFavorite()
+                ? context.getResources().getColor(Yu.code.toolbox.R.color.app_primary)
+                : context.getResources().getColor(Yu.code.toolbox.R.color.app_nav_unchecked));
         holder.btnFavorite.setContentDescription(item.isFavorite()
                 ? context.getString(Yu.code.toolbox.R.string.cookbook_unfavorite)
                 : context.getString(Yu.code.toolbox.R.string.cookbook_favorite));
+        // P3: 列表 stagger 进入(30ms 递增,封顶 5 项),仅 alpha + 位移
+        int stagger = Math.min(position, 5) * context.getResources().getInteger(Yu.code.toolbox.R.integer.motion_stagger);
+        Animation enter = AnimationUtils.loadAnimation(context, Yu.code.toolbox.R.anim.list_item_enter);
+        enter.setStartOffset(stagger);
+        holder.itemView.startAnimation(enter);
+        // P3: 按压缩放 0.98,仅 transform
+        holder.itemView.setOnTouchListener((v, e) -> {
+            int d = context.getResources().getInteger(Yu.code.toolbox.R.integer.motion_press_scale_duration);
+            if (e.getAction() == MotionEvent.ACTION_DOWN) {
+                v.animate().scaleX(0.98f).scaleY(0.98f).setDuration(d).start();
+            } else if (e.getAction() == MotionEvent.ACTION_UP || e.getAction() == MotionEvent.ACTION_CANCEL) {
+                v.animate().scaleX(1f).scaleY(1f).setDuration(d).start();
+            }
+            return false;
+        });
         holder.itemView.setOnClickListener(v -> {
             if (itemClickListener != null) {
                 itemClickListener.onItemClickListener(item);
@@ -120,9 +142,9 @@ public class CookBookListAdapter extends RecyclerView.Adapter<CookBookListAdapte
         ImageView ivIcon;
         TextView tvName;
         TextView tvCategory;
-        Button btnFavorite;
-        Button btnAddToMenu;
-        Button btnDeleteCookbook;
+        ImageButton btnFavorite;
+        ImageButton btnAddToMenu;
+        ImageButton btnDeleteCookbook;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

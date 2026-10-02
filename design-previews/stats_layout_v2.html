@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>统计主页重排 v2 · A/B/C 三版（去批量删/全屏改底弹/列表优先）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 8px;max-width:1240px;line-height:1.9}
+.sub b{color:#ffd479}
+.sec{font-size:15px;font-weight:800;margin:32px 0 6px;color:#ffd479;letter-spacing:1px}
+.sec2{font-size:13px;color:#9aa7bd;margin:0 0 14px;max-width:1240px;line-height:1.8}
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:700px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;position:relative;flex:none;background:#f6f8fc;color:#14181f}
+.scr{height:100%;overflow-y:auto;padding:14px 14px 28px}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:16px}.bar .x{color:#8c98ae;font-size:18px}
+.cap{font-size:11px;color:#8c98ae;margin:4px 0 10px}
+.card{border:1px solid #e7edf6;border-radius:16px;padding:12px;margin-bottom:10px;background:#fff}
+.card h4{font-size:13px;margin-bottom:8px}
+.row{display:flex;align-items:center;gap:8px}.row>.btn{flex:none;width:auto}
+.inp{border:1px solid #e2e9f5;border-radius:12px;padding:11px 12px;font-size:13px;min-height:48px;color:#9aa7bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:none;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:800;min-height:48px}
+.pri{background:#427dff;color:#fff}.secb{background:#eef3fb;color:#14181f}
+.danb{background:#fff;color:#e15a5a;border:1px solid #f5d7d7}
+.txtdanger{display:block;width:100%;background:none;border:none;color:#e15a5a;font-size:13px;font-weight:700;padding:12px}
+.item{display:flex;align-items:center;gap:8px;border:1px solid #e7edf6;border-radius:12px;padding:6px 8px;margin-bottom:6px;background:#fff}
+.item b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item small{font-size:10px;color:#8c98ae;display:block}
+.qbtn{width:36px;height:36px;border-radius:9px;border:1px solid #e2e9f5;background:#f6f8fc;font-size:15px;font-weight:800;flex:none}
+.qnum{font-size:13px;font-weight:800;color:#335fd1;min-width:26px;text-align:center}
+.del{color:#e15a5a;font-size:15px;font-weight:800;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex:none}
+.mut{font-size:11px;color:#8c98ae;line-height:1.7}
+.total{font-size:12px;font-weight:800;color:#335fd1;background:#eaf1ff;border-radius:999px;padding:5px 12px}
+/* bottom sheet */
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;height:86%;background:#f6f8fc;border-radius:22px 22px 0 0;padding:12px 16px 20px;display:flex;flex-direction:column}
+.grab{width:40px;height:4px;border-radius:4px;background:#d5dce8;margin:0 auto 10px;flex:none}
+.sheet .list{flex:1;overflow:hidden}
+.sheet .actionbar{flex:none;display:flex;gap:10px;margin-top:10px}
+/* version B top toolbar */
+.toolbar{display:flex;align-items:center;gap:4px;margin-bottom:8px}
+.iconbtn{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid #e7edf6;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none}
+/* version C segmented */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tilebtn{background:#fff;border:1px solid #e7edf6;border-radius:12px;padding:10px;font-size:12px;font-weight:700;text-align:center}
+.n{max-width:1240px;color:#9aa7bd;font-size:13px;line-height:2;margin-top:16px}.n b{color:#fff}
+</style></head><body>
+<h1>统计主页重排 v2 · A / B / C 三版</h1>
+<div class="sub">按你的要求重排：<b>删批量删除按钮</b>（长摁多选覆盖）· <b>全屏改底部弹层</b>（固定 86% 高，内部滚动，支持长摁多选）· 按钮瘦身融入整体 · <b>主页列表上限 3→5</b>（maxVisible 可调）。三版都含：主页 + 全屏底弹（含多选态）。</div>
+
+<div class="sec">A · 紧凑卡片流（改动最小，从现布局顺延）</div>
+<div class="sec2">组卡（下拉+管理窄键）→ 新增卡（名称大头）→ 列表卡（5 行，行高 48）→ 总计 chip + 一键清空文字键 → 工具行（导入/导出/全屏 <b>小键 44px 高</b>，不再通栏大键）。</div>
+<div class="stage">
+<div><div class="tag"><b>A-1 主页</b> <i>滚动</i> 5 行列表，工具行三小键</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="cap">多组管理 · 长摁多选 · 导入导出</div>
+<div class="card"><div class="row"><div class="inp" style="flex:1;min-width:0">统计组：默认 ▾</div><button class="btn pri">管理</button></div></div>
+<div class="card"><h4>新增物品</h4><div class="row"><div class="inp" style="flex:2.2;min-width:0">名称</div><div class="inp" style="flex:1;min-width:0">数量</div><button class="btn pri">添加</button></div></div>
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b><small>×24 · 点数量可改</small></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b><small>×12</small></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装</b><small>×8</small></div><button class="qbtn">−</button><span class="qnum">8</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>泡面</b><small>×6</small></div><button class="qbtn">−</button><span class="qnum">6</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>电池7号</b><small>×4</small></div><button class="qbtn">−</button><span class="qnum">4</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="row" style="margin:6px 0"><span class="total">总计 54</span><span class="mut">· 还有 2 件在全屏</span></div>
+<div class="row"><button class="btn secb" style="flex:1">导入</button><button class="btn secb" style="flex:1">导出</button><button class="btn pri" style="flex:1.4">全屏查看 ▾</button></div>
+<button class="txtdanger">一键清空当前组</button>
+</div></div></div>
+<div><div class="tag"><b>A-2 全屏底弹</b> <i>86% 高</i> 搜索+排序 → 滚动列表（同行布局，可改数）→ 长摁进多选，底栏删除/取消</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="row"><b style="font-size:14px">全部物品 · 7</b><span class="total" style="margin-left:auto">总计 58</span></div>
+<div class="row" style="margin-top:8px"><div class="inp" style="flex:1;min-width:0">搜索物品名…</div><div class="inp" style="flex:none">数量▾</div></div>
+<div class="list" style="margin-top:8px">
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装</b></div><button class="qbtn">−</button><span class="qnum">8</span><button class="qbtn">＋</button></div>
+<div class="mut">↓ 上滑查看更多 · 长摁任意行进多选</div>
+</div>
+<div class="sheet actionbar"><span class="mut" style="align-self:center">长摁删除 · 已选 0</span></div>
+</div>
+</div></div></div>
+</div>
+
+<div class="sec">B · 工具栏顶置（推荐 · 列表是第一公民）</div>
+<div class="sec2">标题行右置三个图标键（导入/导出/全屏，44px 方形），新增卡紧凑，主列表裸放（无卡套，6 行），底部只有一行文字式清空。图标键用矢量图标， TalkBack 可读。</div>
+<div class="stage">
+<div><div class="tag"><b>B-1 主页</b> <i>滚动</i> 图标工具栏 + 裸列表 6 行</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b><span style="flex:1"></span><span class="iconbtn">⎘</span><span class="iconbtn">⎙</span><span class="iconbtn">⛶</span></div>
+<div class="cap">默认组 ▾ · 管理 · 长摁多选</div>
+<div class="card"><div class="row"><div class="inp" style="flex:2.2;min-width:0">名称</div><div class="inp" style="flex:1;min-width:0">数量</div><button class="btn pri">添加</button></div></div>
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b><small>×24</small></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b><small>×12</small></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装</b><small>×8</small></div><button class="qbtn">−</button><span class="qnum">8</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>泡面</b><small>×6</small></div><button class="qbtn">−</button><span class="qnum">6</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>电池7号</b><small>×4</small></div><button class="qbtn">−</button><span class="qnum">4</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="row" style="margin:6px 0"><span class="total">总计 54</span></div>
+<button class="txtdanger">一键清空当前组</button>
+</div></div></div>
+<div><div class="tag"><b>B-2 全屏底弹·多选态</b> 同 A-2，另画多选态：复选框+底栏</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="row"><b style="font-size:14px">已选 2 项 ✕</b><span class="total" style="margin-left:auto">总计 58</span></div>
+<div class="list" style="margin-top:8px">
+<div class="item" style="border-color:#427dff;background:#f2f6ff"><span style="width:22px;height:22px;border-radius:7px;background:#427dff;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none">✓</span><div style="flex:1;min-width:0"><b>矿泉水</b></div></div>
+<div class="item" style="border-color:#427dff;background:#f2f6ff"><span style="width:22px;height:22px;border-radius:7px;background:#427dff;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none">✓</span><div style="flex:1;min-width:0"><b>苹果</b></div></div>
+<div class="item"><span style="width:22px;height:22px;border-radius:7px;border:2px solid #c3ccd9;flex:none"></span><div style="flex:1;min-width:0"><b>纸巾</b></div></div>
+<div class="mut">退出：右上 ✕ / 底部取消 / 返回键 / 点空已选</div>
+</div>
+<div class="sheet actionbar"><button class="btn secb" style="flex:1">取消</button><button class="btn danb" style="flex:1">删除所选 (2)</button></div>
+</div>
+</div></div></div>
+</div>
+
+<div class="sec">C · 分段磁贴（拇指区优先）</div>
+<div class="sec2">列表 5 行 + 底部 2×2 小磁贴（导入/导出/全屏/清空），全在拇指区；组切换收进标题行（点标题换组）。</div>
+<div class="stage">
+<div><div class="tag"><b>C-1 主页</b> 标题即组切换器，底部四磁贴</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>默认组 ▾</b></div><div class="cap">物品统计 · 长摁多选 · 点标题换组/管理</div>
+<div class="card"><div class="row"><div class="inp" style="flex:2.2;min-width:0">名称</div><div class="inp" style="flex:1;min-width:0">数量</div><button class="btn pri">添加</button></div></div>
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b><small>×24</small></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b><small>×12</small></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装</b><small>×8</small></div><button class="qbtn">−</button><span class="qnum">8</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>泡面</b><small>×6</small></div><button class="qbtn">−</button><span class="qnum">6</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>电池7号</b><small>×4</small></div><button class="qbtn">−</button><span class="qnum">4</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="row" style="margin:6px 0"><span class="total">总计 54 · 还有 2 件 ▸</span></div>
+<div class="seg"><div class="tilebtn">⎘ 导入</div><div class="tilebtn">⎙ 导出</div><div class="tilebtn">⛶ 全屏</div><div class="tilebtn" style="color:#e15a5a">清空</div></div>
+</div></div></div>
+<div><div class="tag"><b>C-2 全屏底弹</b> 同 A-2（跨版本统一，不重复画）</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>默认组 ▾</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="row"><b style="font-size:14px">全部物品 · 7</b><span class="total" style="margin-left:auto">总计 58</span></div>
+<div class="row" style="margin-top:8px"><div class="inp" style="flex:1;min-width:0">搜索物品名…</div><div class="inp" style="flex:none">数量▾</div></div>
+<div class="list" style="margin-top:8px">
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button></div>
+<div class="mut">↓ 上滑查看更多 · 长摁任意行进多选</div>
+</div>
+</div>
+</div></div></div>
+</div>
+
+<div class="n">三版取舍：<b>A</b> 最稳（现布局只删键+改小键，0.5 天）；<b>B</b> 列表空间最大（裸放 6 行+图标工具栏，和首页 B 语言最统一，1 天）；<b>C</b> 操作最近手（四磁贴全在底部，标题换组要学一下，1 天）。全屏底弹三版统一（86% 高+内部滚动+长摁多选+三路退出）。maxVisible 3→5（A/C）/6（B）一行代码。你定一版（或拼），我就补落地文档→你审→开工。</div>
+</body></html>

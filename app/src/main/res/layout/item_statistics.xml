@@ -1,74 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/space_lg"
+    android:layout_marginBottom="@dimen/space_sm"
     android:background="@drawable/app_card_bg"
     android:gravity="center_vertical"
+    android:minHeight="56dp"
     android:orientation="horizontal"
-    android:padding="@dimen/space_sm">
+    android:paddingStart="@dimen/space_sm"
+    android:paddingTop="@dimen/space_xs"
+    android:paddingEnd="@dimen/space_sm"
+    android:paddingBottom="@dimen/space_xs">
+
+    <ImageView
+        android:id="@+id/iv_check"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="@dimen/space_xs"
+        android:importantForAccessibility="no"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_item_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/space_xs"
         android:layout_weight="1"
-        android:layout_marginEnd="@dimen/space_lg"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="@color/app_text_primary"
         android:textSize="@dimen/text_body"
         android:textStyle="bold" />
 
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/btn_decrease"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/space_xxs"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="减少数量"
+        android:padding="@dimen/space_xs"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_remove_24"
+        app:tint="@color/app_text_primary" />
+
+    <TextView
+        android:id="@+id/tv_quantity"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/space_xxs"
+        android:background="@drawable/app_chip_bg"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:minWidth="40dp"
+        android:paddingStart="@dimen/space_xs"
+        android:paddingEnd="@dimen/space_xs"
+        android:textColor="@color/app_primary_dark"
+        android:textSize="@dimen/text_body"
+        android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btn_decrease"
-            style="@style/Widget.Toolbox.Button.Secondary"
-            android:layout_width="@dimen/item_height_sm"
-            android:layout_height="@dimen/item_height_sm"
-            android:layout_marginEnd="@dimen/space_sm"
-            android:minWidth="0dp"
-            android:padding="0dp"
-            android:text="-" />
+    <ImageButton
+        android:id="@+id/btn_increase"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="@dimen/space_xxs"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="增加数量"
+        android:padding="@dimen/space_xs"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_add_24"
+        app:tint="@color/app_text_primary" />
 
-        <TextView
-            android:id="@+id/tv_quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_sm"
-            android:background="@drawable/app_chip_bg"
-            android:clickable="true"
-            android:gravity="center"
-            android:minWidth="@dimen/item_height_sm"
-            android:paddingStart="@dimen/space_md"
-            android:paddingTop="@dimen/space_sm"
-            android:paddingEnd="@dimen/space_md"
-            android:paddingBottom="@dimen/space_sm"
-            android:textColor="@color/app_primary_dark"
-            android:textSize="@dimen/text_body_lg"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/btn_increase"
-            style="@style/Widget.Toolbox.Button.Secondary"
-            android:layout_width="@dimen/item_height_sm"
-            android:layout_height="@dimen/item_height_sm"
-            android:layout_marginEnd="@dimen/space_sm"
-            android:minWidth="0dp"
-            android:padding="0dp"
-            android:text="+" />
-
-        <Button
-            android:id="@+id/btn_delete"
-            style="@style/Widget.Toolbox.Button.Secondary"
-            android:layout_width="@dimen/item_height_sm"
-            android:layout_height="@dimen/item_height_sm"
-            android:minWidth="0dp"
-            android:padding="0dp"
-            android:text="×"
-            android:textColor="@color/app_danger" />
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/btn_delete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="删除物品"
+        android:padding="@dimen/space_xs"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close_24"
+        app:tint="@color/app_danger" />
 </LinearLayout>

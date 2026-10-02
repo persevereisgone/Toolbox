@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B细化-1 · 浅色标准版</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 20px;max-width:1100px;line-height:1.9}
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:700px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;position:relative;flex:none;background:#f6f8fc;color:#14181f}
+.scr{height:100%;overflow-y:auto;padding:14px 14px 28px}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:16px}.bar .x{color:#8c98ae;font-size:18px}
+.cap{font-size:11px;color:#8c98ae;margin:4px 0 10px}
+.card{border:1px solid #e7edf6;border-radius:16px;padding:12px;margin-bottom:10px;background:#fff}
+.row{display:flex;align-items:center;gap:8px}.row>.btn{flex:none;width:auto}
+.inp{border:1px solid #e2e9f5;border-radius:12px;padding:11px 12px;font-size:13px;min-height:48px;color:#9aa7bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:none;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:800;min-height:48px}
+.pri{background:#427dff;color:#fff}.secb{background:#eef3fb;color:#14181f}.danb{background:#fff;color:#e15a5a;border:1px solid #f5d7d7}
+.txtdanger{display:block;width:100%;background:none;border:none;color:#e15a5a;font-size:13px;font-weight:700;padding:12px}
+.iconbtn{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid #e7edf6;display:flex;align-items:center;justify-content:center;flex:none}
+.iconbtn svg{width:20px;height:20px;stroke:#335fd1;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.item{display:flex;align-items:center;gap:8px;border:1px solid #e7edf6;border-radius:12px;padding:6px 8px;margin-bottom:6px;background:#fff}
+.item.on{border-color:#427dff;background:#f2f6ff}
+.item b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item small{font-size:10px;color:#8c98ae;display:block}
+.qbtn{width:36px;height:36px;border-radius:9px;border:1px solid #e2e9f5;background:#f6f8fc;display:flex;align-items:center;justify-content:center;flex:none}
+.qbtn svg{width:15px;height:15px;stroke:#14181f;fill:none;stroke-width:2.4;stroke-linecap:round}
+.qnum{font-size:13px;font-weight:800;color:#335fd1;min-width:26px;text-align:center}
+.delx{width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex:none}
+.delx svg{width:15px;height:15px;stroke:#e15a5a;fill:none;stroke-width:2.4;stroke-linecap:round}
+.mut{font-size:11px;color:#8c98ae;line-height:1.7}
+.total{font-size:12px;font-weight:800;color:#335fd1;background:#eaf1ff;border-radius:999px;padding:5px 12px}
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;height:86%;background:#f6f8fc;border-radius:22px 22px 0 0;padding:12px 16px 20px;display:flex;flex-direction:column}
+.grab{width:40px;height:4px;border-radius:4px;background:#d5dce8;margin:0 auto 10px;flex:none}
+.sheet .list{flex:1;overflow:hidden}
+.sheet .actionbar{flex:none;display:flex;gap:10px;margin-top:10px}
+.box{width:22px;height:22px;border-radius:7px;flex:none;display:flex;align-items:center;justify-content:center}
+.n{max-width:1100px;color:#9aa7bd;font-size:13px;line-height:2;margin-top:20px}.n b{color:#fff}
+</style></head><body>
+<h1>B细化-1 · 浅色标准版（定稿候选）</h1>
+<div class="sub">B风格细化第一套：<b>矢量图标全部落定</b>（工具栏导入/导出/全屏 + 行内−/＋/×，无文字符号）· 行高48 · 6行列表 · 底弹86% + 多选态 + 空态全帧。另两套：<b>B细化-2深色</b> / <b>B细化-3极简线框</b>。</div>
+<div class="stage">
+<div><div class="tag"><b>B1-1 主页</b> 图标工具栏 + 裸列表 6 行</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b><span style="flex:1"></span><span class="iconbtn"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg></span><span class="iconbtn"><svg viewBox="0 0 24 24"><path d="M12 15V3m0 12l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg></span><span class="iconbtn"><svg viewBox="0 0 24 24"><path d="M8 3H3v5m18-5v5h-5M8 21H3v-5m18 5v-5h-5"/></svg></span></div>
+<div class="cap">默认组 ▾ · 管理 · 长摁多选</div>
+<div class="card"><div class="row"><div class="inp" style="flex:2.2;min-width:0">名称</div><div class="inp" style="flex:1;min-width:0">数量</div><button class="btn pri">添加</button></div></div>
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b><small>×24 · 点数量可改</small></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">24</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="delx"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b><small>×12</small></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">12</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="delx"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装限量版</b><small>×8</small></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">8</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="delx"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>泡面</b><small>×6</small></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">6</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="delx"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>电池7号</b><small>×4</small></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">4</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="delx"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>雨伞</b><small>×2</small></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">2</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><span class="delx"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></span></div>
+<div class="row" style="margin:6px 0"><span class="total">总计 56</span></div>
+<button class="txtdanger">一键清空当前组</button>
+</div></div></div>
+<div><div class="tag"><b>B1-2 底弹·普通态</b> 86% 高，搜索+排序+滚动列表</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="row"><b style="font-size:14px">全部物品 · 7</b><span class="total" style="margin-left:auto">总计 58</span></div>
+<div class="row" style="margin-top:8px"><div class="inp" style="flex:1;min-width:0">搜索物品名…</div><div class="inp" style="flex:none">数量高→低 ▾</div></div>
+<div class="list" style="margin-top:8px">
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">24</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">12</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾</b></div><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span><span class="qnum">8</span><span class="qbtn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span></div>
+<div class="mut">↓ 上滑查看更多 · 长摁任意行进多选</div>
+</div>
+</div>
+</div></div></div>
+<div><div class="tag"><b>B1-3 底弹·多选+空态</b> 左多选态，右空态（搜无结果）</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="row"><b style="font-size:14px">已选 2 项 ✕</b><span class="total" style="margin-left:auto">总计 58</span></div>
+<div class="list" style="margin-top:8px">
+<div class="item on"><span class="box" style="background:#427dff;color:#fff;font-size:13px;font-weight:800">✓</span><div style="flex:1;min-width:0"><b>矿泉水</b></div></div>
+<div class="item on"><span class="box" style="background:#427dff;color:#fff;font-size:13px;font-weight:800">✓</span><div style="flex:1;min-width:0"><b>苹果</b></div></div>
+<div class="item"><span class="box" style="border:2px solid #c3ccd9"></span><div style="flex:1;min-width:0"><b>纸巾</b></div></div>
+<div class="mut">退出：右上 ✕ / 取消 / 返回键 / 点空已选</div>
+</div>
+<div class="sheet actionbar"><button class="btn secb" style="flex:1">取消</button><button class="btn danb" style="flex:1">删除所选 (2)</button></div>
+</div>
+</div></div></div>
+</div>
+<div class="n">B细化-1（浅色标准）：图标/行高/字阶/间距全部落定，可直接进落地文档。另两套：<b>B细化-2</b> 深色全套映射 · <b>B细化-3</b> 极简线框（无边框+分割线）。三套看完定一套，或拼。</div>
+</body></html>

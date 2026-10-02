@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Toolbox 首页 redesign - 3 版对比</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px;margin-bottom:6px} .sub{color:#9aa7bd;font-size:13px;margin-bottom:24px}
+.row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.phone{width:340px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;background:#f3f7fc;color:#1a1c1e}
+.phone .scr{padding:20px 20px 28px;min-height:640px}
+.tag{font-size:12px;font-weight:700;color:#9aa7bd;margin:0 0 10px 4px;letter-spacing:2px}
+.card{border-radius:20px;padding:18px}
+/* A */ .a-h{background:linear-gradient(155deg,#3f8cff,#6f67ff);color:#fff;border-radius:24px;padding:20px}
+.a-chip{display:inline-block;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:700}
+.a-title{font-size:27px;font-weight:800;margin-top:14px}.a-sub{font-size:13px;color:#d6e4f7;margin-top:8px;line-height:1.6}
+.a-feats{display:flex;gap:8px;margin-top:16px}.a-feats div{flex:1;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:14px;padding:10px;font-size:11px;line-height:1.5}.a-feats b{display:block;font-size:12px}
+.a-sec{background:#fff;border:1px solid #e2e9f5;border-radius:20px;padding:18px;margin-top:16px}
+.a-sec h3{font-size:19px}.a-sec p{font-size:12px;color:#5b6472;margin:6px 0 12px}
+.a-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.a-grid div{background:#f8fbff;border:1px solid #e2e9f5;border-radius:14px;padding:14px 10px;text-align:center;font-size:12px;font-weight:700}
+.a-grid span{display:block;font-size:22px;margin-bottom:6px}
+.a-tip{background:#f8fbff;border:1px solid #d7e3f5;border-radius:20px;padding:16px 18px;margin-top:14px;font-size:12px;color:#4c4c4c}.a-tip b{display:block;font-size:15px;color:#1a1c1e;margin-bottom:4px}
+/* B */ .b{background:#f6f8fc!important}.b-h{padding:4px 2px 0;color:#14181f}
+.b-row{display:flex;align-items:center;gap:8px}.b-pill{font-size:11px;font-weight:800;background:#14181f;color:#fff;border-radius:999px;padding:5px 12px;letter-spacing:1px}
+.b-log{margin-left:auto;font-size:12px;font-weight:700;color:#3c73f0;background:#eaf1ff;border-radius:999px;padding:6px 14px;position:relative}.b-dot{position:absolute;top:4px;right:6px;width:8px;height:8px;border-radius:50%;background:#ff5a5a;border:2px solid #f6f8fc}
+.b-title{font-size:30px;font-weight:800;margin-top:16px;letter-spacing:-.5px}.b-title em{font-style:normal;color:#427dff}.b-sub{font-size:13px;color:#5b6472;margin-top:8px;line-height:1.6}
+.b-search{margin-top:14px;background:#fff;border:1px solid #e2e9f5;border-radius:999px;padding:12px 16px;font-size:13px;color:#9aa7bd}
+.b-sec{margin-top:16px}.b-sec-h{display:flex;align-items:baseline}.b-sec-h h3{font-size:17px}.b-sec-h span{margin-left:auto;font-size:12px;color:#8c98ae}
+.b-list{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.b-item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e7edf6;border-radius:16px;padding:12px 14px}
+.b-ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.b-item b{font-size:14px;display:block}.b-item small{font-size:11px;color:#8c98ae}
+.b-go{margin-left:auto;color:#c3ccd9;font-size:18px}
+.b-tip{margin-top:12px;background:#14181f;color:#dfe6f2;border-radius:16px;padding:14px 16px;font-size:12px;line-height:1.6}.b-tip b{color:#fff;display:block;margin-bottom:2px;font-size:13px}
+/* C */ .c{background:#0e1526!important;color:#e8eef7}.c .scr{background:radial-gradient(120% 40% at 50% 0%,#233a6b 0%,#0e1526 60%)}
+.c-pill{font-size:11px;font-weight:800;letter-spacing:2px;color:#8fb0ff;border:1px solid #33507f;border-radius:999px;padding:5px 12px;background:rgba(66,125,255,.12)}
+.c-log{margin-left:auto;font-size:12px;color:#dfe6f2;border:1px solid #33507f;border-radius:999px;padding:6px 14px;position:relative;background:rgba(255,255,255,.06)}.c-dot{position:absolute;top:5px;right:8px;width:7px;height:7px;border-radius:50%;background:#ff6b6b}
+.c-title{font-size:28px;font-weight:800;margin-top:16px}.c-sub{font-size:13px;color:#9fb0c9;margin-top:8px;line-height:1.7}
+.c-grid{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.c-grid div{border-radius:18px;padding:16px 12px;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.c-grid div.hot{background:linear-gradient(160deg,#427dff,#7567ff);border:none}
+.c-grid span{font-size:24px;display:block;margin-bottom:8px}.c-grid b{font-size:13px}.c-grid small{display:block;font-size:11px;color:#9fb0c9;margin-top:2px}.c-grid div.hot small{color:#dbe4ff}
+.c Sec,.c-tip{margin-top:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:18px;padding:14px 16px;font-size:12px;color:#9fb0c9;line-height:1.6}.c-tip b{color:#fff;font-size:13px;display:block;margin-bottom:2px}
+.note{max-width:1080px;margin-top:26px;color:#9aa7bd;font-size:13px;line-height:1.9}
+.note b{color:#fff}
+</style></head><body>
+<h1>Toolbox 首页 redesign · 3 版设计稿（功能无删减，仅 UI）</h1>
+<div class="sub">依据 mobile-android-design（M3 卡片 / 48dp / 深色）+ ui-ux-pro-max（P1 无障碍 / P5 布局 / P6 字阶）。现有功能：TOOLBOX 角标 · 更新日志+红点 · 标题+副标题 · 2 特性说明 · 常用功能宫格 · 滑动提示 · 小贴士 · 更多功能(beta)。三版全部保留。</div>
+<div class="row">
+<!-- A -->
+<div><div class="tag">A · M3 渐变延续版（改动最小）</div><div class="phone"><div class="scr">
+<div class="a-h"><div style="display:flex;align-items:center"><span class="a-chip">TOOLBOX</span><span style="flex:1"></span><span class="a-chip" style="position:relative">更新日志 <i style="position:absolute;top:-3px;right:-2px;width:8px;height:8px;border-radius:50%;background:#ff5a5a;display:block"></i></span></div>
+<div class="a-title">让常用操作更简单</div><div class="a-sub">常用功能排在前面，少翻找、少等待，打开就能快速开始。</div>
+<div class="a-feats"><div><b>常用优先</b>打开后直接找到</div><div><b>一眼找到</b>卡片入口点即进</div></div></div>
+<div class="a-sec"><h3>常用功能</h3><p>6 个功能 · 可滑动查看更多</p><div class="a-grid"><div><span>⏱</span>计时器</div><div><span>🍳</span>菜谱</div><div><span>✓</span>待办</div><div><span>⏰</span>闹钟</div><div><span>📊</span>统计</div><div><span>🎲</span>抽奖</div></div></div>
+<div class="a-tip"><b>使用小贴士</b>先从常用功能开始，新增工具会继续放在容易找到的位置。</div>
+<div class="a-sec"><h3>更多功能 <i style="font-style:normal;font-size:11px;color:#e15a5a">BETA</i></h3><p>持续完善中，异常请稍后再试</p></div>
+</div></div></div>
+<!-- B -->
+<div><div class="tag">B · 浅色效率版（推荐 · 信息密度最高）</div><div class="phone b"><div class="scr">
+<div class="b-h"><div class="b-row"><span class="b-pill">TOOLBOX</span><span class="b-log">更新日志<i class="b-dot"></i></span></div>
+<div class="b-title">常用操作，<em>一步即达</em></div><div class="b-sub">把常用功能放在最前面，少翻找、少等待。</div>
+<div class="b-search">搜索功能…</div></div>
+<div class="b-sec"><div class="b-sec-h"><h3>常用功能</h3><span>6 个 · 全部 ›</span></div><div class="b-list">
+<div class="b-item"><div class="b-ic" style="background:#eaf1ff">⏱</div><div><b>计时器</b><small>倒计时 · 悬浮窗</small></div><div class="b-go">›</div></div>
+<div class="b-item"><div class="b-ic" style="background:#fff0ee">🍳</div><div><b>菜谱</b><small>收藏 · 菜单</small></div><div class="b-go">›</div></div>
+<div class="b-item"><div class="b-ic" style="background:#e8f5f0">✓</div><div><b>待办</b><small>3 项未完成</small></div><div class="b-go">›</div></div>
+<div class="b-item"><div class="b-ic" style="background:#f0eeff">⏰</div><div><b>闹钟</b><small>2 个已设置</small></div><div class="b-go">›</div></div>
+</div></div>
+<div class="b-tip"><b>使用小贴士</b>左滑可删，长按可置顶常用。</div>
+<div class="b-sec"><div class="b-sec-h"><h3>更多功能</h3><span>BETA</span></div></div>
+</div></div></div>
+<!-- C -->
+<div><div class="tag">C · 深色沉浸版（深色用户首选）</div><div class="phone c"><div class="scr">
+<div class="b-row"><span class="c-pill">TOOLBOX</span><span class="c-log">更新日志<i class="c-dot"></i></span></div>
+<div class="c-title">让常用操作更简单</div><div class="c-sub">常用功能优先显示，打开后更容易直接找到，一眼即达。</div>
+<div class="c-grid"><div class="hot"><span>⏱</span><b>计时器</b><small>进行中 12:30</small></div><div><span>🍳</span><b>菜谱</b><small>12 道收藏</small></div><div><span>✓</span><b>待办</b><small>3 项未完成</small></div><div><span>⏰</span><b>闹钟</b><small>明日 7:00</small></div></div>
+<div class="c-tip"><b>使用小贴士</b>新增工具会自动进入常用，免去手动整理。</div>
+<div class="c-tip"><b>更多功能 · BETA</b>部分功能持续完善中。</div>
+</div></div></div>
+</div>
+<div class="note">三版差异：<b>A</b> 只做 M3 规范化（圆角/描边/字阶/48dp），开发量最小；<b>B</b> 把宫格改列表+状态副标题+搜索，找功能最快，转化最高；<b>C</b> 整页深色+状态前置（计时剩余/待办数/闹钟时间），夜间和重度用户最爱。你选一版，我就按它出 XML 落地清单（哪几个 layout / drawable / dimen 要改、怎么改）。如果都不中，告诉我偏好（比如 B 的列表 + A 的渐变头），我再拼一版。</div>
+</body></html>

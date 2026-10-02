@@ -3,18 +3,15 @@ package Yu.code.toolbox;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Menu;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.widget.Toast;
-import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import Yu.code.toolbox.databinding.ActivityMainBinding;
@@ -67,29 +64,26 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // 设置ActionBar但隐藏标题
-        setSupportActionBar(binding.appBarMain.toolbar);
-        // 设置导航栏为白色
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-            // 设置导航图标颜色为黑色
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-            // 额外设置导航图标色调
-            android.graphics.drawable.Drawable navigationIcon = binding.appBarMain.toolbar.getNavigationIcon();
-            if (navigationIcon != null) {
-                navigationIcon.setColorFilter(getResources().getColor(android.R.color.black), android.graphics.PorterDuff.Mode.SRC_IN);
-            }
-        }
-        // 设置状态栏文字颜色为黑色
+        // 顶栏/抽屉已移除:无 ActionBar,状态栏文字颜色跟随深浅模式
+        boolean isNight = (getResources().getConfiguration().uiMode
+                & android.content.res.Configuration.UI_MODE_NIGHT_MASK)
+                == android.content.res.Configuration.UI_MODE_NIGHT_YES;
+                // 设置状态栏文字颜色:浅色模式黑字,深色模式白字
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-            // Android 11及以上版本
+            int appearance = isNight ? 0 : android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS;
             getWindow().getInsetsController().setSystemBarsAppearance(
-                    android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                    appearance,
                     android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
             );
         } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            // Android 6.0到Android 10版本
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            View decor = getWindow().getDecorView();
+            int flags = decor.getSystemUiVisibility();
+            if (isNight) {
+                flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            } else {
+                flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
+            decor.setSystemUiVisibility(flags);
         }
 
         // 绑定底部导航
@@ -101,18 +95,15 @@ public class MainActivity extends AppCompatActivity {
             bottomNav.setItemIconTintList(null);
             bottomNav.setItemRippleColor(null);
         }
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
-
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
-                .setOpenableLayout(drawer)
+                R.id.nav_home, R.id.nav_slideshow, R.id.nav_settings)
                 .build();
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
 
         // 如从悬浮窗菜单带参跳回，自动弹出对话框
         handleOpenLockDialogIfNeeded(getIntent());
+
+        // 小组件点击带 open_function 跳指定功能页
+        handleOpenFunctionIfNeeded(getIntent());
         
         // 处理文件分享
         handleSharedFile(getIntent());
@@ -127,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         handleOpenLockDialogIfNeeded(intent);
+        handleOpenFunctionIfNeeded(intent);
         handleSharedFile(intent);
     }
 
@@ -160,7 +152,8 @@ public class MainActivity extends AppCompatActivity {
     private void handleOpenLockDialogIfNeeded(Intent intent) {
         if (intent != null) {
             if (intent.getBooleanExtra("OPEN_LOCK_DIALOG", false)) {
-                showLockTimerDialog();
+                // #10 并入 timer 页:悬浮窗菜单调整时长直接跳回本页,不再弹八档 dialog
+                navigateToTimerPage();
                 intent.removeExtra("OPEN_LOCK_DIALOG");
             } else if (intent.getBooleanExtra("NAVIGATE_TO_TIMER", false)) {
                 navigateToTimerPage();
@@ -249,16 +242,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * 小组件跳转：open_function 为 layoutId，导航到 nav_function 对应页
+     */
+    private void handleOpenFunctionIfNeeded(Intent intent) {
+        if (intent == null || !intent.hasExtra("open_function")) return;
+        int functionId = intent.getIntExtra("open_function", -1);
+        intent.removeExtra("open_function");
+        if (functionId == -1) return;
+        try {
+            androidx.navigation.NavController navController = androidx.navigation.Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            Bundle args = new Bundle();
+            args.putInt("function_id", functionId);
+            if (intent.getBooleanExtra("auto_time_sheet", false)) args.putBoolean("auto_time_sheet", true);
+            androidx.navigation.NavOptions navOptions = new androidx.navigation.NavOptions.Builder()
+                    .setLaunchSingleTop(true).build();
+            navController.navigate(R.id.nav_function, args, navOptions);
+        } catch (Exception ignored) {}
+    }
+
+    /**
      * 创建选项菜单
      * @param menu 菜单对象
      * @return 返回true表示菜单创建成功
      */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
     /**
      * 显示悬浮功能面板
      * 创建并显示包含各种功能按钮的悬浮面板
@@ -270,53 +276,6 @@ public class MainActivity extends AppCompatActivity {
      * 显示定时锁屏对话框
      * 提供预设时长选项和自定义时长功能
      */
-    public void showLockTimerDialog() {
-        final List<String> labels = new ArrayList<>();
-        final List<Long> delays = new ArrayList<>();
-        // 15-120 分钟，步长 15 分钟
-        for (int m = 15; m <= 120; m += 15) {
-            labels.add(m + " 分钟后");
-            delays.add(m * 60L * 1000L);
-        }
-        // 追加功能项
-        labels.add("自定义时长…");
-        labels.add("查看剩余时间");
-        labels.add("取消已设置的定时");
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("定时返回桌面")
-                .setItems(labels.toArray(new String[0]), (d, which) -> {
-                    if (which < delays.size()) {
-                        if (!ensureOverlayPermission()) return;
-                        ensureNotificationPermissionIfNeeded();
-                        if (!ensureExactAlarmPermission()) return;
-                        scheduleLock(delays.get(which));
-                    } else {
-                        int actionIndex = which - delays.size();
-                        if (actionIndex == 0) {
-                            // 自定义
-                            promptCustomMinutes();
-                        } else if (actionIndex == 1) {
-                            showRemainingTime();
-                        } else if (actionIndex == 2) {
-                            cancelScheduledLock();
-                        }
-                    }
-                })
-                .setNegativeButton("关闭", null)
-                .create();
-
-        dialog.show();
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(
-                    ContextCompat.getDrawable(this, R.drawable.shape_overlay_bg)
-            );
-        }
-
-        // 设置按钮文字颜色为黑色
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, android.R.color.black));
-    }
-
     /**
      * 在Home页面显示录音机功能
      * 导航到Home Fragment并显示录音机界面
@@ -469,62 +428,28 @@ public class MainActivity extends AppCompatActivity {
      * 提示用户输入自定义时长
      * 显示NumberPicker对话框让用户选择小时和分钟
      */
-    private void promptCustomMinutes() {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_time_wheel, null, false);
-        NumberPicker npHours = view.findViewById(R.id.np_hours);
-        NumberPicker npMinutes = view.findViewById(R.id.np_minutes);
-        npHours.setMinValue(0);
-        npHours.setMaxValue(12);
-        int lastH = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(KEY_LAST_HOURS, 0);
-        int lastM = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getInt(KEY_LAST_MINUTES, 25);
-        if (lastH < 0) lastH = 0; if (lastH > 12) lastH = 12;
-        if (lastM < 0) lastM = 0; if (lastM > 59) lastM = 59;
-        npHours.setValue(lastH);
-        npMinutes.setMinValue(0);
-        npMinutes.setMaxValue(59);
-        npMinutes.setValue(lastM);
-        npHours.setWrapSelectorWheel(true);
-        npMinutes.setWrapSelectorWheel(true);
-
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("自定义时长")
-                .setView(view)
-                .create();
-
-        View btnOk = view.findViewById(R.id.btn_ok);
-        View btnCancel = view.findViewById(R.id.btn_cancel);
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
-        btnOk.setOnClickListener(v -> {
-            int hours = npHours.getValue();
-            int minutes = npMinutes.getValue();
-            long totalMinutes = (long) hours * 60L + minutes;
-            if (totalMinutes <= 0) {
-                Toast.makeText(this, "请选择大于0的时长", Toast.LENGTH_LONG).show();
-                return;
-            }
-            if (!ensureOverlayPermission()) return;
-            ensureNotificationPermissionIfNeeded();
-            if (!ensureExactAlarmPermission()) return;
-            // 记忆用户上次选择
-            SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-            sp.edit().putInt(KEY_LAST_HOURS, hours).putInt(KEY_LAST_MINUTES, minutes).apply();
-            scheduleLock(totalMinutes * 60L * 1000L);
-            dialog.dismiss();
-        });
-
-        dialog.show();
-    }
-
     /**
      * 显示剩余时间
      * 显示当前定时锁屏的剩余时间
      */
+    /**
+     * 显示剩余时间:统一为对话框(与 timer 页 B-3 同语言)
+     */
     private void showRemainingTime() {
         long remaining = getRemainingMs();
         if (remaining <= 0) {
-            Toast.makeText(this, "当前没有正在进行的定时", Toast.LENGTH_LONG).show();
+            new AlertDialog.Builder(this, R.style.AppDialogStyle)
+                    .setTitle("剩余时间")
+                    .setMessage("当前没有正在进行的定时")
+                    .setPositiveButton("知道了", null)
+                    .show();
         } else {
-            Toast.makeText(this, "剩余：" + formatDuration(remaining) + "后回到主屏", Toast.LENGTH_LONG).show();
+            new AlertDialog.Builder(this, R.style.AppDialogStyle)
+                    .setTitle("剩余时间")
+                    .setMessage("剩余" + formatDuration(remaining) + "后回到主屏")
+                    .setNegativeButton("取消定时", (d, w) -> cancelScheduledLock())
+                    .setPositiveButton("知道了", null)
+                    .show();
         }
     }
 

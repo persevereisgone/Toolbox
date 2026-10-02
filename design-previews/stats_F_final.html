@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>统计F定稿 · 展开式FAB全表面（待审，审完写文档开工）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 20px;max-width:1240px;line-height:1.9}
+.sub b{color:#ffd479}
+.sec{font-size:15px;font-weight:800;margin:30px 0 6px;color:#ffd479;letter-spacing:1px}
+.sec2{font-size:13px;color:#9aa7bd;margin:0 0 14px;max-width:1240px;line-height:1.8}
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:700px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;position:relative;flex:none;background:#f6f8fc;color:#14181f}
+.scr{height:100%;overflow-y:auto;padding:14px 14px 100px}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:16px}.bar .x{color:#8c98ae;font-size:18px}
+.cap{font-size:11px;color:#8c98ae;margin:4px 0 10px}
+.pills{display:flex;gap:8px;overflow:hidden;margin-bottom:10px}
+.pill{flex:none;padding:10px 18px;border-radius:999px;background:#fff;border:1px solid #e7edf6;font-size:12px;font-weight:700}
+.pill.on{background:#14181f;color:#fff;border-color:#14181f}
+.searchrow{display:flex;gap:8px;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:8px}
+.inp{border:1px solid #e2e9f5;background:#fff;border-radius:12px;padding:11px 12px;font-size:13px;min-height:48px;color:#9aa7bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:none;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:800;min-height:48px}
+.pri{background:#427dff;color:#fff}.secb{background:#eef3fb;color:#14181f}.danb{background:#fff;color:#e15a5a;border:1px solid #f5d7d7}
+.txtdanger{display:block;width:100%;background:none;border:none;color:#e15a5a;font-size:13px;font-weight:700;padding:12px}
+.item{display:flex;align-items:center;gap:8px;border:1px solid #e7edf6;background:#fff;border-radius:12px;padding:6px 8px;margin-bottom:6px}
+.item.on{border-color:#427dff;background:#f2f6ff}
+.item.new{border-color:#427dff;box-shadow:0 0 0 3px rgba(66,125,255,.18)}
+.item b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item small{font-size:10px;color:#8c98ae;display:block}
+.qbtn{width:36px;height:36px;border-radius:9px;border:1px solid #e2e9f5;background:#f6f8fc;font-size:15px;font-weight:800;flex:none}
+.qnum{font-size:13px;font-weight:800;color:#335fd1;min-width:26px;text-align:center}
+.delx{color:#e15a5a;font-size:15px;font-weight:800;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex:none}
+.mut{font-size:11px;color:#8c98ae;line-height:1.7}
+.total{font-size:12px;font-weight:800;color:#335fd1;background:#eaf1ff;border-radius:999px;padding:5px 12px}
+/* FAB speed-dial:平时单＋，展开向左三键 */
+.fab{position:absolute;right:16px;bottom:24px;width:60px;height:60px;border-radius:50%;background:#427dff;color:#fff;font-size:32px;font-weight:300;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(66,125,255,.4)}
+.speed{position:absolute;right:88px;bottom:30px;display:flex;gap:10px;align-items:center}
+.speeditem{display:flex;flex-direction:column;align-items:center;gap:4px}
+.speedbtn{width:52px;height:52px;border-radius:50%;background:#fff;border:1px solid #e7edf6;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.14)}
+.speedtag{font-size:10px;font-weight:700;background:#14181f;color:#fff;border-radius:7px;padding:3px 8px;white-space:nowrap}
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:16px 20px 26px}
+.grab{width:40px;height:4px;border-radius:4px;background:#d5dce8;margin:0 auto 12px}
+.r2{display:flex;gap:10px;margin-top:14px}.r2>*{flex:1}
+.opt{display:flex;align-items:center;gap:12px;background:#f6f8fc;border-radius:12px;padding:14px;margin-top:8px;font-size:13px;font-weight:700}
+.opt small{display:block;font-weight:400;color:#8c98ae;font-size:11px}
+.opt .go{margin-left:auto;color:#c3ccd9}
+.err{background:#fdf0f0;border:1px solid #f5d7d7;border-radius:10px;padding:10px 12px;font-size:12px;color:#c04545;margin-top:6px}
+.empty{border:1px dashed #cfd8e6;border-radius:16px;padding:26px;text-align:center;margin-top:6px}
+.dlg{position:absolute;left:30px;right:30px;top:50%;transform:translateY(-50%);background:#fff;border-radius:18px;padding:20px}
+.dlg h4{font-size:15px}.dlg p{font-size:13px;color:#5b6472;margin:8px 0 14px;line-height:1.7}
+.box{width:22px;height:22px;border-radius:7px;flex:none;display:flex;align-items:center;justify-content:center}
+.n{max-width:1240px;color:#9aa7bd;font-size:13px;line-height:2.1;margin-top:20px}.n b{color:#fff}.n i{color:#7fe0a8;font-style:normal}
+</style></head><body>
+<h1>统计F定稿 · 展开式FAB全表面（10 帧）</h1>
+<div class="sub">按你定的：平时单悬浮＋ → 点开展开<b>新增/导入/导出</b>三键 → 全走<b>底部弹层</b>；<b>全屏入口删除</b>，主页直接滚动看全部；长摁多选在主页。共 <b>10 帧</b>，审完我写落地文档→你审→开工。</div>
+
+<div class="sec">主页（F-1 收起 / F-2 展开 / F-3 多选 / F-4 空态）</div>
+<div class="stage">
+<div><div class="tag"><b>F-1 主页·收起</b> <i>默认态</i> 组pills+搜索排序+全量滚动列表+单FAB</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div>
+<div class="pills" style="margin-top:10px"><span class="pill on">默认组</span><span class="pill">年货</span><span class="pill">露营</span><span class="pill">＋</span></div>
+<div class="searchrow"><div class="inp" style="flex:1;min-width:0">搜索物品名…</div><div class="inp" style="flex:none">数量▾</div></div>
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b><small>×24 · 点数量可改</small></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button><span class="delx">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b><small>×12</small></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button><span class="delx">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装</b><small>×8</small></div><button class="qbtn">−</button><span class="qnum">8</span><button class="qbtn">＋</button><span class="delx">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>泡面</b><small>×6</small></div><button class="qbtn">−</button><span class="qnum">6</span><button class="qbtn">＋</button><span class="delx">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>电池7号</b><small>×4</small></div><button class="qbtn">−</button><span class="qnum">4</span><button class="qbtn">＋</button><span class="delx">×</span></div>
+<div class="row" style="margin:8px 0"><span class="total">总计 56 · 7 件</span></div>
+<button class="txtdanger">一键清空当前组</button>
+</div><div class="fab">＋</div></div></div>
+<div><div class="tag"><b>F-2 FAB 展开</b> <i>点＋</i> 向左三键＋标签，点空白/返回收回</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim" style="background:rgba(10,15,25,.25)"></div>
+<div class="pills" style="margin-top:10px;position:relative"><span class="pill on">默认组</span><span class="pill">年货</span></div>
+<div class="item" style="position:relative"><div style="flex:1;min-width:0"><b>矿泉水</b></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button></div>
+<div class="speed"><div class="speeditem"><span class="speedbtn">＋</span><span class="speedtag">新增</span></div><div class="speeditem"><span class="speedbtn">⎘</span><span class="speedtag">导入</span></div><div class="speeditem"><span class="speedbtn">⎙</span><span class="speedtag">导出</span></div></div>
+</div><div class="fab">×</div></div></div>
+<div><div class="tag"><b>F-3 多选态</b> <i>长摁行</i> FAB 隐藏，底栏删除/取消</div><div class="phone"><div class="scr" style="padding-bottom:110px">
+<div class="bar"><span class="x">‹</span><b>已选 2 项 ✕</b></div>
+<div style="height:8px"></div>
+<div class="item on"><span class="box" style="background:#427dff;color:#fff;font-size:13px;font-weight:800">✓</span><div style="flex:1;min-width:0"><b>矿泉水</b></div></div>
+<div class="item on"><span class="box" style="background:#427dff;color:#fff;font-size:13px;font-weight:800">✓</span><div style="flex:1;min-width:0"><b>苹果</b></div></div>
+<div class="item"><span class="box" style="border:2px solid #c3ccd9"></span><div style="flex:1;min-width:0"><b>纸巾</b></div></div>
+<div class="mut">FAB 已隐藏 · 退出：✕/取消/返回/点空已选</div>
+</div><div class="sheet" style="padding:12px 16px 20px"><div class="r2" style="margin-top:0"><button class="btn secb">取消</button><button class="btn danb">删除所选 (2)</button></div></div></div></div>
+<div><div class="tag"><b>F-4 空态</b> 新组/搜空共用虚线框+FAB 脉冲提示</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div>
+<div class="pills" style="margin-top:10px"><span class="pill on">年货（空）</span><span class="pill">默认组</span></div>
+<div class="empty"><b style="font-size:14px">这个组还没有物品</b><div class="mut" style="margin-top:4px">点右下 ＋ 新增第一件</div></div>
+</div><div class="fab" style="box-shadow:0 0 0 8px rgba(66,125,255,.2),0 8px 20px rgba(66,125,255,.4)">＋</div></div></div>
+</div>
+
+<div class="sec">新增（F-5）· 导入（F-6 方式 / F-7 粘贴+报错）· 导出（F-8 方式 / F-9 成功）· 删除确认（F-10）</div>
+<div class="stage">
+<div><div class="tag"><b>F-5 新增底弹</b> <i>展开→新增</i> 名称+数量+添加，成功后滚到新行高亮</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="font-size:15px;text-align:center">新增物品</h4>
+<div class="inp" style="margin-top:10px">名称（长名字单行省略）</div>
+<div class="inp" style="margin-top:8px">数量，默认 1</div>
+<div class="r2"><button class="btn secb">取消</button><button class="btn pri">添加</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>F-6 导入方式</b> <i>展开→导入</i> 文件/粘贴二选一</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="font-size:15px;text-align:center">导入数据</h4>
+<div class="opt">📄<div>从文件导入<small>CSV / Excel，系统文件选择器</small></div><span class="go">›</span></div>
+<div class="opt">📋<div>粘贴文本导入<small>名称+数量，每行一件</small></div><span class="go">›</span></div>
+</div>
+</div></div></div>
+<div><div class="tag"><b>F-7 粘贴+报错</b> 大文本框+格式提示+逐行报错</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="font-size:15px;text-align:center">粘贴文本导入</h4>
+<div class="inp" style="margin-top:10px;min-height:96px;white-space:normal">矿泉水 24<br>苹果 12<br>可乐 -3 ← 数量非法</div>
+<div class="err">第 3 行：数量不能为负数，已跳过，其余 2 件已导入</div>
+<div class="r2"><button class="btn secb">取消</button><button class="btn pri">导入</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>F-8 导出方式</b> <i>展开→导出</i> 文件/文本二选一</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="font-size:15px;text-align:center">导出数据</h4>
+<div class="opt">📄<div>导出 CSV 文件<small>默认组_统计_时间戳.csv</small></div><span class="go">›</span></div>
+<div class="opt">📋<div>复制为文本<small>粘贴到微信/备忘录</small></div><span class="go">›</span></div>
+</div>
+</div></div></div>
+<div><div class="tag"><b>F-9 导出成功</b> 路径+分享/完成（分享唯一入口）</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div><div class="dim"></div>
+<div class="dlg"><h4>导出成功</h4><p>文件已保存到 Documents/Statistics/默认组_统计_…csv，是否立即分享？</p><div class="r2"><button class="btn secb">完成</button><button class="btn pri">分享</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>F-10 删除确认</b> danger 框列出名字</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>已选 2 项 ✕</b></div><div class="dim"></div>
+<div class="dlg"><h4>删除所选 2 个物品？</h4><p>矿泉水、苹果将被删除，此操作不可撤销。</p><div class="r2"><button class="btn secb">再想想</button><button class="btn danb">确认删除</button></div></div>
+</div></div></div>
+</div>
+
+<div class="n">我的补充建议（ functionality，不在你列的里面，实装时一并做，你拍板）：<br><b>① 搜索排序上主页</b> <i>强烈建议</i>——全屏删了，它里面的搜索+排序不能丢，F-1 已画（搜索框+数量▾），排序记忆 prefs；<br><b>② 多选态隐藏 FAB</b>——F-3 画了，避免 FAB 挡底栏；<br><b>③ 新增成功滚到新行+高亮一闪</b>——F-1 备注，列表长了不然找不到刚加的；<br><b>④ 展开态点空白/返回收回</b>——F-2 备注，scrim 点透收回；<br><b>⑤ 空态 FAB 脉冲</b>——F-4 画了，新组第一眼就知道点哪；<br><b>⑥ 组 pills 末尾＋进组管理</b>（新建/重命名/删组沿用原链路，不重画）。<br>实现改动：删全屏入口+dialog（maxVisible 恢复不限）、主页 RecyclerView 全量+搜索过滤、FAB speed-dial（stagger 展开）、底弹全套。确认 10 帧+6 条建议，我就写文档→你审→开工。</div>
+</body></html>

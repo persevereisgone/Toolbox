@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 悬浮窗主体:横向紧凑,小字,点按展开菜单 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/app_overlay_card_bg"
-    android:elevation="@dimen/elevation_lg"
+    android:elevation="@dimen/elevation_low"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="@dimen/space_sm">
+    android:paddingStart="@dimen/space_sm"
+    android:paddingTop="@dimen/space_xs"
+    android:paddingEnd="@dimen/space_sm"
+    android:paddingBottom="@dimen/space_xs">
+
+    <TextView
+        android:text="⏱"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_caption"
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/tv_countdown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="剩余 00:00"
+        android:layout_marginStart="@dimen/space_xxs"
+        android:text="00:00"
         android:textColor="@color/app_text_primary"
         android:textSize="@dimen/text_caption"
         android:textStyle="bold" />

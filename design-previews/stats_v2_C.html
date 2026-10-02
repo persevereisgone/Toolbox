@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C版 · 分段磁贴（统计主页重排）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 20px;max-width:800px;line-height:1.9}
+.sub b{color:#ffd479}
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:700px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;position:relative;flex:none;background:#f6f8fc;color:#14181f}
+.scr{height:100%;overflow-y:auto;padding:14px 14px 28px}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:16px}.bar .x{color:#8c98ae;font-size:18px}
+.cap{font-size:11px;color:#8c98ae;margin:4px 0 10px}
+.card{border:1px solid #e7edf6;border-radius:16px;padding:12px;margin-bottom:10px;background:#fff}
+.row{display:flex;align-items:center;gap:8px}.row>.btn{flex:none;width:auto}
+.inp{border:1px solid #e2e9f5;border-radius:12px;padding:11px 12px;font-size:13px;min-height:48px;color:#9aa7bd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{border:none;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:800;min-height:48px}
+.pri{background:#427dff;color:#fff}
+.item{display:flex;align-items:center;gap:8px;border:1px solid #e7edf6;border-radius:12px;padding:6px 8px;margin-bottom:6px;background:#fff}
+.item b{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item small{font-size:10px;color:#8c98ae;display:block}
+.qbtn{width:36px;height:36px;border-radius:9px;border:1px solid #e2e9f5;background:#f6f8fc;font-size:15px;font-weight:800;flex:none}
+.qnum{font-size:13px;font-weight:800;color:#335fd1;min-width:26px;text-align:center}
+.del{color:#e15a5a;font-size:15px;font-weight:800;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex:none}
+.mut{font-size:11px;color:#8c98ae;line-height:1.7}
+.total{font-size:12px;font-weight:800;color:#335fd1;background:#eaf1ff;border-radius:999px;padding:5px 12px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tilebtn{background:#fff;border:1px solid #e7edf6;border-radius:12px;padding:12px;font-size:12px;font-weight:700;text-align:center;min-height:48px;display:flex;align-items:center;justify-content:center}
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;height:86%;background:#f6f8fc;border-radius:22px 22px 0 0;padding:12px 16px 20px;display:flex;flex-direction:column}
+.grab{width:40px;height:4px;border-radius:4px;background:#d5dce8;margin:0 auto 10px;flex:none}
+.sheet .list{flex:1;overflow:hidden}
+.n{max-width:800px;color:#9aa7bd;font-size:13px;line-height:2;margin-top:20px}.n b{color:#fff}
+</style></head><body>
+<h1>C版 · 分段磁贴</h1>
+<div class="sub">操作全部沉底：<b>标题即组切换器</b>（点标题换组/管理），底部 <b>2×2 小磁贴</b>全在拇指区，列表 5 行。另有 <b>A版</b>（紧凑卡片）/ <b>B版</b>（工具栏顶置）两个文件，对比着看。</div>
+<div class="stage">
+<div><div class="tag"><b>C-1 主页</b> 标题即组切换器，底部四磁贴</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>默认组 ▾</b></div><div class="cap">物品统计 · 长摁多选 · 点标题换组/管理</div>
+<div class="card"><div class="row"><div class="inp" style="flex:2.2;min-width:0">名称</div><div class="inp" style="flex:1;min-width:0">数量</div><button class="btn pri">添加</button></div></div>
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b><small>×24</small></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b><small>×12</small></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>纸巾抽纸大包装</b><small>×8</small></div><button class="qbtn">−</button><span class="qnum">8</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>泡面</b><small>×6</small></div><button class="qbtn">−</button><span class="qnum">6</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="item"><div style="flex:1;min-width:0"><b>电池7号</b><small>×4</small></div><button class="qbtn">−</button><span class="qnum">4</span><button class="qbtn">＋</button><span class="del">×</span></div>
+<div class="row" style="margin:6px 0"><span class="total">总计 54 · 还有 2 件 ▸</span></div>
+<div class="seg"><div class="tilebtn">⎘ 导入</div><div class="tilebtn">⎙ 导出</div><div class="tilebtn">⛶ 全屏</div><div class="tilebtn" style="color:#e15a5a">清空</div></div>
+</div></div></div>
+<div><div class="tag"><b>C-2 全屏底弹</b> 86% 高，三版统一</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>默认组 ▾</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div>
+<div class="row"><b style="font-size:14px">全部物品 · 7</b><span class="total" style="margin-left:auto">总计 58</span></div>
+<div class="row" style="margin-top:8px"><div class="inp" style="flex:1;min-width:0">搜索物品名…</div><div class="inp" style="flex:none">数量▾</div></div>
+<div class="list" style="margin-top:8px">
+<div class="item"><div style="flex:1;min-width:0"><b>矿泉水</b></div><button class="qbtn">−</button><span class="qnum">24</span><button class="qbtn">＋</button></div>
+<div class="item"><div style="flex:1;min-width:0"><b>苹果</b></div><button class="qbtn">−</button><span class="qnum">12</span><button class="qbtn">＋</button></div>
+<div class="mut">↓ 上滑查看更多 · 长摁任意行进多选</div>
+</div>
+</div>
+</div></div></div>
+</div>
+<div class="n">C版特点：<b>操作最近手</b>（四磁贴全在底部，1 天），标题换组要学一下。选定这版后，我再出 <b>3 套细化图</b>（磁贴样式/深色/空态变体）给你定稿。</div>
+</body></html>

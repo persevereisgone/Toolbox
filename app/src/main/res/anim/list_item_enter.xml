@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/decelerate_cubic">
+    <!-- P3: 列表进入只做 alpha+位移,不做宽高动画 -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="@integer/motion_enter" />
+    <translate
+        android:fromYDelta="16dp"
+        android:toYDelta="0"
+        android:duration="@integer/motion_enter" />
+</set>

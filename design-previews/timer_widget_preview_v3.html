@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>timer 2x1 v3 真实尺寸三套</title>
+<style>
+*{box-sizing:border-box}body{font-family:system-ui;background:#1c1c1e;color:#fff;padding:16px;margin:0}
+p{color:#aaa;font-size:13px}.grid{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+/* 真实2x1比例: 宽:高约 4:1, 高度锁死56px模拟40dp, 宽度294px, 内部不换行 */
+.w{width:294px;height:56px;border-radius:14px;padding:4px 6px;display:flex;align-items:center;gap:6px;overflow:hidden;white-space:nowrap}
+.w .t{font-size:11px;font-weight:700;line-height:1.1}.w .s{font-size:9px;opacity:.65;line-height:1.1}
+.b{width:34px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+.light{background:#fff;color:#111;border:1px solid #E0EAF5}.light .b{background:#0B57D0;color:#fff}
+.capsule{background:#EAF1FB;color:#111;border-radius:28px}.capsule .b{background:#fff;border:1px solid #C9D8F0}
+.dark{background:#1B2538;color:#fff}.dark .b{background:#2C3A55;color:#fff}
+.bar{height:4px;border-radius:2px;background:#e3e3e3;margin-top:3px}.bar>i{display:block;height:100%;border-radius:2px;background:#0B57D0}
+.dark .bar{background:#333}.dark .bar>i{background:#7AA7FF}
+.mm{font-family:monospace;font-size:15px;font-weight:800}
+.card{background:#2c2c2e;border-radius:12px;padding:10px;margin:0 0 8px}
+h3{margin:14px 0 6px}
+</style>
+<p>按真实2×1(约110×40dp,高只有一行)重排:padding 4dp、按钮34×28dp、标题11sp/副9sp/剩余15sp、全部singleLine不换行。三套都是「未设置=预设 / 已设置=极简」。</p>
+<div class="card"><h3>A · 标准M3(推荐,默认白底与闹钟/todo一致)</h3><div class="grid">
+<div><div class="w light"><div style="font-size:18px">⏱</div><div><div class="t">定时回桌面</div><div class="s">没定时·点数字即设</div></div><div style="flex:1"></div><div class="b">15</div><div class="b">30</div><div class="b">60</div></div><p>未设置</p></div>
+<div><div class="w light"><div style="font-size:18px">⏱</div><div style="flex:1"><div class="mm">24:36</div><div class="bar"><i style="width:60%"></i></div></div><div class="b" style="background:#eee;color:#111">✕</div></div><p>已设置:剩余+进度+取消</p></div>
+</div></div>
+<div class="card"><h3>B · 紧凑胶囊(按钮最多最透气,自定入口放标题旁)</h3><div class="grid">
+<div><div class="w capsule"><div style="font-size:16px">⏱</div><div class="b">15</div><div class="b">30</div><div class="b">60</div><div class="b">+</div><div class="s">没定时</div></div><p>未设置:4键一排,+进自定</p></div>
+<div><div class="w capsule"><div style="font-size:16px">⏱</div><div class="mm">24:36</div><div style="flex:1" class="bar"><i style="width:60%"></i></div><div class="b">✕</div></div><p>已设置:剩余+条+取消</p></div>
+</div></div>
+<div class="card"><h3>C · 深色沉浸(夜间弱打扰,对比度最高)</h3><div class="grid">
+<div><div class="w dark"><div style="font-size:18px">⏱</div><div><div class="t">定时回桌面</div><div class="s">没定时·点即设</div></div><div style="flex:1"></div><div class="b">15</div><div class="b">30</div><div class="b">60</div></div><p>未设置</p></div>
+<div><div class="w dark"><div style="font-size:18px">⏱</div><div style="flex:1"><div class="mm">24:36</div><div class="bar"><i style="width:60%"></i></div></div><div class="b">✕</div></div><p>已设置</p></div>
+</div></div>
+<p>代码已同步改小:widget_timer_home.xml padding 8→4dp,三键/取消键44×36→34×28dp(minWidth/Height同步),标题12→11sp单行、副10→9sp单行、剩余18→15sp单行,图标22→18sp感觉。这样60键不再被裁,高度不再撑高。推荐直接用A套。</p>

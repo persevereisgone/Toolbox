@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:gravity="center"
+    android:background="@color/app_primary"
+    android:padding="@dimen/space_3xl">
+
+    <TextView
+        android:id="@+id/tv_ring_badge"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:letterSpacing="0.3"
+        android:text="@string/alarm_ring_badge"
+        android:textAppearance="@style/TextAppearance.Toolbox.Caption"
+        android:textColor="@color/app_text_inverse_secondary" />
+
+    <TextView
+        android:id="@+id/tv_ring_time"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:fontFamily="monospace"
+        android:textColor="@color/app_text_inverse"
+        android:textSize="@dimen/text_hero_lg"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_ring_status"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:gravity="center"
+        android:text="@string/alarm_ring_ringing"
+        android:textAppearance="@style/TextAppearance.Toolbox.Body"
+        android:textColor="@color/app_text_inverse_secondary" />
+
+    <Button
+        android:id="@+id/btn_ring_close"
+        android:layout_width="match_parent" android:layout_height="@dimen/button_height_lg"
+        android:layout_marginTop="@dimen/space_3xl"
+        android:background="@drawable/bg_alarm_solid_white"
+        android:text="@string/alarm_btn_close"
+        android:textAppearance="@style/TextAppearance.Toolbox.Button"
+        android:textColor="@color/app_surface_dark" />
+
+    <Button
+        android:id="@+id/btn_ring_snooze"
+        android:layout_width="match_parent" android:layout_height="@dimen/button_height"
+        android:layout_marginTop="@dimen/space_sm"
+        android:background="@drawable/bg_alarm_ghost_white"
+        android:text="@string/alarm_btn_snooze"
+        android:textAppearance="@style/TextAppearance.Toolbox.Button"
+        android:textColor="@color/app_text_inverse" />
+</LinearLayout>

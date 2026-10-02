@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- P1 动效 token: enter 200 / exit 120 / stagger 30, 仅 transform/alpha -->
+    <integer name="motion_enter">200</integer>
+    <integer name="motion_exit">120</integer>
+    <integer name="motion_stagger">30</integer>
+    <integer name="motion_press_scale_duration">100</integer>
+</resources>

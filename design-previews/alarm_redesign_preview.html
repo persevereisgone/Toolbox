@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>闹钟 / 倒计时 redesign 预览（三版·同风格拼摆放）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Noto Sans SC", sans-serif; background: #eef1f6; padding: 24px; color: #0f172a; }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .sub { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+  .ver { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 28px; }
+  .ver h2 { font-size: 17px; margin-bottom: 4px; }
+  .diff { font-size: 13px; background: #f0f5ff; border-radius: 10px; padding: 8px 12px; margin: 8px 0 12px; color: #335fd1; line-height: 1.6; }
+  .ver .meta { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .ver .tag { display: inline-block; font-size: 11px; background: #eaf1ff; color: #335fd1; border-radius: 999px; padding: 2px 10px; margin: 2px 4px 12px 0; }
+  .frames { display: flex; gap: 16px; flex-wrap: wrap; }
+  .phone { width: 300px; border-radius: 28px; overflow: hidden; border: 1px solid #e0eaf5; background: #fff; }
+  .notch { height: 26px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #94a3b8; }
+  .screen { padding: 16px; min-height: 560px; }
+  .cap { font-size: 11px; color: #64748b; margin-bottom: 8px; }
+  .ttl { font-size: 18px; font-weight: 700; }
+  .desc { font-size: 13px; color: #64748b; margin: 4px 0 16px; line-height: 1.5; }
+  .card { background: #fff; border: 1px solid #e0eaf5; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+  .card h3 { font-size: 14px; margin-bottom: 8px; }
+  .big-time { font-size: 40px; font-weight: 700; font-family: monospace; text-align: center; letter-spacing: 2px; }
+  .row { display: flex; gap: 8px; margin-top: 12px; }
+  .btn { flex: 1; height: 48px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+  .btn-p { background: #427dff; color: #fff; }
+  .btn-s { background: #f0f5ff; color: #335fd1; }
+  .btn-d { background: #fff; color: #e15a5a; border: 1px solid #ffecec; }
+  .btn-sm { height: 40px; font-size: 13px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chips.slide { flex-wrap: nowrap; overflow: hidden; }
+  .chip { height: 40px; padding: 0 16px; border-radius: 999px; background: #f0f5ff; color: #335fd1; font-size: 14px; display: flex; align-items: center; white-space: nowrap; }
+  .chip.on { background: #427dff; color: #fff; }
+  .inp { height: 48px; border: 1px solid #e0eaf5; border-radius: 12px; padding: 0 12px; font-size: 15px; width: 100%; margin-top: 8px; }
+  .inp-row { display: flex; gap: 8px; } .inp-row .inp { margin-top: 0; flex: 1; } .inp-row .btn { flex: 0 0 120px; }
+  .lbl { font-size: 12px; color: #64748b; margin-top: 12px; }
+  .status { text-align: center; font-size: 14px; padding: 10px; border-radius: 12px; background: #f8fbff; color: #335fd1; margin-bottom: 12px; }
+  .status-line { display: flex; align-items: center; gap: 8px; background: #f8fbff; border-radius: 12px; padding: 8px 8px 8px 14px; margin-bottom: 12px; }
+  .status-line .t { flex: 1; font-size: 15px; font-weight: 700; font-family: monospace; }
+  .status-line .s { font-size: 12px; color: #64748b; display: block; font-family: sans-serif; font-weight: 400; }
+  .hero-strip { background: #427dff; color: #fff; border-radius: 16px; padding: 18px 16px; margin-bottom: 12px; text-align: center; }
+  .hero-strip .big-time { color: #fff; font-size: 48px; }
+  .hero-strip p { font-size: 13px; opacity: .9; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .grid2 .chip { justify-content: center; }
+  .sheet { background: #fff; border: 1px solid #e0eaf5; border-radius: 20px 20px 0 0; padding: 12px 16px 20px; margin: 24px -16px -16px; }
+  .grab { width: 40px; height: 4px; border-radius: 2px; background: #cbd5e1; margin: 0 auto 12px; }
+  .ring { text-align: center; padding: 32px 0; }
+  .ring .bell { font-size: 13px; color: #64748b; letter-spacing: 4px; }
+  .widget { border: 2px dashed #94a3b8; border-radius: 16px; padding: 12px; margin-top: 8px; }
+  .widget .wttl { font-size: 11px; color: #64748b; margin-bottom: 6px; }
+  .note { font-size: 12px; color: #64748b; line-height: 1.6; margin-top: 8px; }
+  .fold { display: flex; align-items: center; gap: 8px; padding: 12px 0; font-size: 14px; font-weight: 600; }
+  .fold .chev { margin-left: auto; color: #94a3b8; }
+</style>
+</head>
+<body>
+<h1>闹钟 / 倒计时 redesign 预览</h1>
+<p class="sub">规则已更新：风格已定（首页 B 语言：白底白卡/48dp/5档字阶），三版只拼<strong>版式与组件大小位置</strong> ｜ 10 项功能全覆盖：主页面 / 空状态 / 权限底部弹窗 / 响铃页 / 通知 / 2×2 组件</p>
+
+<!-- ============ A 版：双卡并列 ============ -->
+<div class="ver">
+  <h2>A 版 · 双卡并列（改动最小）</h2>
+  <p class="meta">开发量：小 ｜ 信息密度：中 ｜ 上手：与旧版最接近</p>
+  <div class="diff">摆放差异：状态独立成卡置顶；倒计时与指定时刻<strong>上下双卡并列</strong>，两套开始键各自全宽；取消键 danger 全宽放在状态卡内。</div>
+  <span class="tag">状态卡置顶</span><span class="tag">双卡上下排</span><span class="tag">全宽开始键×2</span>
+  <div class="frames">
+    <div class="phone"><div class="notch">主页面（有闹钟）</div><div class="screen">
+      <div class="cap">帧1 · 主页面</div>
+      <div class="ttl">闹钟</div><p class="desc">定一个提醒，到时响铃震动，10 秒无人理自动停</p>
+      <div class="card"><h3>当前状态</h3><div class="big-time" style="font-size:36px">02:14:05</div>
+      <p class="desc" style="text-align:center;margin:4px 0 0">今日 09:30 · 倒计时 30 秒</p>
+      <div class="row"><button class="btn btn-d">取消闹钟</button></div></div>
+      <div class="card"><h3>倒计时</h3><div class="chips"><span class="chip on">10 秒</span><span class="chip">1 分钟</span><span class="chip">5 分钟</span><span class="chip">10 分钟</span></div>
+        <div class="lbl">自定义（秒）</div><input class="inp" placeholder="输入秒数" />
+        <div class="row"><button class="btn btn-p">开始倒计时</button></div></div>
+      <div class="card"><h3>指定时刻</h3><p class="note">原生 TimePicker 滚轮；已过今天自动顺延明天</p>
+        <div class="row"><button class="btn btn-s">设为该时刻</button></div></div>
+    </div></div>
+    <div class="phone"><div class="notch">空状态 + 权限弹窗</div><div class="screen">
+      <div class="cap">帧2 · 空状态 / 权限底部弹窗</div>
+      <div class="ttl">闹钟</div><p class="desc">定一个提醒，到时响铃震动，10 秒无人理自动停</p>
+      <div class="status">当前无闹钟，下方定一个吧</div>
+      <div class="sheet"><div class="grab"></div><h3 style="font-size:14px;margin-bottom:6px">需要精准闹钟权限</h3>
+      <p class="note">Android 12+ 必须允许，否则到时不响。拒绝后状态卡常驻提示条，点提示条重进设置。</p>
+      <div class="row"><button class="btn btn-p">去设置</button><button class="btn btn-s">稍后</button></div></div>
+    </div></div>
+    <div class="phone"><div class="notch">响铃页 + 通知 + 组件</div><div class="screen">
+      <div class="cap">帧3 · 响铃页 / 帧4 · 通知 / 帧5 · 2×2 组件</div>
+      <div class="ring"><div class="bell">ALARM · 全屏亮屏</div><div class="big-time">09:30</div><p class="desc">响铃中 · 10 秒后自动关闭</p>
+      <div class="row"><button class="btn btn-p">关闭</button><button class="btn btn-s">再响 5 分钟</button></div></div>
+      <div class="card"><h3>通知栏</h3><p class="note">高优先级 + 全屏 intent｜[关闭]［再响5分钟］｜关闭后即撤</p></div>
+      <div class="widget"><div class="wttl">2×2 小组件（布局不变）</div><div class="big-time" style="font-size:28px">02:14</div>
+      <div class="row"><button class="btn btn-p btn-sm">10秒</button><button class="btn btn-s btn-sm">取消</button><button class="btn btn-s btn-sm">设置</button></div></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ============ B 版：单列紧凑 ============ -->
+<div class="ver">
+  <h2>B 版 · 单列紧凑（默认推荐）</h2>
+  <p class="meta">开发量：中 ｜ 信息密度：最高 ｜ 上手：高频操作全在一屏</p>
+  <div class="diff">摆放差异：状态压缩成<strong>行内条</strong>（剩余时间＋取消小键同行）；预设改<strong>横滑一行</strong>；自定义输入与开始键<strong>同行</strong>；指定时刻收进<strong>折叠卡</strong>，点开才是 TimePicker。</div>
+  <span class="tag">状态行内化</span><span class="tag">预设横滑</span><span class="tag">输入+开始同行</span><span class="tag">时刻折叠卡</span>
+  <div class="frames">
+    <div class="phone"><div class="notch">主页面（有闹钟）</div><div class="screen">
+      <div class="cap">帧1 · 主页面</div>
+      <div class="ttl">闹钟</div><p class="desc">定一个提醒，到时响铃震动，10 秒无人理自动停</p>
+      <div class="status-line"><div class="t">02:14:05<span class="s">今日 09:30 · 倒计时 30 秒</span></div><button class="btn btn-d btn-sm" style="flex:0 0 84px">取消</button></div>
+      <div class="card"><h3>倒计时</h3><div class="chips slide"><span class="chip on">10秒</span><span class="chip">1分</span><span class="chip">5分</span><span class="chip">10分</span><span class="chip">30分 ›</span></div>
+        <div class="lbl">自定义（秒）</div><div class="inp-row"><input class="inp" placeholder="秒数" /><button class="btn btn-p">开始</button></div></div>
+      <div class="card"><div class="fold">指定时刻<span class="chev">›</span></div>
+        <p class="note">展开后：TimePicker 滚轮 +［设为该时刻］；已过今天顺延明天</p></div>
+    </div></div>
+    <div class="phone"><div class="notch">空状态 + 权限弹窗</div><div class="screen">
+      <div class="cap">帧2 · 空状态 / 权限底部弹窗</div>
+      <div class="ttl">闹钟</div><p class="desc">定一个提醒，到时响铃震动，10 秒无人理自动停</p>
+      <div class="status">当前无闹钟，点一个预设即开始</div>
+      <div class="card"><h3>倒计时</h3><div class="chips slide"><span class="chip">10秒</span><span class="chip">1分</span><span class="chip">5分</span><span class="chip">10分 ›</span></div></div>
+      <div class="sheet"><div class="grab"></div><h3 style="font-size:14px;margin-bottom:6px">需要精准闹钟权限</h3>
+      <p class="note">首次点开始/设时刻时弹出；拒绝后状态行内嵌提示"去设置"，不另占卡片。</p>
+      <div class="row"><button class="btn btn-p">去设置</button><button class="btn btn-s">稍后</button></div></div>
+    </div></div>
+    <div class="phone"><div class="notch">响铃页 + 通知 + 组件</div><div class="screen">
+      <div class="cap">帧3 · 响铃页 / 帧4 · 通知 / 帧5 · 2×2 组件</div>
+      <div class="card"><div class="ring" style="padding:12px 0"><div class="bell">ALARM · 全屏亮屏</div><div class="big-time">09:30</div>
+      <p class="desc">响铃中 · 10 秒后自动关闭</p>
+      <div class="row"><button class="btn btn-p">关闭</button><button class="btn btn-s">再响 5 分钟</button></div></div></div>
+      <div class="card"><h3>通知栏</h3><p class="note">同 A 版</p></div>
+      <div class="widget"><div class="wttl">2×2 小组件（布局不变）</div><div class="big-time" style="font-size:28px">02:14</div>
+      <div class="row"><button class="btn btn-p btn-sm">10秒</button><button class="btn btn-s btn-sm">取消</button><button class="btn btn-s btn-sm">设置</button></div></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ============ C 版：分段操作区 ============ -->
+<div class="ver">
+  <h2>C 版 · 状态 hero + 底部操作区</h2>
+  <p class="meta">开发量：中 ｜ 信息密度：中 ｜ 上手：状态一眼可见，设置沉底</p>
+  <div class="diff">摆放差异：状态放大成<strong>顶部 hero 条</strong>（取消键收进 hero 右下小键）；操作区沉底：预设改<strong>两列宫格大键</strong>；自定义与指定时刻合并为<strong>底部设置区</strong>，时刻走 bottom-sheet 选完回填。</div>
+  <span class="tag">hero 状态条</span><span class="tag">预设宫格</span><span class="tag">设置沉底/弹窗选时刻</span>
+  <div class="frames">
+    <div class="phone"><div class="notch">主页面（有闹钟）</div><div class="screen">
+      <div class="cap">帧1 · 主页面</div>
+      <div class="ttl">闹钟</div><p class="desc">定一个提醒，到时响铃震动，10 秒无人理自动停</p>
+      <div class="hero-strip"><div class="big-time">02:14</div><p>今日 09:30 · 倒计时 30 秒</p>
+        <div class="row"><button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff">取消闹钟</button></div></div>
+      <div class="card"><h3>一键定时</h3><div class="grid2"><span class="chip">10 秒</span><span class="chip">1 分钟</span><span class="chip">5 分钟</span><span class="chip">10 分钟</span></div></div>
+      <div class="card"><h3>更多设置</h3>
+        <div class="inp-row"><input class="inp" placeholder="自定义秒数" /><button class="btn btn-p">开始</button></div>
+        <div class="row"><button class="btn btn-s">选指定时刻…</button></div>
+        <p class="note">点"选指定时刻"弹出 bottom-sheet（滚轮+确定），确定后回填 hero 条</p></div>
+    </div></div>
+    <div class="phone"><div class="notch">空状态 + 时刻弹窗 + 权限</div><div class="screen">
+      <div class="cap">帧2 · 空状态 / 时刻 bottom-sheet / 权限弹窗</div>
+      <div class="ttl">闹钟</div><p class="desc">定一个提醒，到时响铃震动，10 秒无人理自动停</p>
+      <div class="hero-strip" style="background:#f0f5ff"><div class="big-time" style="color:#335fd1;font-size:32px">--:--</div><p style="color:#64748b">当前无闹钟，下方点一个即开始</p></div>
+      <div class="sheet"><div class="grab"></div><h3 style="font-size:14px;margin-bottom:6px">选择时刻</h3>
+      <p class="note">TimePicker 滚轮（09:30）｜已过今天顺延明天</p>
+      <div class="row"><button class="btn btn-p">确定</button><button class="btn btn-s">取消</button></div></div>
+      <p class="note" style="margin-top:12px">权限弹窗：与 A/B 同一样式，首次设置时弹出，拒绝后 hero 条内嵌"去设置"。</p>
+    </div></div>
+    <div class="phone"><div class="notch">响铃页 + 通知 + 组件</div><div class="screen">
+      <div class="cap">帧3 · 响铃页 / 帧4 · 通知 / 帧5 · 2×2 组件</div>
+      <div class="hero-strip"><div class="bell" style="font-size:12px;letter-spacing:4px;opacity:.8">ALARM · 全屏亮屏</div><div class="big-time">09:30</div><p>响铃中 · 10 秒后自动关闭</p>
+      <div class="row"><button class="btn btn-sm" style="background:#fff;color:#427dff">关闭</button><button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff">再响 5 分钟</button></div></div>
+      <div class="card"><h3>通知栏</h3><p class="note">同 A 版</p></div>
+      <div class="widget"><div class="wttl">2×2 小组件（布局不变）</div><div class="big-time" style="font-size:28px">02:14</div>
+      <div class="row"><button class="btn btn-p btn-sm">10秒</button><button class="btn btn-s btn-sm">取消</button><button class="btn btn-s btn-sm">设置</button></div></div>
+    </div></div>
+  </div>
+</div>
+
+<p class="sub">第一道审核门：三版同风格，只差摆放。请定一版（A/B/C）＋确认 10 项功能无遗漏，确认后我写 design-docs/alarm-redesign.md，文档评审通过才动 app/ 代码。</p>
+</body>
+</html>

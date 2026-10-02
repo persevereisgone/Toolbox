@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Toolbox 功能页 redesign - B 风格全套 v2（功能零丢失）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px} .sub{color:#9aa7bd;font-size:13px;margin:6px 0 24px;max-width:1150px;line-height:1.8}
+.sub b{color:#ffd479}
+.row{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start}
+.tag{font-size:12px;font-weight:700;color:#9aa7bd;margin:0 0 10px 4px;letter-spacing:1px;max-width:320px;line-height:1.7}
+.tag b{color:#fff}
+.phone{width:320px;border-radius:34px;overflow:hidden;border:1px solid #2a3550;background:#f6f8fc;color:#14181f}
+.scr{padding:18px 18px 24px;min-height:560px;max-height:640px;overflow:hidden}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:17px}.bar .x{color:#8c98ae;font-size:18px}.bar .r{margin-left:auto;font-size:12px;font-weight:700;color:#3c73f0;background:#eaf1ff;border-radius:999px;padding:6px 12px}
+.hero{background:linear-gradient(155deg,#3f8cff,#6f67ff);border-radius:18px;padding:16px;color:#fff;margin-bottom:12px}
+.hero .pill{display:inline-block;background:rgba(255,255,255,.22);border-radius:999px;font-size:10px;font-weight:800;letter-spacing:1px;padding:3px 10px}
+.hero h2{font-size:22px;margin-top:10px}.hero p{font-size:12px;color:#d6e4f7;margin-top:6px;line-height:1.6}
+.desc{font-size:12px;color:#8c98ae;margin:6px 0 12px;line-height:1.6}
+.search{background:#fff;border:1px solid #e2e9f5;border-radius:999px;padding:11px 16px;font-size:13px;color:#9aa7bd;margin-bottom:12px}
+.card{background:#fff;border:1px solid #e7edf6;border-radius:18px;padding:16px;margin-bottom:12px}
+.card h4{font-size:14px;margin-bottom:8px}
+.item{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e7edf6;border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.item b{font-size:14px;display:block}.item small{font-size:11px;color:#8c98ae}
+.go{margin-left:auto;color:#c3ccd9;font-size:18px}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:800;min-height:48px}
+.pri{background:#427dff;color:#fff}.sec{background:#eef3fb;color:#14181f}.dan{background:#fff;color:#e15a5a;border:1px solid #f5d7d7}
+.inp{background:#fff;border:1px solid #e2e9f5;border-radius:14px;padding:13px 14px;font-size:14px;min-height:48px;color:#9aa7bd}
+.big{font-size:40px;font-weight:800;text-align:center;letter-spacing:2px;margin:6px 0}
+.center{text-align:center}.mut{font-size:12px;color:#8c98ae;line-height:1.7}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs span{flex:1;text-align:center;font-size:12px;font-weight:700;padding:10px;border-radius:999px;background:#eef3fb;color:#5b6472}.tabs span.on{background:#14181f;color:#fff}
+.empty{border:1px dashed #c9d4e6;border-radius:16px;padding:22px 16px;text-align:center;color:#8c98ae;font-size:12px;line-height:1.8;margin-bottom:12px}
+.empty b{display:block;color:#14181f;font-size:14px;margin-bottom:4px}
+.n{font-size:12px;color:#8c98ae;text-align:center;margin-top:10px;line-height:1.7}
+.n b{color:#3c73f0}
+.sw{margin-left:auto;width:46px;height:27px;border-radius:999px;background:#427dff;position:relative;flex:none}.sw:after{content:"";position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#fff}
+.row2{display:flex;gap:8px}.row2>*{flex:1}
+.spin{background:#fff;border:1px solid #e2e9f5;border-radius:14px;padding:13px 14px;font-size:13px;flex:1;color:#14181f;min-height:48px}
+.lvl{margin-top:10px;background:#eef3fb;border-radius:14px;padding:10px 14px;font-size:11px;color:#5b6472;line-height:1.8}
+.lvl b{color:#14181f}
+.sub2{margin-top:10px;border-top:1px dashed #d5dce8;padding-top:10px}
+.sub2 h5{font-size:12px;margin-bottom:8px;color:#3c73f0}
+</style></head><body>
+<h1>Toolbox 功能页 redesign · B 风格 v2（功能零丢失 · 多级进入）</h1>
+<div class="sub">v1 被指出丢功能，这一版按每个 <b>function_*.xml 原布局逐项核对</b>，丢的全部补回。原则：<b>一屏放不下就多级进入</b>（二级页/对话框/抽屉），但每级入口必须在新 UI 里一眼能找到，下面每个手机框下方都标了<b>功能清单对照</b>。风格仍是 B（白底白卡/48dp/5 档字阶）。</div>
+<div class="row">
+
+<div><div class="tag"><b>1 计时器 timer</b> · 清单：状态卡+剩余大字 / 6 预设(15/30/45/60/90/120) / 自动锁屏开关+说明 / 自定义时+分+设置 / 取消定时+刷新状态 / 底部说明</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b><span class="r">悬浮窗开</span></div>
+<div class="card"><h4>当前状态</h4><div class="center mut">当前没有正在进行的定时</div><div class="big" style="display:none">12:30</div></div>
+<div class="card"><h4>快速设置</h4><div class="tabs"><span>15分</span><span>30分</span><span>45分</span></div><div class="tabs"><span>1小时</span><span>1.5小时</span><span>2小时</span></div></div>
+<div class="card"><h4>定时结束后自动锁屏</h4><div class="item" style="margin:0;border:none;padding:4px 0"><div style="font-size:13px">先回桌面再锁屏</div><div class="sw"></div></div><div class="mut">开启后定时结束时先返回桌面然后自动锁定屏幕</div></div>
+<div class="card"><h4>自定义时长</h4><div class="row2"><div class="inp">小时</div><div class="inp">分钟</div><button class="btn pri">设置</button></div></div>
+<div class="row2"><button class="btn sec" style="color:#e15a5a">取消定时</button><button class="btn pri">刷新状态</button></div>
+<div class="n">底部说明：设置后到点自动回桌面并显示倒计时悬浮窗</div>
+</div></div></div>
+
+<div><div class="tag"><b>2 抽奖 lottery</b> · 清单：返回键 / hero / 抽奖组下拉+管理 / 转盘+指针 / 结果区(抽后才出现) / 开始+重置 / 管理抽奖内容 / 当前组信息</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>转盘抽奖</b></div>
+<div class="hero"><span class="pill">LOTTERY</span><h2>转盘抽奖</h2><p>快速切换抽奖组、开始抽奖并查看结果</p></div>
+<div class="card"><div class="row2"><div class="spin">当前组：年会 ▾</div><button class="btn pri" style="flex:.6">管理</button></div></div>
+<div class="card"><div class="center" style="font-size:64px">🎡</div><div class="center mut">转盘 + 指针（原 LotteryWheelView 保留）</div></div>
+<div class="card" style="border-style:dashed"><h4 class="center">抽奖结果（抽后出现）</h4><div class="big" style="color:#e15a5a;font-size:30px">张三</div></div>
+<div class="row2"><button class="btn pri">开始抽奖</button><button class="btn sec">重置</button></div><div style="height:8px"></div>
+<button class="btn sec">管理抽奖内容</button>
+<div class="lvl"><b>组信息：</b>项目数量 20 · <b>二级：</b>管理组 / 管理内容均为独立二级页，入口都在本屏</div>
+</div></div></div>
+
+<div><div class="tag"><b>3 待办 todo</b> · 清单：输入+添加 / 列表(勾选/改名/删除) / 未完成置顶 / 清除已完成+撤销 / 空状态（P1 已实装）</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>待办</b></div><div class="desc">未完成排前面，完成后可一键清除（可撤销）。</div>
+<div class="row2"><div class="inp" style="flex:1.6">新待办…</div><button class="btn pri">添加</button></div><div style="height:12px"></div>
+<div class="item"><div class="ic" style="background:#eef3fb">☐</div><div><b>买牛奶</b><small>改名 ✎ · 删除 🗑（行内按钮 48dp）</small></div></div>
+<div class="item"><div class="ic" style="background:#e8f5f0">☑</div><div><b style="text-decoration:line-through;color:#8c98ae">交电费</b><small>已完成 · 点框可恢复未完成</small></div></div>
+<div class="empty"><b>空状态</b>暂无待办，在上方写下第一件事吧</div>
+<button class="btn sec">清除已完成</button><div class="n">清除后 <b>Snackbar：已清除 · 撤销</b>（快照恢复）</div>
+</div></div></div>
+
+<div><div class="tag"><b>4 闹钟 alarm</b> · 清单：状态行 / 倒计时秒数+开始倒计时 / TimePicker+设置指定时刻 / 取消（v1 漏了三种模式只画了列表，已补）</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>闹钟</b></div>
+<div class="card"><h4>当前：无闹钟</h4><div class="mut">下方两种设闹方式任选其一</div></div>
+<div class="card"><h4>方式一 · 倒计时</h4><div class="inp">倒计时秒数（默认10）</div><div style="height:8px"></div><button class="btn pri">开始倒计时</button></div>
+<div class="card"><h4>方式二 · 指定时刻</h4><div class="center" style="font-size:30px;font-weight:800">07 : 30</div><div class="center mut">TimePicker（滚轮保留）</div><div style="height:8px"></div><button class="btn pri">设置指定时刻</button></div>
+<button class="btn sec" style="color:#e15a5a">取消闹钟</button>
+</div></div></div>
+
+<div><div class="tag"><b>5 统计 statistics</b> · 清单：hero / 统计组下拉+管理 / 新增(名+数量+添加) / 总计chip+批量删除+一键清空 / 导出+导入 / 全屏列表按钮 / 列表（v1 漏了组管理和批量操作，已补）</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b><span class="r">全屏列表</span></div>
+<div class="card"><div class="row2"><div class="spin">统计组：默认 ▾</div><button class="btn pri" style="flex:.6">管理</button></div></div>
+<div class="card"><h4>新增物品</h4><div class="row2"><div class="inp" style="flex:1.4">名称</div><div class="inp" style="flex:.7">数量</div><button class="btn pri">添加</button></div></div>
+<div class="row2"><div class="spin" style="flex:1;color:#335fd1;font-weight:800">总计: 36</div></div>
+<div class="row2"><button class="btn dan">批量删除</button><button class="btn dan">一键清空</button></div><div style="height:8px"></div>
+<div class="row2"><button class="btn sec">导出数据</button><button class="btn sec">导入数据</button></div><div style="height:8px"></div>
+<button class="btn pri">全屏查看物品列表</button>
+<div class="item" style="margin-top:10px"><div class="ic" style="background:#eaf1ff">📦</div><div><b>矿泉水 ×24</b><small>+ − 改数量 · 🗑</small></div><div class="go">›</div></div>
+<div class="lvl"><b>二级：</b>组管理 / 全屏列表 / 导入导出确认框，入口都在本屏</div>
+</div></div></div>
+
+<div><div class="tag"><b>6 录音 recorder</b> · 清单：录制键+时长+波形 / 停止并保存 / 列表(播放/暂停/删除/改名) / 空状态</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>录音</b><span class="r">列表</span></div>
+<div class="card"><div class="center" style="font-size:40px">🎙</div><div class="big" style="font-size:28px">00:12:36</div><div class="center mut">▂▄▆▄▂ 波形 · 录制中</div><div style="height:8px"></div><button class="btn pri">⏹ 停止并保存</button></div>
+<div class="item"><div class="ic" style="background:#eef3fb">▶</div><div><b>会议记录 0930</b><small>12:36 · 播放/暂停 · 改名 · 删除</small></div><div class="go">›</div></div>
+<div class="item"><div class="ic" style="background:#eef3fb">▶</div><div><b>灵感 0918</b><small>02:14</small></div><div class="go">›</div></div>
+<div class="empty"><b>空状态</b>还没有录音，点上方开始录制</div>
+</div></div></div>
+
+<div><div class="tag"><b>7 录屏 screen recorder</b> · 清单：开始/停止/暂停 / 悬浮窗菜单 / 权限设置入口 / 无权限空状态 / 回放列表</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>录屏</b></div>
+<div class="card"><h4>悬浮窗菜单</h4><div class="mut">● 开始 · ■ 停止 · ⏸ 暂停 · 倒计时显示（悬浮窗样式不变）</div></div>
+<button class="btn pri">开始录屏</button><div style="height:8px"></div>
+<div class="row2"><button class="btn sec">暂停</button><button class="btn sec">停止</button></div><div style="height:8px"></div>
+<button class="btn sec">权限设置（悬浮窗+通知）</button>
+<div class="empty"><b>无权限时</b>需授予悬浮窗权限 → 去设置</div>
+<div class="item"><div class="ic" style="background:#eaf1ff">🎬</div><div><b>回放 0930</b><small>03:22 · ▶ 播放 · 🗑</small></div><div class="go">›</div></div>
+</div></div></div>
+
+<div><div class="tag"><b>8 菜谱 cookbook</b> · 清单：搜索+清除 / 4 tab(全部/收藏/菜单/分类) / 列表(收藏/加菜单/删除/点进详情) / 新菜谱 / 详情对话框(编辑) / 分类管理 / 导入导出 / 批量删除</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>菜谱</b><span class="r">+ 新菜谱</span></div>
+<div class="search">搜索菜名 / 分类… ✕</div>
+<div class="tabs"><span class="on">全部</span><span>收藏</span><span>菜单</span><span>分类</span></div>
+<div class="item"><div class="ic" style="background:#fff0ee">🍳</div><div><b>番茄炒蛋</b><small>家常 · ★ ☆ 🗑（48dp）· 点行进详情</small></div><div class="go">›</div></div>
+<div class="item"><div class="ic" style="background:#eaf1ff">🍜</div><div><b>阳春面</b><small>主食</small></div><div class="go">›</div></div>
+<div class="lvl"><b>二级入口都在本屏：</b>详情对话框（含编辑）· 分类管理 · 导入/导出 · 批量删除（工具行“更多 ›”进）</div>
+<div class="sub2"><h5>点行进详情对话框 →</h5><div class="card">大图 · 用料 · 步骤 · <div class="row2"><button class="btn pri">编辑</button><button class="btn sec">＋菜单</button></div></div></div>
+</div></div></div>
+
+<div><div class="tag"><b>9 更新日志 changelog</b> · 清单：版本列表（号+日期+内容）/ 点进详情 / 有新版首页红点</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>更新日志</b></div>
+<div class="item"><div class="ic" style="background:#e8f5f0">✦</div><div><b>v2.4.0 · 09-30</b><small>深色修复 · 待办撤销 · 列表动效</small></div><div class="go">›</div></div>
+<div class="item"><div class="ic" style="background:#eef3fb">✦</div><div><b>v2.3.1 · 09-18</b><small>小组件深色 · 闹钟精度</small></div><div class="go">›</div></div>
+<div class="sub2"><h5>点行进详情 →</h5><div class="card"><h4>v2.4.0 完整内容</h4><div class="mut">1. 深色卡片背景修复<br>2. 待办清除可撤销<br>3. 菜谱列表 stagger 动效<br>4. 收藏图标 crash 修复</div></div></div>
+</div></div></div>
+
+</div>
+<div class="sub" style="margin-top:26px">v1→v2 补回清单：计时器（自动锁屏开关/6预设/取消+刷新/底部说明）· 抽奖（返回/组下拉+管理/重置/组信息/结果隐藏态）· 闹钟（双模式+取消）· 统计（组管理/批量删除/清空/导入导出/全屏按钮）· 菜谱（详情对话框/分类管理/导入导出/批量删除二级入口）· 录屏（暂停/权限/空状态）。再看一遍，哪页还有遗漏直接指出来，我补到v3；确认无误我就按页出 XML 落地清单。</div>
+</body></html>

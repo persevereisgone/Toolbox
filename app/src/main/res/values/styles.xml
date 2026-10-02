@@ -3,6 +3,33 @@
     <style name="AppDialogStyle" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="android:windowBackground">@drawable/app_overlay_card_bg</item>
         <item name="backgroundTint">@color/app_surface</item>
+        <!-- 对话框按钮默认色:跟 colorPrimary(浅底)走会白上白看不见,必须显式指定 -->
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Toolbox.DialogButton.Positive</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Toolbox.DialogButton.Negative</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Toolbox.DialogButton.Negative</item>
+    </style>
+
+    <style name="Widget.Toolbox.DialogButton.Positive" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/app_primary</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="rippleColor">@color/app_primary_light</item>
+    </style>
+
+    <style name="Widget.Toolbox.DialogButton.Negative" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/app_text_secondary</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="rippleColor">@color/app_surface_soft</item>
+    </style>
+
+    <style name="Widget.Toolbox.DialogButton.Danger" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/app_danger</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="rippleColor">@color/app_danger_light</item>
+    </style>
+
+    <!-- 危险操作确认框:确认键走 danger 色 -->
+    <style name="AppDialogStyle.Danger">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Toolbox.DialogButton.Danger</item>
     </style>
 
     <style name="Widget.Toolbox" parent="">
@@ -79,6 +106,12 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/app_text_primary</item>
     </style>
+
+    <!-- P1: 5 档正字阶 Display/TitleMedium/BodyPrimary/Label,旧名字保留做别名(TitleLarge 已存在,不重复定义) -->
+    <style name="TextAppearance.Toolbox.Display" parent="TextAppearance.Toolbox.HeroTitle" />
+    <style name="TextAppearance.Toolbox.TitleMedium" parent="TextAppearance.Toolbox.Title" />
+    <style name="TextAppearance.Toolbox.BodyPrimary" parent="TextAppearance.Toolbox.Body" />
+    <style name="TextAppearance.Toolbox.Label" parent="TextAppearance.Toolbox.Caption" />
 
     <style name="Widget.Toolbox.CardContainer" parent="Widget.Toolbox">
         <item name="android:background">@drawable/app_card_bg</item>

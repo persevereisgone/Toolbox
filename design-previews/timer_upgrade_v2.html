@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>定时返回 redesign v3 · 结构级三版（A卡片/B无卡/C仪表）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 24px;max-width:1240px;line-height:1.9}
+.sub b{color:#ffd479}
+.sec{font-size:15px;font-weight:800;margin:36px 0 6px;color:#ffd479;letter-spacing:1px}
+.sec2{font-size:13px;color:#9aa7bd;margin:0 0 16px;max-width:1240px;line-height:1.8}
+.stage{display:flex;gap:26px;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:700px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;position:relative;flex:none}
+.scr{height:100%;overflow-y:auto;padding:20px 20px 40px}
+.scr::-webkit-scrollbar{width:4px}.scr::-webkit-scrollbar-thumb{background:#c3ccd9;border-radius:4px}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:17px}.bar .x{color:#8c98ae;font-size:18px}
+.mut{font-size:12px;color:#8c98ae;line-height:1.7}
+.r2{display:flex;gap:10px}.r2>*{flex:1}
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.sheet{position:absolute;left:0;right:0;bottom:0;border-radius:24px 24px 0 0;padding:18px 20px 26px}
+.grab{width:40px;height:4px;border-radius:4px;margin:0 auto 12px}
+.dlgc{position:absolute;left:26px;right:26px;top:50%;transform:translateY(-50%);border-radius:20px;padding:22px}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:14px;font-size:14px;font-weight:800;min-height:48px}
+/* ===== A ===== */
+.a{background:#f3f7fc;color:#1a1c1e}
+.a .cap{font-size:12px;color:#5b6472;margin:6px 0 16px}
+.a .big{font-size:44px;font-weight:800;text-align:center;letter-spacing:2px}
+.a .st{text-align:center;font-size:12px;color:#5b6472;margin:4px 0 2px}
+.a .track{height:8px;border-radius:99px;background:#e2e9f5;margin:10px 0 2px;overflow:hidden}
+.a .fill{height:100%;width:50%;border-radius:99px;background:linear-gradient(90deg,#3f8cff,#6f67ff)}
+.a .card{background:#fff;border:1px solid #e7edf6;border-radius:20px;padding:18px;margin-bottom:14px}
+.a .card h4{font-size:14px;margin-bottom:10px}
+.a .chips{display:flex;flex-wrap:wrap;gap:8px}
+.a .chip{padding:10px 16px;border-radius:999px;background:#eef3fb;font-size:13px;font-weight:700;border:1.5px solid transparent}
+.a .chip.on{background:#eaf1ff;border-color:#427dff;color:#335fd1}
+.a .pri{background:#427dff;color:#fff}.a .tonal{background:#eaf1ff;color:#335fd1}.a .dan{background:#fff;color:#e15a5a;border:1px solid #f5d7d7}
+.a .swrow{display:flex;align-items:center}.a .sw{margin-left:auto;width:50px;height:30px;border-radius:999px;background:#427dff;position:relative;flex:none}.a .sw:after{content:"";position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;background:#fff}
+.a .sheet{background:#fff;color:#14181f}.a .grab{background:#d5dce8}
+.a .dlgc{background:#fff;color:#14181f}.a .dlgc p{font-size:13px;color:#5b6472;margin:8px 0 16px;line-height:1.7}
+.a .ov{background:#14181f;border-radius:14px;padding:10px 16px;color:#fff;display:inline-block;font-size:13px;font-weight:800}
+.a .menu{background:#fff;border:1px solid #e7edf6;border-radius:14px;padding:8px;color:#14181f;margin-top:8px;font-size:13px}
+.a .menu div{padding:11px 12px;border-radius:8px}
+/* ===== B ===== */
+.b{background:#fff;color:#14181f}
+.b .cap{font-size:12px;color:#8c98ae;margin:6px 0 10px}
+.b .big{font-size:52px;font-weight:800;letter-spacing:1px}
+.b .st{font-size:12px;color:#8c98ae;margin:2px 0 4px}
+.b .hscroll{display:flex;gap:8px;overflow:hidden;margin:10px -20px 0;padding:0 20px}
+.b .hchip{flex:none;padding:12px 20px;border-radius:999px;background:#f1f4f9;font-size:13px;font-weight:700}
+.b .hchip.on{background:#14181f;color:#fff}
+.b hr{border:none;border-top:1px solid #edf0f5;margin:16px 0}
+.b .rowline{display:flex;align-items:center;padding:13px 0;font-size:14px;font-weight:700}
+.b .rowline small{display:block;font-weight:400;color:#8c98ae;font-size:11px;margin-top:2px}
+.b .rowline .go{margin-left:auto;color:#c3ccd9;font-size:16px;font-weight:400}
+.b .sw{margin-left:auto;width:46px;height:27px;border-radius:999px;background:#427dff;position:relative;flex:none}.b .sw:after{content:"";position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#fff}
+.b .txtbtn{display:block;width:100%;background:none;border:none;color:#e15a5a;font-size:14px;font-weight:700;padding:14px}
+.b .sheet{background:#fff;color:#14181f}.b .grab{background:#d5dce8}
+.b .quick{display:flex;gap:8px;margin-bottom:12px}.b .quick span{flex:1;text-align:center;font-size:12px;font-weight:700;background:#f1f4f9;border-radius:10px;padding:10px}
+.b .ov{background:#14181f;border-radius:99px;padding:8px 16px;color:#fff;display:inline-block;font-size:12px;font-weight:800}
+.b .menu{margin-top:8px;font-size:13px;color:#14181f}.b .menu div{padding:12px 4px;border-bottom:1px solid #edf0f5}
+/* ===== C ===== */
+.c{background:#0b1224;color:#e8eef7}
+.c .cap{font-size:12px;color:#9fb0c9;margin:6px 0 14px}
+.c .dash{border:1px solid rgba(255,255,255,.12);background:radial-gradient(120% 130% at 50% 0%,#1d3260 0%,#0e1830 65%);border-radius:24px;padding:22px 18px;text-align:center}
+.c .ring{width:150px;height:150px;border-radius:50%;margin:0 auto;background:conic-gradient(#5b8cff 0 50%,rgba(255,255,255,.12) 50% 100%);display:flex;align-items:center;justify-content:center}
+.c .hole{width:112px;height:112px;border-radius:50%;background:#101b36;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.c .hole b{font-size:26px}.c .hole small{font-size:10px;color:#9fb0c9}
+.c .dash p{font-size:11px;color:#9fb0c9;margin-top:12px}
+.c .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.c .tile{border-radius:16px;padding:14px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-align:center}
+.c .tile b{display:block;font-size:15px}.c .tile small{font-size:10px;color:#9fb0c9}
+.c .tile.on{background:linear-gradient(160deg,#427dff,#7567ff);border:none}.c .tile.on small{color:#dbe4ff}
+.c .card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px;margin-top:12px}
+.c .card h4{font-size:13px;color:#fff;margin-bottom:4px}
+.c .swrow{display:flex;align-items:center;margin-top:8px;font-size:13px}.c .sw{margin-left:auto;width:46px;height:27px;border-radius:999px;background:#427dff;position:relative;flex:none}.c .sw:after{content:"";position:absolute;top:3px;right:3px;width:21px;height:21px;border-radius:50%;background:#fff}
+.c .gradbtn{margin-top:12px;background:linear-gradient(90deg,#427dff,#7567ff);color:#fff}
+.c .outbtn{margin-top:10px;background:transparent;color:#ff8a8a;border:1px solid #5a2b2b}
+.c .sheet{background:#141f3d;color:#e8eef7}.c .grab{background:rgba(255,255,255,.2)}
+.c .dlgc{background:#141f3d;color:#e8eef7}.c .dlgc p{font-size:13px;color:#9fb0c9;margin:8px 0 14px}
+.c .pbar{height:6px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:10px}.c .pfill{height:100%;width:50%;background:linear-gradient(90deg,#427dff,#7567ff)}
+.c .ov{background:#000;border:1px solid #33507f;border-radius:12px;padding:8px 14px;color:#fff;display:inline-block;font-size:12px;font-weight:800}
+.c .menu{background:#141f3d;border:1px solid #33507f;border-radius:12px;padding:8px;color:#e8eef7;margin-top:8px;font-size:13px}
+.c .menu div{padding:11px 12px}
+.n{max-width:1240px;color:#9aa7bd;font-size:13px;line-height:2;margin-top:8px}.n b{color:#fff}
+</style></head><body>
+<h1>定时返回 redesign v3 · 结构级三版（不只是换皮）</h1>
+<div class="sub">v2 三版骨架几乎一样，被打回。这版三个版本<b>信息架构不同</b>，依据双 skill 重排：<b>A = M3 卡片流</b>（ expressive 卡片 + 进度条 + 胶囊预设）；<b>B = 无卡片效率流</b>（白底 + 横滑预设条 + 设置行 + 文字式取消）；<b>C = 深色仪表流</b>（环形进度仪表 + 双列大磁贴）。共性约束不变：删 #6 摘要、删 #8 刷新、#10 并入本页、#11 全对话框/弹层、48dp、5 档字阶、enter200/exit120。</div>
+
+<div class="sec">A · M3 卡片流（改动最小，从现布局顺延）</div>
+<div class="sec2">结构：状态卡（含线性进度）→ 预设胶囊卡 → 开关卡 → 自定义卡 → tonal 取消键。预设从方形按钮改为 M3 filter-chip 胶囊，选中态描边+浅底。</div>
+<div class="stage">
+<div><div class="tag"><b>A-1 主页</b> <i>滚动</i></div><div class="phone a"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div class="cap">快速预设 · 自定义时长 · 到点自动回桌面</div>
+<div class="card"><div class="big">12:30</div><div class="st">25 分钟后回到桌面 · 自动锁屏开</div><div class="track"><div class="fill"></div></div><div class="mut" style="text-align:center">已过 50% · 点大字查剩余</div></div>
+<div class="card"><h4>快速设置</h4><div class="chips"><span class="chip">15分钟</span><span class="chip on">25分钟</span><span class="chip">45分钟</span><span class="chip">1小时</span><span class="chip">1.5小时</span><span class="chip">2小时</span></div></div>
+<div class="card"><h4>定时结束后自动锁屏</h4><div class="mut">先回桌面再锁屏，需设备管理员权限</div><div class="swrow" style="margin-top:10px"><span style="font-size:14px">自动锁屏</span><div class="sw"></div></div></div>
+<div class="card"><h4>自定义时长</h4><div style="height:6px"></div><button class="btn tonal">设置自定义时长 ›</button></div>
+<button class="btn dan">取消定时</button><div style="height:10px"></div>
+<div class="mut">设置定时后到点自动返回桌面，并显示倒计时悬浮窗。</div>
+</div></div></div>
+<div><div class="tag"><b>A-2 自定义 sheet</b> <i>底部弹出</i> 标准双滚轮</div><div class="phone a"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="text-align:center">自定义时长</h4><p class="mut" style="text-align:center;margin:4px 0 12px">滚轮选择 · 自动记住上次</p>
+<div class="r2" style="text-align:center"><div><div class="mut">小时 0~12</div><div style="font-size:26px;font-weight:800">0</div></div><div><div class="mut">分钟 0~59</div><div style="font-size:26px;font-weight:800">25</div></div></div>
+<div class="r2" style="margin-top:14px"><button class="btn sec2" style="background:#eef3fb">取消</button><button class="btn pri">确定 · 25分钟后</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>A-3 剩余/取消</b> <i>居中对话框</i></div><div class="phone a"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div class="dim"></div>
+<div class="dlgc"><h4>剩余时间</h4><p>剩余 <b style="color:#335fd1">12分30秒</b> 后回到主屏</p><div class="r2"><button class="btn sec2" style="background:#eef3fb">取消定时</button><button class="btn pri">知道了</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>A-4 悬浮窗</b> 紧凑条+菜单+收边</div><div class="phone a"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<span class="ov">⏱ 12:30</span>
+<div class="menu"><div>调整时长（跳回本页）</div><div>收起到侧边</div><div style="color:#e15a5a">取消定时</div></div>
+</div></div></div>
+</div>
+
+<div class="sec">B · 无卡片效率流（推荐 · 结构变化最大）</div>
+<div class="sec2">结构：大字裸放 → <b>横滑预设条</b>（一行滑完 6 档，不占纵向空间）→ 设置行（自动锁屏 / 自定义时长，行式，点进 sheet）→ 底部文字式取消。整页无卡片，靠分割线分区。</div>
+<div class="stage">
+<div><div class="tag"><b>B-1 主页</b> <i>滚动</i> 预设横滑是本版标志</div><div class="phone b"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div class="cap">快速预设 · 自定义时长 · 到点自动回桌面</div>
+<div class="big">12:30</div><div class="st">25 分钟后回到桌面 · 自动锁屏开 · 点大字查剩余</div>
+<div class="hscroll"><span class="hchip">15分</span><span class="hchip on">25分</span><span class="hchip">45分</span><span class="hchip">1小时</span><span class="hchip">1.5小时</span><span class="hchip">2小时</span></div>
+<hr>
+<div class="rowline"><span>自动锁屏<small>到点先回桌面再锁屏 · 需设备管理员权限</small></span><div class="sw"></div></div>
+<div class="rowline"><span>自定义时长<small>滚轮选择 · 记住上次</small></span><span class="go">›</span></div>
+<hr>
+<button class="btn" style="background:#fff;color:#e15a5a;border:1px solid #f5d7d7">取消定时</button>
+<div class="mut" style="text-align:center">设置定时后到点自动返回桌面，并显示倒计时悬浮窗。</div>
+</div></div></div>
+<div><div class="tag"><b>B-2 自定义 sheet</b> <i>底部弹出</i> 快捷预设 + <b>可滚动滚轮</b>（上下露头，中间高亮）+ 等高双键</div><div class="phone b"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="text-align:center">自定义时长</h4>
+<div class="quick" style="margin-top:12px"><span>15分</span><span>25分</span><span>45分</span><span>1小时</span></div>
+<div class="r2" style="text-align:center;margin-top:6px"><div><div class="mut">小时 · 上下滑动</div><div class="mut">23</div><div style="font-size:28px;font-weight:800">0</div><div class="mut">1</div></div><div><div class="mut">分钟 · 上下滑动</div><div class="mut">24</div><div style="font-size:28px;font-weight:800">25</div><div class="mut">26</div></div></div>
+<div class="r2" style="margin-top:14px"><button class="btn sec2" style="background:#eef3fb">取消</button><button class="btn pri">25分钟后</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>B-3 剩余查询</b> <i>底部 sheet</i> 本版剩余查询也是 sheet（与自定义同语言），无定时则空文案行</div><div class="phone b"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="text-align:center">剩余 <b>12:30</b></h4><p class="mut" style="text-align:center;margin:6px 0 14px">25分钟后回到主屏 · 自动锁屏开</p>
+<div class="r2"><button class="btn sec2" style="background:#fff;color:#e15a5a;border:1px solid #f5d7d7">取消定时</button><button class="btn pri">知道了</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>B-4 悬浮窗</b> 药丸条+下划线菜单（与本版行式语言统一）</div><div class="phone b"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<span class="ov">⏱ 12:30</span>
+<div class="menu"><div>调整时长（跳回本页） ›</div><div>收起到侧边 ›</div><div style="color:#e15a5a">取消定时 ›</div></div>
+</div></div></div>
+</div>
+
+<div class="sec">C · 深色仪表流（深色/夜间用户）</div>
+<div class="sec2">结构：<b>环形进度仪表</b>（剩余可视化）→ 双列大磁贴预设 → 开关卡 → 渐变主按钮（自定义）→ 描边取消。悬浮窗/通知不变。</div>
+<div class="stage">
+<div><div class="tag"><b>C-1 主页</b> <i>滚动</i> 仪表是本版标志（ conic-gradient 环，placements 可实现）</div><div class="phone c"><div class="scr">
+<div class="bar"><span class="x" style="color:#9fb0c9">‹</span><b>定时返回桌面</b></div><div class="cap">快速预设 · 自定义时长 · 到点自动回桌面</div>
+<div class="dash"><div class="ring"><div class="hole"><b>12:30</b><small>剩余 · 点查详情</small></div></div><p>25 分钟后回到桌面 · 已过 50% · 自动锁屏开</p></div>
+<div class="tiles"><div class="tile"><b>15分</b><small>快捷</small></div><div class="tile on"><b>25分</b><small>当前 ★</small></div><div class="tile"><b>45分</b><small>快捷</small></div><div class="tile"><b>1小时</b><small>快捷</small></div><div class="tile"><b>1.5小时</b><small>快捷</small></div><div class="tile"><b>2小时</b><small>快捷</small></div></div>
+<div class="card"><h4>定时结束后自动锁屏</h4><div class="swrow"><span>自动锁屏 · 需设备管理员权限</span><div class="sw"></div></div></div>
+<button class="btn gradbtn">设置自定义时长 ›</button>
+<button class="btn outbtn">取消定时</button>
+<div class="mut" style="margin-top:10px;text-align:center">设置定时后到点自动返回桌面，并显示倒计时悬浮窗。</div>
+</div></div></div>
+<div><div class="tag"><b>C-2 自定义 sheet</b> 深底+滚轮，确定渐变键</div><div class="phone c"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x" style="color:#9fb0c9">‹</span><b>定时返回桌面</b></div><div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4 style="text-align:center">自定义时长</h4><p class="mut" style="text-align:center;margin:4px 0 12px">滚轮选择 · 自动记住上次</p>
+<div class="r2" style="text-align:center"><div><div class="mut">小时</div><div style="font-size:26px;font-weight:800">0</div></div><div><div class="mut">分钟</div><div style="font-size:26px;font-weight:800">25</div></div></div>
+<div class="r2" style="margin-top:14px"><button class="btn sec2" style="background:rgba(255,255,255,.1);color:#fff">取消</button><button class="btn gradbtn" style="margin-top:0">确定 · 25分钟后</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>C-3 剩余对话框</b> 深底+进度条</div><div class="phone c"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x" style="color:#9fb0c9">‹</span><b>定时返回桌面</b></div><div class="dim"></div>
+<div class="dlgc"><h4>剩余 12:30</h4><div class="pbar"><div class="pfill"></div></div><p>25分钟后回到主屏 · 自动锁屏开</p><div class="r2"><button class="btn outbtn" style="margin-top:0">取消定时</button><button class="btn gradbtn" style="margin-top:0">知道了</button></div></div>
+</div></div></div>
+<div><div class="tag"><b>C-4 悬浮窗</b> 深底描边条（与系统深色一致）</div><div class="phone c"><div class="scr">
+<div class="bar"><span class="x" style="color:#9fb0c9">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<span class="ov">⏱ 12:30</span>
+<div class="menu"><div>调整时长（跳回本页）</div><div>收起到侧边</div><div style="color:#ff8a8a">取消定时</div></div>
+</div></div></div>
+</div>
+
+<div class="n">三版结构差异（这次是真不一样）：<b>A</b> 卡片流+线性进度+胶囊预设+tonal 按钮（从现布局顺延，开发量 0.5 天）；<b>B</b> 无卡片+横滑预设条+行式设置+文字取消，sheet 里多一排快捷预设（开发量 1 天，列表/行复用首页 B 语言）；<b>C</b> 环形仪表+双列磁贴+渐变按钮（仪表用 conic-gradient/自定义 View，开发量 1.5 天）。悬浮窗三版统一（紧凑条+三项菜单+收边，已实装不动）。<b>你定一版</b>（或拼，如 B-1 主页 + A-2 sheet），我就走技术识别→落地文档→给你审→开工。</div>
+</body></html>

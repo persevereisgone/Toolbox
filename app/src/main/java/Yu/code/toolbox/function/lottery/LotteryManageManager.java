@@ -61,7 +61,6 @@ public class LotteryManageManager {
 
     private void initViews() {
         btnBack = rootView.findViewById(R.id.btn_back);
-        btnAddItem = rootView.findViewById(R.id.btn_add_item);
         btnImport = rootView.findViewById(R.id.btn_import);
         btnExport = rootView.findViewById(R.id.btn_export);
         rvLotteryItems = rootView.findViewById(R.id.rv_lottery_items);

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>待办 B 版升级预览（A+B+C · 左滑删除）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Noto Sans SC","PingFang SC",sans-serif; background:#E7EDF6; color:#14181F; padding:24px 12px 60px; }
+  .page { max-width:420px; margin:0 auto 28px; background:#F3F7FC; border-radius:24px; overflow:hidden; box-shadow:0 8px 32px rgba(20,24,31,.12); border:1px solid #E7EDF6; }
+  .cap { max-width:420px; margin:0 auto 8px; font-size:13px; font-weight:700; color:#14181F; }
+  .cap span { display:inline-block; background:#14181F; color:#fff; font-size:11px; border-radius:6px; padding:2px 8px; margin-right:8px; }
+  .screen { padding:20px 20px 24px; }
+  h1 { font-size:22px; font-weight:800; }
+  .sub { font-size:12px; color:#5B6B82; margin-top:4px; }
+  .inputrow { display:flex; gap:8px; margin-top:16px; }
+  .input { flex:1; background:#fff; border:1px solid #E7EDF6; border-radius:12px; padding:0 14px; height:48px; line-height:48px; font-size:14px; color:#8A97AB; }
+  .addbtn { width:72px; height:48px; border:none; border-radius:12px; background:#2563EB; color:#fff; font-size:14px; font-weight:700; }
+  .chips { display:flex; gap:8px; margin-top:14px; }
+  .chip { height:32px; padding:0 14px; border-radius:999px; font-size:12px; border:1px solid #E7EDF6; background:#fff; color:#5B6B82; }
+  .chip.on { background:#14181F; color:#fff; border-color:#14181F; font-weight:700; }
+  .row { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #E7EDF6; border-radius:14px; padding:12px; margin-top:8px; min-height:64px; }
+  .cb { width:24px; height:24px; border-radius:8px; border:2px solid #C3CCD9; flex:none; display:flex; align-items:center; justify-content:center; font-size:14px; color:#fff; }
+  .cb.done { background:#16A34A; border-color:#16A34A; }
+  .t { flex:1; font-size:14px; font-weight:700; }
+  .t.done { color:#8A97AB; text-decoration:line-through; font-weight:400; }
+  .meta { font-size:11px; color:#8A97AB; margin-top:2px; font-weight:400; }
+  .edit { font-size:12px; color:#2563EB; white-space:nowrap; }
+  .swipehint { position:relative; overflow:hidden; border-radius:14px; margin-top:8px; }
+  .swipehint .under { position:absolute; inset:0; background:#DC2626; color:#fff; display:flex; align-items:center; justify-content:flex-end; padding-right:20px; font-size:13px; font-weight:700; }
+  .swipehint .row { margin-top:0; transform:translateX(-72px); }
+  .clearbtn { width:100%; height:48px; margin-top:14px; border-radius:12px; border:1px solid #E7EDF6; background:#fff; color:#DC2626; font-size:14px; font-weight:700; }
+  .empty { text-align:center; padding:48px 20px; }
+  .empty .e1 { font-size:16px; font-weight:800; }
+  .empty .e2 { font-size:12px; color:#5B6B82; margin-top:6px; }
+  .snack { display:flex; align-items:center; background:#14181F; color:#fff; border-radius:12px; padding:12px 16px; margin-top:14px; font-size:13px; }
+  .snack b { margin-left:auto; color:#7FB0FF; }
+  .sheet { background:#fff; border-radius:20px 20px 0 0; padding:12px 20px 24px; margin:0 -20px -24px; }
+  .grab { width:40px; height:4px; border-radius:4px; background:#E7EDF6; margin:0 auto 12px; }
+  .sheet h2 { font-size:18px; font-weight:800; text-align:center; }
+  .sheet .inp { height:48px; border:1px solid #2563EB; border-radius:12px; padding:0 14px; font-size:14px; margin-top:12px; line-height:48px; }
+  .sheet .btns { display:flex; gap:12px; margin-top:14px; }
+  .sheet .btns button { flex:1; height:48px; border-radius:12px; font-size:14px; font-weight:700; }
+  .b-sec { background:#fff; border:1px solid #E7EDF6; color:#14181F; }
+  .b-pri { background:#2563EB; color:#fff; border:none; }
+  .note { max-width:420px; margin:0 auto 20px; font-size:12px; color:#5B6B82; line-height:1.8; }
+</style>
+</head>
+<body>
+
+<div class="cap"><span>帧1</span>主列表 · 有未完成+已完成 · 计数+筛选</div>
+<div class="page"><div class="screen">
+  <h1>待办</h1>
+  <div class="sub">3 项未完成 · 已完成沉底</div>
+  <div class="inputrow"><div class="input">新待办…</div><button class="addbtn">添加</button></div>
+  <div class="chips"><div class="chip on">全部 5</div><div class="chip">未完成 3</div><div class="chip">已完成 2</div></div>
+  <div class="row"><div class="cb"></div><div><div class="t">买牛奶</div><div class="meta">今天创建</div></div><div class="edit">编辑</div></div>
+  <div class="row"><div class="cb"></div><div><div class="t">交电费</div><div class="meta">昨天创建</div></div><div class="edit">编辑</div></div>
+  <div class="row"><div class="cb"></div><div><div class="t"> review 代码</div><div class="meta">3 天前</div></div><div class="edit">编辑</div></div>
+  <div class="row"><div class="cb done">✓</div><div><div class="t done">取快递</div><div class="meta">已完成</div></div><div class="edit">编辑</div></div>
+  <div class="row"><div class="cb done">✓</div><div><div class="t done">浇花</div><div class="meta">已完成</div></div><div class="edit">编辑</div></div>
+  <button class="clearbtn">清除已完成（2）</button>
+</div></div>
+
+<div class="cap"><span>帧2</span>左滑删除 · 露出红色删除底 + Snackbar 撤销</div>
+<div class="page"><div class="screen">
+  <h1>待办</h1>
+  <div class="sub">3 项未完成 · 已完成沉底</div>
+  <div class="inputrow"><div class="input">新待办…</div><button class="addbtn">添加</button></div>
+  <div class="chips"><div class="chip on">全部 4</div><div class="chip">未完成 2</div><div class="chip">已完成 2</div></div>
+  <div class="swipehint">
+    <div class="under">删除</div>
+    <div class="row"><div class="cb"></div><div><div class="t">交电费</div><div class="meta">昨天创建 · 左滑可删</div></div><div class="edit">编辑</div></div>
+  </div>
+  <div class="snack">已删除“买牛奶”<b>撤销</b></div>
+  <button class="clearbtn">清除已完成（2）</button>
+</div></div>
+
+<div class="cap"><span>帧3</span>空状态</div>
+<div class="page"><div class="screen">
+  <h1>待办</h1>
+  <div class="sub">暂无待办 · 去添加第一项吧</div>
+  <div class="inputrow"><div class="input">新待办…</div><button class="addbtn">添加</button></div>
+  <div class="chips"><div class="chip on">全部 0</div><div class="chip">未完成 0</div><div class="chip">已完成 0</div></div>
+  <div class="empty"><div class="e1">暂无待办</div><div class="e2">在上方输入框写下新的小目标吧</div></div>
+  <button class="clearbtn" style="color:#C3CCD9">清除已完成（0）</button>
+</div></div>
+
+<div class="cap"><span>帧4</span>编辑 bottom-sheet（替代现有 AlertDialog+裸 EditText）</div>
+<div class="page"><div class="screen">
+  <h1>待办</h1>
+  <div class="sub">3 项未完成 · 已完成沉底</div>
+  <div class="inputrow"><div class="input">新待办…</div><button class="addbtn">添加</button></div>
+  <div class="chips"><div class="chip on">全部 5</div><div class="chip">未完成 3</div><div class="chip">已完成 2</div></div>
+  <div class="row"><div class="cb"></div><div><div class="t">买牛奶</div><div class="meta">今天创建</div></div><div class="edit">编辑</div></div>
+  <div class="sheet">
+    <div class="grab"></div>
+    <h2>编辑待办</h2>
+    <div class="inp">买牛奶｜</div>
+    <div class="btns"><button class="b-sec">取消</button><button class="b-pri">保存</button></div>
+  </div>
+</div></div>
+
+<div class="note">
+B 版说明：浅色效率风，沿用首页 B 版 Token（卡白 #FFFFFF + 描边 #E7EDF6 / 主色 #2563EB / 危险 #DC2626 / 48dp 触摸 / stagger 30ms）。<br>
+A=单条删除左滑+撤销&nbsp;&nbsp;B=编辑弹窗合规&nbsp;&nbsp;C=计数+筛选&nbsp;&nbsp;D=到期提醒/优先级留到下轮。<br>
+Widget（widget_todo）只读展示不变，数据源同 TodoManager，排序变化自动跟随。
+</div>
+
+</body>
+</html>

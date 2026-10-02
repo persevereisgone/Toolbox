@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="6dp"
+    android:background="@drawable/bg_widget_m3">
+
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/bg_widget_mode_cd"
+        android:paddingTop="3dp" android:paddingBottom="3dp"
+        android:text="@string/alarm_widget_cd_label"
+        android:textColor="@color/widget_on_mode"
+        android:textSize="10sp" android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+        android:orientation="vertical" android:gravity="center">
+
+        <TextView
+            android:id="@+id/tv_widget_cd_time"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="monospace"
+            android:text="05:00"
+            android:textColor="@color/widget_on_surface"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Chronometer
+            android:id="@+id/chrono_widget_cd"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="monospace"
+            android:format="%s"
+            android:textColor="@color/app_primary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_widget_cd_sub"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/alarm_widget_cd_pending"
+            android:textColor="@color/widget_on_variant"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:background="@drawable/widget_pill_solid"
+            android:textColor="#0B57D0"
+            android:fontFamily="sans-serif"
+            android:includeFontPadding="false"
+            android:id="@+id/btn_widget_cd_minus5"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="30dp"
+            android:layout_marginEnd="2dp"
+            android:text="@string/alarm_widget_btn_minus5"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/btn_widget_cd_plus5"
+            android:background="@drawable/widget_pill_solid"
+            android:textColor="#0B57D0"
+            android:fontFamily="sans-serif"
+            android:includeFontPadding="false"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="30dp"
+            android:layout_marginStart="2dp"
+            android:text="@string/alarm_widget_btn_plus5"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_widget_cd_start"
+            android:background="@drawable/widget_pill_solid"
+            android:textColor="#0B57D0"
+            android:fontFamily="sans-serif"
+            android:includeFontPadding="false"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="30dp"
+            android:layout_marginEnd="2dp"
+            android:text="@string/alarm_widget_btn_start"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/btn_widget_cd_clear"
+            android:background="@drawable/widget_pill_solid"
+            android:textColor="#0B57D0"
+            android:fontFamily="sans-serif"
+            android:includeFontPadding="false"
+            android:layout_width="0dp" android:layout_weight="1" android:layout_height="30dp"
+            android:layout_marginStart="2dp"
+            android:text="@string/alarm_widget_btn_clear"
+            android:textSize="10sp" />
+    </LinearLayout>
+</LinearLayout>

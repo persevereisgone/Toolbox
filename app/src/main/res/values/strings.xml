@@ -110,4 +110,94 @@
     <string name="cookbook_unfavorite">取消收藏</string>
     <string name="cookbook_favorited">已收藏</string>
     <string name="cookbook_unfavorited">已取消收藏</string>
+
+    <!-- 桌面小组件在系统选择器中的名称与说明 -->
+    <string name="widget_todo_label">待办清单</string>
+    <string name="widget_todo_desc">待办清单：Top 待办勾选，点行即完成</string>
+    <string name="widget_rtc_label">定时提醒</string>
+    <string name="widget_rtc_compact_label">定时提醒·紧凑</string>
+    <string name="widget_rtc_compact_desc">定时提醒·紧凑：2×2 试验版，只有 ±5 微调，数据与标准版互通</string>
+    <string name="widget_cd_label">倒计时</string>
+    <string name="widget_cd_compact_label">倒计时·紧凑</string>
+    <string name="widget_cd_compact_desc">倒计时·紧凑：2×2 试验版，只有 ±5 步进，数据与标准版互通</string>
+    <string name="widget_cook_label">今日菜谱</string>
+    <string name="widget_timer_label">定时回桌面</string>
+    <string name="timer_widget_title">定时回桌面</string>
+    <string name="timer_widget_empty">没定时 · 点数字即设</string>
+    <string name="timer_widget_desc">定时回桌面2×1:没设显示15/30/60点即设,已设显示剩余+取消</string>
+    <string name="widget_cook_desc">今日菜谱：随机一道菜，换一换、去买菜</string>
+
+    <!-- 闹钟功能 -->
+    <string name="alarm_page_title">闹钟</string>
+    <string name="alarm_page_desc">定一个提醒，到时响铃震动，10 秒无人理自动停</string>
+    <string name="alarm_mode_none">尚未设置</string>
+    <string name="alarm_mode_rtc">定时提醒 · 到点响</string>
+    <string name="alarm_mode_countdown">倒计时 · 剩多久响</string>
+    <string name="alarm_hero_idle">--:--</string>
+    <string name="alarm_hero_idle_sub">还没定时间，下方点一个即开始</string>
+    <string name="alarm_btn_cancel">取消闹钟</string>
+    <string name="alarm_quick_title">一键定时（分钟）</string>
+    <string name="alarm_preset_1">1 分钟</string>
+    <string name="alarm_preset_5">5 分钟</string>
+    <string name="alarm_preset_10">10 分钟</string>
+    <string name="alarm_preset_30">30 分钟</string>
+    <string name="alarm_more_title">更多设置</string>
+    <string name="alarm_custom_hint">自定义分钟</string>
+    <string name="alarm_custom_unit">单位：分钟，可填小数（0.1 = 6 秒），范围 0.1 ~ 720</string>
+    <string name="alarm_btn_start">开始</string>
+    <string name="alarm_btn_pick_time">选指定时刻…</string>
+    <string name="alarm_btn_clear_input">清除</string>
+    <string name="alarm_input_invalid">请输入 0.1 ~ 720 之间的分钟数</string>
+    <string name="alarm_time_sheet_title">选择时刻</string>
+    <string name="alarm_time_sheet_desc">已过今天则自动顺延明天</string>
+    <string name="alarm_permission_hint">需要精准闹钟权限，点此去设置</string>
+    <string name="alarm_permission_sheet_title">需要精准闹钟权限</string>
+    <string name="alarm_permission_sheet_desc">Android 12 及以上必须逐项允许，否则到点不会响。点「去设置」打开「闹钟和提醒」权限，返回后自动继续刚才的操作。</string>
+    <string name="alarm_btn_goto_settings">去设置</string>
+    <string name="alarm_btn_later">稍后</string>
+    <string name="alarm_set_done">已设置</string>
+    <string name="alarm_countdown_started">已开始</string>
+    <string name="alarm_cancelled">已取消闹钟</string>
+    <string name="alarm_remaining">还剩 %1$s</string>
+    <string name="alarm_home_after">后响</string>
+    <string name="alarm_day_today">今天</string>
+    <string name="alarm_day_tomorrow">明天</string>
+    <string name="alarm_countdown_label">%1$s 分钟倒计时</string>
+    <string name="alarm_countdown_label_sec">%1$s 秒倒计时</string>
+    <string name="alarm_ring_title">闹钟响了</string>
+    <string name="alarm_ring_auto_close">10 秒后自动关闭</string>
+    <string name="alarm_ring_ringing">响铃＋震动中 · 10 秒后自动关闭</string>
+    <string name="alarm_ring_badge">ALARM · 全屏亮屏</string>
+    <string name="alarm_btn_close">关闭</string>
+    <string name="alarm_btn_snooze">5 分钟后再响</string>
+
+    <!-- 闹钟小组件 -->
+    <string name="alarm_widget_rtc_label">定时提醒 · 到点响</string>
+    <string name="alarm_widget_rtc_desc">定时提醒：到某个时间点响</string>
+    <string name="alarm_widget_rtc_empty">还没定时间</string>
+    <string name="alarm_widget_rtc_today">今天 · 还剩 %1$s</string>
+    <string name="alarm_widget_rtc_tomorrow">明天 · 还剩 %1$s</string>
+    <string name="alarm_widget_btn_minus15">−15 分</string>
+    <string name="alarm_widget_btn_plus15">+15 分</string>
+    <string name="alarm_widget_btn_pick">选时刻</string>
+    <string name="alarm_widget_btn_cancel">取消</string>
+    <string name="alarm_widget_btn_open">打开</string>
+    <string name="alarm_notify_elapsed">%1$d%% 已过</string>
+    <string name="alarm_channel_name">闹钟倒计时</string>
+    <string name="alarm_channel_desc">闹钟/倒计时剩余时间常驻显示，锁屏可见</string>
+    <string name="alarm_widget_cd_label">倒计时 · 剩多久响</string>
+    <string name="alarm_widget_cd_desc">倒计时：多久之后响</string>
+    <string name="alarm_widget_cd_pending">再过 %1$s 响</string>
+    <string name="alarm_widget_cd_running">再过 %1$s 响</string>
+    <string name="alarm_widget_btn_minus1">−1 分</string>
+    <string name="alarm_widget_btn_plus1">+1 分</string>
+    <string name="alarm_widget_btn_minus5">−5 分</string>
+    <string name="alarm_widget_btn_plus5">+5 分</string>
+    <string name="alarm_widget_btn_start">开始</string>
+    <string name="alarm_widget_btn_clear">清空</string>
+    <string name="alarm_widget_btn_restart">重定</string>
+    <string name="alarm_widget_range_tip">范围 1 ~ 720 分钟</string>
+    <string name="alarm_widget_duration_hm">%1$d 小时 %2$d 分</string>
+    <string name="alarm_widget_duration_m">%1$d 分钟</string>
+    <string name="alarm_widget_duration_s">%1$d 秒</string>
 </resources>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:padding="@dimen/space_lg">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="待办"
+        style="@style/TextAppearance.Toolbox.TitleLarge" />
+
+    <TextView
+        android:id="@+id/tv_todo_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_xxs"
+        android:layout_marginBottom="@dimen/space_md"
+        android:text="未完成排前面,完成后可一键清除"
+        style="@style/TextAppearance.Toolbox.Caption" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/et_todo_input"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/input_height"
+            android:hint="新待办"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            style="@style/Widget.Toolbox.Input" />
+
+        <Button
+            android:id="@+id/btn_todo_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/button_height_md"
+            android:layout_marginStart="@dimen/space_sm"
+            android:text="添加"
+            style="@style/Widget.Toolbox.Button.Primary" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/chip_group_todo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/chip_todo_all"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:minWidth="64dp"
+            android:textSize="@dimen/text_caption" />
+
+        <Button
+            android:id="@+id/chip_todo_undone"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/space_sm"
+            android:minWidth="64dp"
+            android:textSize="@dimen/text_caption" />
+
+        <Button
+            android:id="@+id/chip_todo_done"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/space_sm"
+            android:minWidth="64dp"
+            android:textSize="@dimen/text_caption" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_todo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="@dimen/space_sm"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/space_md" />
+
+    <!-- P1 空状态 -->
+    <LinearLayout
+        android:id="@+id/layout_todo_empty"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="@dimen/space_xl">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="暂无待办"
+            style="@style/TextAppearance.Toolbox.TitleMedium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:gravity="center"
+            android:text="在上方输入框写下第一件事吧"
+            style="@style/TextAppearance.Toolbox.Caption" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_todo_clear_done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/button_height_md"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="清除已完成"
+        style="@style/Widget.Toolbox.Button.Secondary" />
+</LinearLayout>

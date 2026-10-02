@@ -31,6 +31,12 @@ public class FunctionConstants {
     // 菜谱功能
     public static final int FUNCTION_COOKBOOK = R.layout.function_cookbook;
 
+    // 待办功能
+    public static final int FUNCTION_TODO = R.layout.function_todo;
+
+    // 闹钟功能
+    public static final int FUNCTION_ALARM = R.layout.function_alarm;
+
     // 在这里可以添加更多功能的常量
     // public static final int FUNCTION_CALCULATOR = R.layout.function_calculator;
     // public static final int FUNCTION_NOTES = R.layout.function_notes;

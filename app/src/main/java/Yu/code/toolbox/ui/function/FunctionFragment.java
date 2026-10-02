@@ -20,6 +20,8 @@ import Yu.code.toolbox.function.recorder_photo.RecordingPlaylistManager;
 import Yu.code.toolbox.function.recorder_photo.ScreenRecorderManager;
 import Yu.code.toolbox.function.statistics.StatisticsManager;
 import Yu.code.toolbox.function.time.TimerManager;
+import Yu.code.toolbox.function.alarm.AlarmFunctionManager;
+import Yu.code.toolbox.ui.function.todo.TodoFunctionManager;
 import Yu.code.toolbox.ui.function.RecorderManager;
 import Yu.code.toolbox.ui.function.cookbook.CookBookFragment;
 
@@ -36,6 +38,8 @@ public class FunctionFragment extends Fragment {
     private ScreenRecorderManager screenRecorderManager;
     private ChangelogManager changelogManager;
     private CookBookFragment cookBookFragment;
+    private TodoFunctionManager todoFunctionManager;
+    private AlarmFunctionManager alarmFunctionManager;
 
     @Nullable
     @Override
@@ -47,6 +51,15 @@ public class FunctionFragment extends Fragment {
             int functionId = getArguments().getInt("function_id", -1);
             if (functionId != -1) {
                 showFunction(functionId);
+
+                if (functionId == R.layout.function_alarm
+                        && getArguments().getBoolean("auto_time_sheet", false)
+                        && alarmFunctionManager != null) {
+                    getArguments().remove("auto_time_sheet");
+                    new android.os.Handler().postDelayed(() -> {
+                        if (alarmFunctionManager != null) alarmFunctionManager.openTimeSheet();
+                    }, 300);
+                }
 
                 if (functionId == R.layout.function_statistics) {
                     android.net.Uri importFileUri = getArguments().getParcelable("import_file_uri");
@@ -123,6 +136,14 @@ public class FunctionFragment extends Fragment {
             View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
             container.addView(functionView);
             changelogManager = new ChangelogManager(requireContext(), functionView);
+        } else if (layoutId == R.layout.function_todo) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
+            todoFunctionManager = new TodoFunctionManager(requireContext(), functionView);
+        } else if (layoutId == R.layout.function_alarm) {
+            View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
+            container.addView(functionView);
+            alarmFunctionManager = new AlarmFunctionManager(requireContext(), functionView);
         } else if (layoutId == R.layout.function_cookbook) {
             cookBookFragment = new CookBookFragment();
             getChildFragmentManager()
@@ -159,6 +180,11 @@ public class FunctionFragment extends Fragment {
             screenRecorderManager = null;
         }
         changelogManager = null;
+        todoFunctionManager = null;
+        if (alarmFunctionManager != null) {
+            alarmFunctionManager.onDestroy();
+            alarmFunctionManager = null;
+        }
         if (cookBookFragment != null) {
             getChildFragmentManager().beginTransaction().remove(cookBookFragment).commitNowAllowingStateLoss();
             cookBookFragment = null;

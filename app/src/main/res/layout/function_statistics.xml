@@ -1,227 +1,329 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_bg"
-    android:fillViewport="true">
+    android:background="@color/app_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/space_md"
+        android:background="@drawable/function_page_bg"
         android:orientation="vertical"
-        android:padding="@dimen/space_xl">
+        android:padding="@dimen/space_md">
 
-        <LinearLayout
+        <!-- 瘦标题 -->
+        <TextView
+            style="@style/TextAppearance.Toolbox.TitleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="物品统计" />
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xxs"
+            android:layout_marginBottom="@dimen/space_sm"
+            android:text="长摁多选 · 加减改数 · 导入导出" />
+
+        <!-- 组 pills:横滑切换,末尾＋进管理 -->
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/app_hero_bg"
-            android:orientation="vertical"
-            android:padding="@dimen/space_xl">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/home_chip_bg"
-                android:paddingStart="@dimen/space_md"
-                android:paddingTop="@dimen/space_xs"
-                android:paddingEnd="@dimen/space_md"
-                android:paddingBottom="@dimen/space_xs"
-                android:text="STATISTICS"
-                android:textColor="@color/app_text_inverse"
-                android:textSize="@dimen/text_caption"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                android:text="物品统计"
-                android:textColor="@color/app_text_inverse"
-                android:textSize="@dimen/text_hero"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:text="快速维护统计组、录入数量并导入导出数据。"
-                android:textColor="@color/home_header_subtitle"
-                android:textSize="@dimen/text_caption_lg" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/Widget.Toolbox.CardContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/TextAppearance.Toolbox.TitleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="统计组" />
+            android:layout_marginBottom="@dimen/space_sm"
+            android:clipToPadding="false"
+            android:scrollbars="none">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <Spinner
-                    android:id="@+id/spinner_statistics_set"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/button_height_md"
-                    android:layout_marginEnd="@dimen/space_lg"
-                    android:layout_weight="1"
-                    android:background="@drawable/app_input_bg"
-                    android:paddingStart="@dimen/space_lg" />
-
-                <Button
-                    android:id="@+id/btn_manage_sets"
-                    style="@style/Widget.Toolbox.Button.Primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="管理" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/Widget.Toolbox.CardContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/TextAppearance.Toolbox.TitleLarge"
+                android:id="@+id/layout_set_pills"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="新增物品" />
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/et_item_name"
-                    style="@style/Widget.Toolbox.Input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginBottom="1dp"
-                    android:hint="物品名称" />
-
-                <EditText
-                    android:id="@+id/et_item_quantity"
-                    style="@style/Widget.Toolbox.Input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.55"
-                    android:hint="数量"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginBottom="1dp"
-                    android:inputType="number" />
-
-                <Button
-                    android:id="@+id/btn_add_item"
-                    style="@style/Widget.Toolbox.Button.Primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="添加" />
-            </LinearLayout>
-        </LinearLayout>
-
+        <!-- 搜索+排序(全屏删除后上主页) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
+            android:layout_marginBottom="@dimen/space_sm"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <EditText
+                android:id="@+id/et_search"
+                style="@style/Widget.Toolbox.Input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:hint="搜索物品名"
+                android:inputType="text"
+                android:maxLines="1"
+                android:minHeight="@dimen/button_height_md" />
+
             <TextView
-                android:id="@+id/tv_total_count"
+                android:id="@+id/tv_sort"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height_md"
+                android:background="@drawable/app_input_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:minHeight="@dimen/button_height_md"
+                android:minWidth="96dp"
+                android:paddingStart="@dimen/space_md"
+                android:paddingEnd="@dimen/space_md"
+                android:text="数量 ↓"
+                android:textColor="@color/app_text_primary"
+                android:textSize="@dimen/text_body" />
+        </LinearLayout>
+
+        <!-- 全量列表,页内滚动 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:overScrollMode="never" />
+
+        <!-- 空状态 -->
+        <LinearLayout
+            android:id="@+id/layout_stats_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/home_empty_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/space_xl"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_stats_empty_title"
+                style="@style/TextAppearance.Toolbox.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/app_chip_bg"
-                android:paddingStart="@dimen/space_lg"
-                android:paddingTop="@dimen/space_sm"
-                android:paddingEnd="@dimen/space_lg"
-                android:paddingBottom="@dimen/space_sm"
-                android:text="总计: 0"
+                android:text="这个组还没有物品" />
+
+            <TextView
+                android:id="@+id/tv_stats_empty_sub"
+                style="@style/TextAppearance.Toolbox.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:text="点右下 ＋ 新增第一件" />
+        </LinearLayout>
+
+        <!-- 总计 -->
+        <TextView
+            android:id="@+id/tv_total_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@drawable/app_chip_bg"
+            android:paddingStart="@dimen/space_lg"
+            android:paddingTop="@dimen/space_sm"
+            android:paddingEnd="@dimen/space_lg"
+            android:paddingBottom="@dimen/space_sm"
+            android:text="总计: 0"
+            android:textColor="@color/app_primary_dark"
+            android:textSize="@dimen/text_body_lg"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_clear_all"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:minHeight="@dimen/button_height_md"
+            android:text="一键清空当前组"
+            android:textColor="@color/app_danger" />
+
+        <!-- 多选底部栏 -->
+        <LinearLayout
+            android:id="@+id/layout_multiselect_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:background="@color/app_surface"
+            android:elevation="@dimen/elevation_md"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/space_md"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_multiselect_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="已选 0 项"
                 android:textColor="@color/app_primary_dark"
                 android:textSize="@dimen/text_body_lg"
                 android:textStyle="bold" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1" />
-
             <Button
-                android:id="@+id/btn_batch_delete"
+                android:id="@+id/btn_multiselect_cancel"
                 style="@style/Widget.Toolbox.Button.Secondary"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_lg"
-                android:text="批量删除"
-                android:textColor="@color/app_danger" />
+                android:layout_height="@dimen/button_height_md"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:minWidth="76dp"
+                android:text="取消" />
 
             <Button
-                android:id="@+id/btn_clear_all"
-                style="@style/Widget.Toolbox.Button.Secondary"
+                android:id="@+id/btn_multiselect_delete"
+                style="@style/Widget.Toolbox.Button.Danger"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="一键清空"
-                android:textColor="@color/app_danger" />
+                android:layout_height="@dimen/button_height_md"
+                android:minWidth="110dp"
+                android:text="删除所选" />
         </LinearLayout>
+    </LinearLayout>
+
+    <!-- 速拨收回层:全透明,只收点击(点空白收回),不要灰底 -->
+    <View
+        android:id="@+id/view_speed_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone" />
+
+    <!-- 速拨+FAB 同行容器:三键在左,主 FAB 在右,垂直居中天然对齐 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/space_lg"
+        android:layout_marginBottom="@dimen/space_xl"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layout_speed_dial"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="horizontal">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
 
-            <Button
-                android:id="@+id/btn_export"
-                style="@style/Widget.Toolbox.Button.Secondary"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_lg"
-                android:layout_weight="1"
-                android:text="导出数据" />
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btn_import"
-                style="@style/Widget.Toolbox.Button.Secondary"
-                android:layout_width="0dp"
+                <TextView
+                    style="@style/TextAppearance.Toolbox.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_xxs"
+                    android:background="@drawable/app_chip_bg"
+                    android:paddingStart="@dimen/space_sm"
+                    android:paddingTop="@dimen/space_xxs"
+                    android:paddingEnd="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_xxs"
+                    android:text="新增"
+                    android:textColor="@color/app_text_primary" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_menu_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="新增物品"
+                    android:src="@drawable/ic_add_24"
+                    app:backgroundTint="@color/app_primary"
+                    app:elevation="0dp"
+                    app:fabSize="mini"
+                    app:pressedTranslationZ="0dp"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="导入数据" />
+                android:layout_marginStart="@dimen/space_sm"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextAppearance.Toolbox.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_xxs"
+                    android:background="@drawable/app_chip_bg"
+                    android:paddingStart="@dimen/space_sm"
+                    android:paddingTop="@dimen/space_xxs"
+                    android:paddingEnd="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_xxs"
+                    android:text="导入"
+                    android:textColor="@color/app_text_primary" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_menu_import"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="导入数据"
+                    android:src="@drawable/ic_import_24"
+                    app:backgroundTint="@color/app_primary"
+                    app:elevation="0dp"
+                    app:fabSize="mini"
+                    app:pressedTranslationZ="0dp"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_sm"
+                android:layout_marginEnd="@dimen/space_sm"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextAppearance.Toolbox.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/space_xxs"
+                    android:background="@drawable/app_chip_bg"
+                    android:paddingStart="@dimen/space_sm"
+                    android:paddingTop="@dimen/space_xxs"
+                    android:paddingEnd="@dimen/space_sm"
+                    android:paddingBottom="@dimen/space_xxs"
+                    android:text="导出"
+                    android:textColor="@color/app_text_primary" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab_menu_export"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="导出数据"
+                    android:src="@drawable/ic_export_24"
+                    app:backgroundTint="@color/app_primary"
+                    app:elevation="0dp"
+                    app:fabSize="mini"
+                    app:pressedTranslationZ="0dp"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_fullscreen_list"
-            style="@style/Widget.Toolbox.Button.Primary"
-            android:layout_width="match_parent"
+        <!-- 主 FAB:平时单＋,展开变× -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_main"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:text="全屏查看物品列表" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_statistics"
-            android:layout_width="match_parent"
-            android:layout_height="360dp"
-            android:layout_marginTop="@dimen/space_lg"
-            android:background="@drawable/app_card_bg"
-            android:clipToPadding="false"
-            android:padding="@dimen/space_md"
-            android:paddingBottom="@dimen/space_lg" />
-
+            android:layout_gravity="bottom"
+            android:contentDescription="更多操作"
+            android:src="@drawable/ic_add_24"
+            app:backgroundTint="@color/app_primary"
+            app:elevation="0dp"
+            app:pressedTranslationZ="0dp"
+            app:tint="@android:color/white" />
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

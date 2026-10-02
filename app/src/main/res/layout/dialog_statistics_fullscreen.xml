@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:background="@color/app_bg"
     android:orientation="vertical"
-    android:padding="@dimen/space_lg">
+    android:padding="@dimen/space_md">
 
     <TextView
-        style="@style/TextAppearance.Toolbox.Heading"
+        style="@style/TextAppearance.Toolbox.TitleLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="全屏物品列表" />
@@ -30,7 +30,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/space_md"
+        android:layout_marginTop="@dimen/space_sm"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <EditText
@@ -38,26 +39,61 @@
             style="@style/Widget.Toolbox.Input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/space_md"
+            android:layout_marginEnd="@dimen/space_sm"
             android:layout_weight="1"
-            android:hint="搜索物品名" />
+            android:ellipsize="end"
+            android:hint="搜索物品名"
+            android:inputType="text"
+            android:maxLines="1"
+            android:minHeight="@dimen/button_height_md" />
 
         <Spinner
             android:id="@+id/spinner_fullscreen_sort"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/button_height_md"
             android:background="@drawable/app_input_bg"
+            android:minHeight="@dimen/button_height_md"
             android:paddingStart="@dimen/space_md" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/lv_fullscreen_statistics"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/space_md"
-        android:layout_weight="1"
-        android:background="@drawable/app_card_bg"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="@dimen/space_md"
-        android:padding="@dimen/space_md" />
+        android:layout_marginTop="@dimen/space_sm"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_fullscreen_statistics"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:padding="@dimen/space_sm" />
+
+        <LinearLayout
+            android:id="@+id/layout_fullscreen_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/home_empty_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/space_xl"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/TextAppearance.Toolbox.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="没有匹配的物品" />
+
+            <TextView
+                style="@style/TextAppearance.Toolbox.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:gravity="center"
+                android:text="换个关键词试试，或返回新增物品" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

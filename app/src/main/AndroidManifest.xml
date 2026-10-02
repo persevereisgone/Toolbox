@@ -4,9 +4,12 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -85,11 +88,55 @@
             android:name=".function.time.LockAlarmReceiver"
             android:exported="true" />
 
+        <receiver android:name=".ui.function.todo.TodoWidgetProvider" android:exported="false" android:label="@string/widget_todo_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/todo_widget_info" />
+        </receiver>
+        <service android:name=".ui.function.todo.TodoWidgetService" android:exported="false" android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <receiver android:name=".function.alarm.AlarmWidgetProvider" android:exported="false" android:label="@string/widget_rtc_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/alarm_widget_info" />
+        </receiver>
+        <receiver android:name=".function.alarm.AlarmCompactProvider" android:exported="false" android:label="@string/widget_rtc_compact_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/alarm_compact_widget_info" />
+        </receiver>
+        <receiver android:name=".function.alarm.AlarmCountdownWidgetProvider" android:exported="false" android:label="@string/widget_cd_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/alarm_countdown_widget_info" />
+        </receiver>
+        <receiver android:name=".function.alarm.AlarmCountdownCompactProvider" android:exported="false" android:label="@string/widget_cd_compact_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/alarm_countdown_compact_widget_info" />
+        </receiver>
+        <receiver android:name=".function.alarm.AlarmReceiver" android:exported="false" />
+        <activity android:name=".function.alarm.AlarmRingActivity" android:exported="false" android:showWhenLocked="true" android:turnScreenOn="true" />
+        <receiver android:name=".function.time.TimerHomeWidgetProvider" android:exported="false" android:label="@string/widget_timer_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            <action android:name="Yu.code.toolbox.TIMER_HOME_SET" />
+            <action android:name="Yu.code.toolbox.TIMER_HOME_CANCEL" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/timer_home_widget_info" />
+        </receiver>
+        <receiver android:name=".ui.function.cookbook.CookbookWidgetProvider" android:exported="false" android:label="@string/widget_cook_label">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/cookbook_widget_info" />
+        </receiver>
+
         <!-- 倒计时前台服务：更新常驻通知与悬浮窗 -->
         <service
             android:name=".function.time.CountdownOverlayService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+
+        <!-- 闹钟常驻通知：定时/倒计时剩余时间，锁屏可见 -->
+        <service
+            android:name=".function.alarm.AlarmCountdownService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="闹钟剩余时间常驻通知，响铃或取消时停止" />
+        </service>
 
         <!-- FileProvider for camera photos -->
         <provider

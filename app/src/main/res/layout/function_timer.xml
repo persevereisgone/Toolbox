@@ -8,278 +8,231 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/space_md"
+        android:background="@drawable/function_page_bg"
         android:orientation="vertical"
         android:padding="@dimen/space_xl">
 
-        <LinearLayout
+        <TextView
+            style="@style/TextAppearance.Toolbox.TitleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="定时返回桌面" />
+
+        <TextView
+            style="@style/TextAppearance.Toolbox.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:layout_marginBottom="@dimen/space_md"
+            android:text="快速预设 · 自定义时长 · 到点自动回桌面" />
+
+        <TextView
+            android:id="@+id/tv_remaining_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/app_hero_bg"
-            android:orientation="vertical"
-            android:padding="@dimen/space_xl">
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/app_primary"
+            android:textSize="52sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/home_chip_bg"
-                android:paddingStart="@dimen/space_md"
-                android:paddingTop="@dimen/space_xs"
-                android:paddingEnd="@dimen/space_md"
-                android:paddingBottom="@dimen/space_xs"
-                android:text="TIMER"
-                android:textColor="@color/app_text_inverse"
-                android:textSize="@dimen/text_caption"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                android:text="定时返回桌面"
-                android:textColor="@color/app_text_inverse"
-                android:textSize="@dimen/text_hero"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:text="支持快速预设、自定义时长和自动锁屏，帮助你更省心地结束当前任务。"
-                android:textColor="@color/home_header_subtitle"
-                android:textSize="@dimen/text_caption_lg" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/Widget.Toolbox.CardContainer"
+        <TextView
+            android:id="@+id/tv_timer_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:text="当前没有正在进行的定时"
+            android:textColor="@color/app_text_secondary"
+            android:textSize="@dimen/text_body_lg" />
 
-            <TextView
-                style="@style/TextAppearance.Toolbox.TitleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="当前状态" />
-
-            <TextView
-                android:id="@+id/tv_timer_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:gravity="center"
-                android:text="当前没有正在进行的定时"
-                android:textColor="@color/app_text_secondary"
-                android:textSize="@dimen/text_body_lg" />
-
-            <TextView
-                android:id="@+id/tv_remaining_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:gravity="center"
-                android:text=""
-                android:textColor="@color/app_primary"
-                android:textSize="@dimen/text_hero"
-                android:textStyle="bold"
-                android:visibility="gone" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/Widget.Toolbox.CardContainer"
+        <!-- 横滑预设条:一行滑完 6 档 -->
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/space_md"
+            android:clipToPadding="false"
+            android:scrollbars="none">
 
-            <TextView
-                style="@style/TextAppearance.Toolbox.TitleLarge"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="快速设置" />
-
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:columnCount="3"
-                android:rowCount="2">
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_15min"
                     style="@style/Widget.Toolbox.Button.Secondary"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="@dimen/space_sm"
-                    android:text="15分钟" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height_md"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:minWidth="88dp"
+                    android:text="15分" />
 
                 <Button
                     android:id="@+id/btn_30min"
                     style="@style/Widget.Toolbox.Button.Secondary"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="@dimen/space_sm"
-                    android:text="30分钟" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height_md"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:minWidth="88dp"
+                    android:text="30分" />
 
                 <Button
                     android:id="@+id/btn_45min"
                     style="@style/Widget.Toolbox.Button.Secondary"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="@dimen/space_sm"
-                    android:text="45分钟" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height_md"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:minWidth="88dp"
+                    android:text="45分" />
 
                 <Button
                     android:id="@+id/btn_60min"
                     style="@style/Widget.Toolbox.Button.Secondary"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="@dimen/space_sm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height_md"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:minWidth="88dp"
                     android:text="1小时" />
 
                 <Button
                     android:id="@+id/btn_90min"
                     style="@style/Widget.Toolbox.Button.Secondary"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="@dimen/space_sm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height_md"
+                    android:layout_marginEnd="@dimen/space_sm"
+                    android:minWidth="88dp"
                     android:text="1.5小时" />
 
                 <Button
                     android:id="@+id/btn_120min"
                     style="@style/Widget.Toolbox.Button.Secondary"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="@dimen/space_sm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/button_height_md"
+                    android:minWidth="88dp"
                     android:text="2小时" />
-            </GridLayout>
-        </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
 
+        <View
+            style="@style/Widget.Toolbox.Divider"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/space_lg"
+            android:layout_marginBottom="@dimen/space_xs" />
+
+        <!-- 自动锁屏行 -->
         <LinearLayout
-            style="@style/Widget.Toolbox.CardContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/TextAppearance.Toolbox.TitleLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="锁屏设置" />
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/button_height_md"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/space_sm"
+            android:paddingBottom="@dimen/space_sm">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_lg"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="定时结束后自动锁屏"
-                    android:textColor="@color/app_text_primary"
-                    android:textSize="@dimen/text_body_lg" />
-
-                <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/switch_auto_lock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="false" />
+                    android:text="自动锁屏"
+                    android:textColor="@color/app_text_primary"
+                    android:textSize="@dimen/text_body_lg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/TextAppearance.Toolbox.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:text="到点先回桌面再锁屏 · 需设备管理员权限" />
             </LinearLayout>
 
-            <TextView
-                style="@style/TextAppearance.Toolbox.Caption.Tertiary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_sm"
-                android:text="开启后，定时结束时会先返回桌面，然后自动锁定屏幕。" />
-        </LinearLayout>
-
-        <LinearLayout
-            style="@style/Widget.Toolbox.CardContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/TextAppearance.Toolbox.TitleLarge"
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_auto_lock"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="自定义时长" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/space_md"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/et_custom_hours"
-                    style="@style/Widget.Toolbox.Input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="小时"
-                    android:inputType="number" />
-
-                <EditText
-                    android:id="@+id/et_custom_minutes"
-                    style="@style/Widget.Toolbox.Input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="分钟"
-                    android:inputType="number" />
-
-                <Button
-                    android:id="@+id/btn_set_custom"
-                    style="@style/Widget.Toolbox.Button.Primary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="设置" />
-            </LinearLayout>
+                android:checked="false"
+                android:contentDescription="定时结束后自动锁屏开关" />
         </LinearLayout>
 
+        <!-- 自定义时长行 -->
         <LinearLayout
+            android:id="@+id/row_custom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
-            android:orientation="horizontal">
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="@dimen/button_height_md"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/space_sm"
+            android:paddingBottom="@dimen/space_sm">
 
-            <Button
-                android:id="@+id/btn_cancel_timer"
-                style="@style/Widget.Toolbox.Button.Secondary"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/space_lg"
-                android:layout_weight="1"
-                android:text="取消定时"
-                android:textColor="@color/app_danger" />
-
-            <Button
-                android:id="@+id/btn_refresh_status"
-                style="@style/Widget.Toolbox.Button.Primary"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="刷新状态" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="自定义时长"
+                    android:textColor="@color/app_text_primary"
+                    android:textSize="@dimen/text_body_lg"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/TextAppearance.Toolbox.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:text="滚轮选择 · 记住上次" />
+
+                <TextView
+                    android:id="@+id/tv_custom_summary"
+                    style="@style/TextAppearance.Toolbox.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_xxs"
+                    android:text="上次：25分钟" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textColor="@color/app_text_tertiary"
+                android:textSize="@dimen/text_title_lg" />
         </LinearLayout>
+
+        <View
+            style="@style/Widget.Toolbox.Divider"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/space_xs"
+            android:layout_marginBottom="@dimen/space_lg" />
+
+        <Button
+            android:id="@+id/btn_cancel_timer"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height_md"
+            android:text="取消定时"
+            android:textColor="@color/app_danger" />
 
         <TextView
             style="@style/TextAppearance.Toolbox.Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_lg"
+            android:layout_marginTop="@dimen/space_md"
+            android:gravity="center"
             android:text="设置定时后，应用将在指定时间后自动返回桌面，并显示倒计时悬浮窗。" />
     </LinearLayout>
 </ScrollView>

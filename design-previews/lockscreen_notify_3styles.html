@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>锁屏通知三版设计图（闹钟/倒计时常驻）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 20px;max-width:1100px;line-height:1.9}
+.sub b{color:#ffd479}
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:700px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;position:relative;flex:none;background:linear-gradient(180deg,#0b1020,#1a2340 60%,#0b1020);color:#fff}
+.status{display:flex;justify-content:space-between;padding:14px 22px 0;font-size:12px;color:#cfd8ea}
+.clock{text-align:center;margin-top:54px}
+.clock .t{font-size:64px;font-weight:200;letter-spacing:2px}
+.clock .d{font-size:13px;color:#aeb9d0;margin-top:4px}
+.lockarea{position:absolute;left:14px;right:14px;top:250px}
+.notif{background:rgba(255,255,255,.14);backdrop-filter:blur(20px);border-radius:20px;padding:12px 14px;border:1px solid rgba(255,255,255,.12)}
+.nrow{display:flex;align-items:center;gap:10px}
+.nicon{width:34px;height:34px;border-radius:10px;background:#427dff;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none}
+.napp{font-size:11px;color:#dbe3f2}.ntime{font-size:11px;color:#9fb0c9;margin-left:auto}
+.ntitle{font-size:14px;font-weight:800;margin-top:6px}
+.ntext{font-size:13px;color:#e6ecf7;margin-top:2px}
+.nbig{font-size:34px;font-weight:800;letter-spacing:1px;margin-top:4px;font-variant-numeric:tabular-nums}
+.nbar{height:6px;border-radius:6px;background:rgba(255,255,255,.2);margin-top:8px;overflow:hidden}
+.nbar i{display:block;height:100%;width:62%;border-radius:6px;background:linear-gradient(90deg,#427dff,#7f9dff)}
+.nact{display:flex;gap:8px;margin-top:10px}
+.nbtn{flex:1;text-align:center;font-size:12px;font-weight:700;background:rgba(255,255,255,.16);border-radius:10px;padding:9px}
+.nbtn.pri{background:#427dff}
+.hint{position:absolute;bottom:26px;width:100%;text-align:center;font-size:12px;color:#8fa0bd}
+.n{max-width:1100px;color:#9aa7bd;font-size:13px;line-height:2.1;margin-top:20px}.n b{color:#fff}.n i{color:#7fe0a8;font-style:normal}
+code{background:#1c2540;padding:1px 6px;border-radius:6px;font-size:12px}
+</style></head><body>
+<h1>锁屏通知三版（先修不显示，再选风格）</h1>
+<div class="sub">锁屏不显示先看 <b>§0 排查</b>（90% 是通道/系统开关问题，一行代码+两处系统设置）。三版锁屏效果如下，用的都是系统通知（<b>无需解锁、杀进程也在</b>，和微信电话同一层）。</div>
+<div class="stage">
+<div><div class="tag"><b>A · 标准双行（现在这版，修好即这样）</b> <i>0 改动</i> 标题+一行剩余+取消/打开。最省电，最不会被系统折叠。</div><div class="phone"><div class="status"><span>21:47</span><span>🔋 82</span></div><div class="clock"><div class="t">21:47</div><div class="d">10月2日 星期五</div></div><div class="lockarea"><div class="notif"><div class="nrow"><span class="nicon">⏰</span><span class="napp">Toolbox · 闹钟</span><span class="ntime">现在</span></div><div class="ntitle">午睡 · 还有 24:36 后响</div><div class="ntext">点开进入闹钟页，可取消或修改</div><div class="nact"><span class="nbtn">取消闹钟</span><span class="nbtn pri">打开闹钟</span></div></div></div><div class="hint">上滑解锁</div></div></div>
+<div><div class="tag"><b>B · 秒级跳动（推荐）</b> <i>1 行代码</i> 系统秒表逐秒走（<code>setUsesChronometer</code>），<b>不用 10 秒轮询</b>，服务可休眠，更省电；配 BigText 展开看标签。</div><div class="phone"><div class="status"><span>21:47</span><span>🔋 82</span></div><div class="clock"><div class="t">21:47</div><div class="d">10月2日 星期五</div></div><div class="lockarea"><div class="notif"><div class="nrow"><span class="nicon">⏱</span><span class="napp">Toolbox · 倒计时</span><span class="ntime">◉ 常驻</span></div><div class="nbig">24:36 <span style="font-size:13px;font-weight:400">后响</span></div><div class="ntext">泡面 · 每秒更新，无需亮屏</div><div class="nact"><span class="nbtn">取消</span><span class="nbtn">+5 分钟</span><span class="nbtn pri">打开</span></div></div></div><div class="hint">上滑解锁</div></div></div>
+<div><div class="tag"><b>C · 进度卡片</b> <i>自定义布局</i> 大数字+进度条+三个按钮，锁屏最好看；代价是部分机型折叠只露一行，展开才全。</div><div class="phone"><div class="status"><span>21:47</span><span>🔋 82</span></div><div class="clock"><div class="t">21:47</div><div class="d">10月2日 星期五</div></div><div class="lockarea"><div class="notif"><div class="nrow"><span class="nicon">⏰</span><span class="napp">Toolbox · 闹钟</span><span class="ntime">62% 已过</span></div><div class="nbig">24:36</div><div class="ntext">午睡 · 22:12 响铃</div><div class="nbar"><i></i></div><div class="nact"><span class="nbtn">取消</span><span class="nbtn">贪睡5分</span><span class="nbtn pri">打开</span></div></div></div><div class="hint">上滑解锁</div></div></div>
+</div>
+<div class="n">§0 为什么锁屏不显示（按顺序查）：<b>① 通道被系统记住了</b> <i>最常见</i>——旧通道 <code>alarm_countdown</code> 建出来是 DEFAULT 级别，部分机型锁屏不显示这类通知。修法：我把通道换成新 ID <code>alarm_countdown_v2</code>+HIGH 级别，老通道废弃（卸载重装也行）；<b>② 系统锁屏通知总开关</b>：设置→通知→锁屏通知→允许（小米叫"锁屏显示通知"，华为在"通知→锁屏通知"）；<b>③ 应用通知被关/设为静默</b>：长按通知→设为"允许"/"重要"；<b>④ 通知权限没给</b>（Android 13+）：定闹钟时我们 toast 提示，去设置→应用→Toolbox→通知→允许；<b>⑤ 省电杀后台</b>：前台服务一般不杀，若被杀通知一起没，建议把 Toolbox 加自启动白名单。<br>三版取舍：<b>A</b> 零改动（只修 §0）；<b>B</b> 一行秒表+多一个+5分钟按钮，体验最好，也最省电；<b>C</b> 最好看但要写 RemoteViews（约 100 行），且折叠机型打折。你定一版，我就改（B 只动服务一行+按钮，C 新建布局）。</div>
+</body></html>

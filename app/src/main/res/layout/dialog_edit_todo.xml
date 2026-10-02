@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/app_overlay_card_bg"
+    android:orientation="vertical"
+    android:padding="@dimen/space_lg">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/app_chip_bg"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        style="@style/TextAppearance.Toolbox.TitleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/space_md"
+        android:text="编辑待办" />
+
+    <EditText
+        android:id="@+id/et_edit_todo"
+        style="@style/Widget.Toolbox.Input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:hint="待办内容"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:minHeight="@dimen/input_height" />
+
+    <TextView
+        android:id="@+id/tv_edit_todo_error"
+        style="@style/TextAppearance.Toolbox.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:gravity="center"
+        android:text="内容不能为空"
+        android:textColor="@color/app_danger"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_edit_cancel"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/space_md"
+            android:layout_weight="1"
+            android:minHeight="@dimen/button_height_md"
+            android:text="取消" />
+
+        <Button
+            android:id="@+id/btn_edit_save"
+            style="@style/Widget.Toolbox.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="@dimen/button_height_md"
+            android:text="保存" />
+    </LinearLayout>
+</LinearLayout>

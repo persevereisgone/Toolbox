@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>倒计时常驻通知 redesign 预览（三版·折叠尺寸拼摆放）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Noto Sans SC", sans-serif; background: #3a4a63; padding: 24px; color: #0f172a; }
+  h1 { font-size: 20px; margin-bottom: 4px; color: #fff; }
+  .sub { font-size: 13px; color: #c3cede; margin-bottom: 20px; line-height: 1.7; }
+  .sub b { color: #fff; }
+  .ver { background: #fff; border-radius: 16px; padding: 20px; margin-bottom: 28px; }
+  .ver h2 { font-size: 17px; margin-bottom: 4px; }
+  .diff { font-size: 13px; background: #f0f5ff; border-radius: 10px; padding: 8px 12px; margin: 8px 0 16px; color: #335fd1; line-height: 1.6; }
+  .ver .meta { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+  .stage { background: #3a4a63; border-radius: 12px; padding: 24px 16px; margin-bottom: 12px; }
+  .stage .cap { font-size: 11px; color: #c3cede; margin-bottom: 8px; }
+  /* 通知体：按真实折叠尺寸 1:1（宽 100%，高约 96dp） */
+  .notif { background: #fff; border-radius: 18px; padding: 10px 14px; max-width: 420px; }
+  .n-row1 { display: flex; align-items: baseline; }
+  .n-time { font-size: 26px; font-weight: 700; font-family: monospace; letter-spacing: 1px; }
+  .n-sub { font-size: 12px; color: #64748b; margin-left: 8px; }
+  .n-pct { margin-left: auto; font-size: 12px; color: #64748b; }
+  .n-center { text-align: center; }
+  .n-center .n-time { font-size: 30px; }
+  .n-center .n-sub { display: block; margin: 2px 0 0; }
+  .n-bar { height: 3px; border-radius: 2px; background: #e6ebf2; margin-top: 6px; overflow: hidden; }
+  .n-bar i { display: block; height: 100%; width: 20%; background: #0e5a6d; border-radius: 2px; }
+  .n-row2 { display: flex; gap: 8px; margin-top: 8px; }
+  .n-btn { flex: 1; height: 36px; border-radius: 9px; border: none; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+  .n-cancel { background: #fff; color: #0f172a; }
+  .n-open { background: #f0f5ff; color: #335fd1; font-weight: 600; }
+  .n-open-solid { background: #427dff; color: #fff; font-weight: 600; }
+  .n-row2.edge .n-cancel { flex: 0 0 auto; padding: 0 4px; background: #fff; color: #64748b; }
+  .n-row2.edge .n-open-solid { flex: 0 0 120px; margin-left: auto; }
+  .ruler { font-size: 11px; color: #c3cede; margin-top: 8px; line-height: 1.6; }
+  .note { font-size: 12px; color: #64748b; line-height: 1.6; margin-top: 8px; }
+  .foot { font-size: 13px; color: #c3cede; line-height: 1.7; }
+  .foot b { color: #fff; }
+</style>
+</head>
+<body>
+<h1>倒计时常驻通知 redesign 预览</h1>
+<p class="sub">约束：<b>保持折叠尺寸</b>（约 96dp 高，不设 bigView → 无折叠箭头）｜只留<b>两行</b>：第一行时间显示，第二行 <b>取消 / 打开</b> 两个按钮｜风格：跟随系统通知底（不自绘底色，只排内容）｜三版只拼摆放</p>
+
+<div class="ver">
+  <h2>A 版 · 时间左对齐＋百分比右对齐，按钮均分（改动最小）</h2>
+  <p class="meta">开发量：小 ｜ 信息：时间/副文案/百分比全保留 ｜ 上手：与展开版最接近</p>
+  <div class="diff">摆放：第一行＝大时间＋副文案＋百分比右对齐；第二行＝取消/打开均分两键（打开弱高亮）。</div>
+  <div class="stage"><div class="cap">A 版 1:1 效果（以 360dp 宽为基准）</div>
+    <div class="notif">
+      <div class="n-row1"><span class="n-time">03:12</span><span class="n-sub">22:45 · 03:12后响</span><span class="n-pct">20% 已过</span></div>
+      <div class="n-row2"><button class="n-btn n-cancel">取消</button><button class="n-btn n-open">打开</button></div>
+    </div>
+    <div class="ruler">实测换算：通知体高 ≈ 上下边距 20 ＋ 时间行 36 ＋ 按钮行 36 ＋ 间距 8 ＝ 100dp；取消走现有 ACTION（停铃＋撤通知），打开跳 App 闹钟页。</div>
+  </div>
+  <p class="note">技术：RemoteViews 纵向 LinearLayout；时间用 Chronometer 走字（已验证可行）；百分比 TextView 右对齐；无 bigView 即无箭头。</p>
+</div>
+
+<div class="ver">
+  <h2>B 版 · 时间居中大字，按钮贴边（默认推荐）</h2>
+  <p class="meta">开发量：小 ｜ 信息：百分比并入副文案 ｜ 上手：一眼看时间</p>
+  <div class="diff">摆放：第一行＝时间居中＋副文案居中（百分比并入副文案，省一格）；第二行＝取消贴左弱化、打开贴右实心主键。</div>
+  <div class="stage"><div class="cap">B 版 1:1 效果</div>
+    <div class="notif">
+      <div class="n-center"><span class="n-time">03:12</span><span class="n-sub">22:45 · 03:12后响 · 20% 已过</span></div>
+      <div class="n-row2 edge"><button class="n-btn n-cancel">取消</button><button class="n-btn n-open-solid">打开</button></div>
+    </div>
+    <div class="ruler">实测换算：高 ≈ 20 ＋ 时间 40 ＋ 副文案 16 ＋ 按钮 36 ＋ 间距 8 ＝ 120dp，比折叠上限多约 20dp——副文案与时间同行可压回 100dp（见备注）。</div>
+  </div>
+  <p class="note">备注：若严格卡 100dp，副文案改与时间同行右对齐（即 A 版第一行），仅按钮行用贴边式；实现前按此口径一次定稿。</p>
+</div>
+
+<div class="ver">
+  <h2>C 版 · 时间行带进度底线，打开实心键</h2>
+  <p class="meta">开发量：中 ｜ 信息：进度条→3dp 底线 ｜ 上手：进度不断层</p>
+  <div class="diff">摆放：第一行＝时间＋副文案，下挂 3dp 进度细线（替代原粗进度条）；第二行＝取消文字键＋打开实心键均分。</div>
+  <div class="stage"><div class="cap">C 版 1:1 效果</div>
+    <div class="notif">
+      <div class="n-row1"><span class="n-time">03:12</span><span class="n-sub">22:45 · 03:12后响</span><span class="n-pct">20% 已过</span></div>
+      <div class="n-bar"><i></i></div>
+      <div class="n-row2"><button class="n-btn n-cancel">取消</button><button class="n-btn n-open-solid">打开</button></div>
+    </div>
+    <div class="ruler">实测换算：高 ≈ 20 ＋ 时间行 36 ＋ 细线 3+6 ＋ 按钮 36 ＋ 间距 8 ＝ 109dp；进度用 setProgressBar 按秒更新（现有逻辑保留）。</div>
+  </div>
+  <p class="note">注意：RemoteViews 进度条每秒刷新会唤醒桌面进程，现有 C 卡片已是此逻辑，沿用不变；若觉得耗电可降为 5 秒一刷，定稿时定。</p>
+</div>
+
+<p class="foot">第一道审核门：请定一版（<b>推荐 A</b>：信息零丢失、高度最接近折叠、改动最小）＋确认按钮语义（取消＝停本次提醒并撤通知；打开＝跳 App 闹钟页）。确认后我改 <b>AlarmCountdownService</b>（C 卡片布局→两行紧凑布局，删 bigView 去箭头），不动其它代码。<br>另：截图里"贪睡5分"按钮按你的两键要求本次删掉，重响统一回 App 内/响铃页的"5 分钟后再响"，确认请一并点头。</p>
+</body>
+</html>

@@ -8,18 +8,17 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
 
 import java.util.Locale;
 
-import Yu.code.toolbox.MainActivity;
 import Yu.code.toolbox.R;
 import Yu.code.toolbox.function.time.CountdownOverlayService;
 import Yu.code.toolbox.function.time.LockAlarmReceiver;
@@ -28,10 +27,10 @@ public class TimerManager {
 
     private static final String PREFS_NAME = "lock_prefs";
     private static final String KEY_TRIGGER_AT = "lock_trigger_at";
-    private static final String KEY_AUTO_LOCK = "auto_lock_screen"; // 是否自动锁屏
+    private static final String KEY_AUTO_LOCK = "auto_lock_screen";
+    private static final String KEY_LAST_HOURS = "last_custom_hours";
+    private static final String KEY_LAST_MINUTES = "last_custom_minutes";
     private static final int REQ_CODE_LOCK = 1001;
-    private static final int REQ_CODE_POST_NOTI = 3001;
-    private static final int REQ_CODE_EXACT_ALARM = 3002;
 
     private Context context;
     private View rootView;
@@ -41,8 +40,6 @@ public class TimerManager {
 
     private TextView tvTimerStatus;
     private TextView tvRemainingTime;
-    private EditText etCustomHours;
-    private EditText etCustomMinutes;
     private Button btnCancelTimer;
     private androidx.appcompat.widget.SwitchCompat switchAutoLock;
 
@@ -61,18 +58,14 @@ public class TimerManager {
     private void initViews() {
         tvTimerStatus = rootView.findViewById(R.id.tv_timer_status);
         tvRemainingTime = rootView.findViewById(R.id.tv_remaining_time);
-        etCustomHours = rootView.findViewById(R.id.et_custom_hours);
-        etCustomMinutes = rootView.findViewById(R.id.et_custom_minutes);
         btnCancelTimer = rootView.findViewById(R.id.btn_cancel_timer);
         switchAutoLock = rootView.findViewById(R.id.switch_auto_lock);
-        
-        // 每次都默认关闭自动锁屏，需要用户手动开启
+
         switchAutoLock.setChecked(false);
         prefs.edit().putBoolean(KEY_AUTO_LOCK, false).apply();
     }
 
     private void setupClickListeners() {
-        // 预设时长按钮
         rootView.findViewById(R.id.btn_15min).setOnClickListener(v -> setTimer(15 * 60 * 1000L));
         rootView.findViewById(R.id.btn_30min).setOnClickListener(v -> setTimer(30 * 60 * 1000L));
         rootView.findViewById(R.id.btn_45min).setOnClickListener(v -> setTimer(45 * 60 * 1000L));
@@ -80,24 +73,20 @@ public class TimerManager {
         rootView.findViewById(R.id.btn_90min).setOnClickListener(v -> setTimer(90 * 60 * 1000L));
         rootView.findViewById(R.id.btn_120min).setOnClickListener(v -> setTimer(120 * 60 * 1000L));
 
-        // 自定义时长按钮
-        rootView.findViewById(R.id.btn_set_custom).setOnClickListener(v -> setCustomTimer());
+        rootView.findViewById(R.id.row_custom).setOnClickListener(v -> showCustomSheet());
 
-        // 取消定时按钮
-        btnCancelTimer.setOnClickListener(v -> cancelTimer());
+        btnCancelTimer.setOnClickListener(v -> showCancelConfirm());
 
-        // 刷新状态按钮
-        rootView.findViewById(R.id.btn_refresh_status).setOnClickListener(v -> updateTimerStatus());
-        
-        // 自动锁屏开关
+        // 状态每秒自动刷新,无需手动刷新键
+
+        // 点大字查看剩余时间
+        tvRemainingTime.setOnClickListener(v -> showRemainingDialog());
+
         switchAutoLock.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                // 检查是否有设备管理员权限
                 if (!isDeviceAdminActive()) {
-                    // 没有权限，提示用户并引导到设置页面
                     Toast.makeText(context, "需要设备管理员权限才能自动锁屏", Toast.LENGTH_LONG).show();
                     requestDeviceAdminPermission();
-                    // 暂时不保存开关状态，等用户授权后再说
                     buttonView.setChecked(false);
                     return;
                 }
@@ -108,28 +97,120 @@ public class TimerManager {
             prefs.edit().putBoolean(KEY_AUTO_LOCK, isChecked).apply();
         });
     }
-    
-    /**
-     * 检查是否已激活设备管理员
-     */
+
+    /** 自定义时长 bottom-sheet:双滚轮 + 确定带结果 + 记忆上次 */
+    private void showCustomSheet() {
+        View view = LayoutInflater.from(context).inflate(R.layout.dialog_custom_sheet, null, false);
+        android.widget.NumberPicker npHours = view.findViewById(R.id.np_hours);
+        android.widget.NumberPicker npMinutes = view.findViewById(R.id.np_minutes);
+        npHours.setMinValue(0);
+        npHours.setMaxValue(12);
+        npMinutes.setMinValue(0);
+        npMinutes.setMaxValue(59);
+        npHours.setValue(Math.max(0, Math.min(12, prefs.getInt(KEY_LAST_HOURS, 0))));
+        npMinutes.setValue(Math.max(0, Math.min(59, prefs.getInt(KEY_LAST_MINUTES, 25))));
+        npHours.setWrapSelectorWheel(true);
+        npMinutes.setWrapSelectorWheel(true);
+
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog =
+                new com.google.android.material.bottomsheet.BottomSheetDialog(context);
+        dialog.setContentView(view);
+
+        Button btnOk = view.findViewById(R.id.btn_ok);
+        View btnCancel = view.findViewById(R.id.btn_cancel);
+        TextView tvError = view.findViewById(R.id.tv_sheet_error);
+        Runnable refreshOk = () -> {
+            long total = (long) npHours.getValue() * 60L + npMinutes.getValue();
+            // 只保留时长,不加"确定 ·"前缀,防换行撑高按钮
+            btnOk.setText(total > 0 ? formatDuration(total * 60L * 1000L) + "后" : "确定");
+            tvError.setVisibility(View.GONE);
+        };
+        npHours.setOnValueChangedListener((p, o, n) -> refreshOk.run());
+        npMinutes.setOnValueChangedListener((p, o, n) -> refreshOk.run());
+        refreshOk.run();
+
+        // 快捷预设:点即填滚轮(布局可选,不存在则跳过)
+        setQuickPreset(view, R.id.btn_quick_15, npHours, npMinutes, 0, 15, refreshOk);
+        setQuickPreset(view, R.id.btn_quick_25, npHours, npMinutes, 0, 25, refreshOk);
+        setQuickPreset(view, R.id.btn_quick_45, npHours, npMinutes, 0, 45, refreshOk);
+        setQuickPreset(view, R.id.btn_quick_60, npHours, npMinutes, 1, 0, refreshOk);
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnOk.setOnClickListener(v -> {
+            int hours = npHours.getValue();
+            int minutes = npMinutes.getValue();
+            long totalMinutes = (long) hours * 60L + minutes;
+            if (totalMinutes <= 0) {
+                tvError.setVisibility(View.VISIBLE);
+                return;
+            }
+            prefs.edit().putInt(KEY_LAST_HOURS, hours).putInt(KEY_LAST_MINUTES, minutes).apply();
+            dialog.dismiss();
+            setTimer(totalMinutes * 60L * 1000L);
+        });
+        dialog.show();
+    }
+
+    /** 快捷预设:布局可选,找不到则跳过,避免崩溃 */
+    private void setQuickPreset(View parent, int id,
+                                android.widget.NumberPicker npHours,
+                                android.widget.NumberPicker npMinutes,
+                                int h, int m, Runnable refreshOk) {
+        View v = parent.findViewById(id);
+        if (v == null) return;
+        v.setOnClickListener(x -> { npHours.setValue(h); npMinutes.setValue(m); refreshOk.run(); });
+    }
+
+    /** 取消确认:破坏性操作二次确认 */
+    private void showCancelConfirm() {
+        if (getRemainingMs() <= 0) {
+            Toast.makeText(context, "当前没有正在进行的定时", Toast.LENGTH_LONG).show();
+            return;
+        }
+        AlertDialog dialog = new AlertDialog.Builder(context, R.style.AppDialogStyle)
+                .setTitle("取消已设置的定时？")
+                .setMessage("将取消闹钟并停止倒计时悬浮窗，此操作不可撤销。")
+                .setNegativeButton("再想想", null)
+                .setPositiveButton("确认取消", (d, w) -> cancelTimer())
+                .create();
+        dialog.setOnShowListener(d -> {
+            // 破坏性确认键用 danger 色,避免与默认 positive 主色混淆
+            android.widget.Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            if (positive != null) positive.setTextColor(context.getResources().getColor(R.color.app_danger));
+        });
+        dialog.show();
+    }
+
+    /** 点大字查看剩余时间 */
+    private void showRemainingDialog() {
+        long remaining = getRemainingMs();
+        if (remaining <= 0) {
+            Toast.makeText(context, "当前没有正在进行的定时", Toast.LENGTH_LONG).show();
+            return;
+        }
+        new AlertDialog.Builder(context, R.style.AppDialogStyle)
+                .setTitle("剩余时间")
+                .setMessage("剩余" + formatDurationWithSeconds(remaining) + "后回到主屏")
+                .setNegativeButton("取消定时", (d, w) -> showCancelConfirm())
+                .setPositiveButton("知道了", null)
+                .show();
+    }
+
     private boolean isDeviceAdminActive() {
-        android.app.admin.DevicePolicyManager dpm = 
+        android.app.admin.DevicePolicyManager dpm =
             (android.app.admin.DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        android.content.ComponentName adminComponent = 
+        android.content.ComponentName adminComponent =
             new android.content.ComponentName(context, LockDeviceAdminReceiver.class);
         return dpm != null && dpm.isAdminActive(adminComponent);
     }
-    
-    /**
-     * 请求设备管理员权限
-     */
+
     private void requestDeviceAdminPermission() {
         Intent intent = new Intent(android.app.admin.DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        android.content.ComponentName adminComponent = 
+        android.content.ComponentName adminComponent =
             new android.content.ComponentName(context, LockDeviceAdminReceiver.class);
         intent.putExtra(android.app.admin.DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent);
-        intent.putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION, 
-            "授予设备管理员权限后，应用可以在定时结束时自动锁定屏幕");
+        intent.putExtra(android.app.admin.DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+            "授予设备管理员权限后，应用可以在定时结束时自动锁定屏幕。");
         context.startActivity(intent);
     }
 
@@ -153,55 +234,11 @@ public class TimerManager {
         }
 
         saveTriggerAt(triggerAt);
+        prefs.edit().putLong("lock_total_ms", delayMillis).apply();
         startCountdownService();
         updateTimerStatus();
+        TimerHomeWidgetProvider.refreshAll(context);
         Toast.makeText(context, "已设置：" + formatDuration(delayMillis) + "后回到主屏", Toast.LENGTH_LONG).show();
-    }
-
-    private void setCustomTimer() {
-        String hoursStr = etCustomHours.getText().toString().trim();
-        String minutesStr = etCustomMinutes.getText().toString().trim();
-
-        int hours = 0;
-        int minutes = 0;
-
-        if (!hoursStr.isEmpty()) {
-            try {
-                hours = Integer.parseInt(hoursStr);
-                if (hours < 0) {
-                    Toast.makeText(context, "小时不能为负数", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                Toast.makeText(context, "请输入有效的小时数", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
-        if (!minutesStr.isEmpty()) {
-            try {
-                minutes = Integer.parseInt(minutesStr);
-                if (minutes < 0 || minutes >= 60) {
-                    Toast.makeText(context, "分钟必须在0-59之间", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                Toast.makeText(context, "请输入有效的分钟数", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
-        if (hours == 0 && minutes == 0) {
-            Toast.makeText(context, "请设置大于0的时长", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        long totalMinutes = (long) hours * 60L + minutes;
-        setTimer(totalMinutes * 60L * 1000L);
-
-        // 清空输入
-        etCustomHours.setText("");
-        etCustomMinutes.setText("");
     }
 
     private void cancelTimer() {
@@ -213,6 +250,7 @@ public class TimerManager {
         clearTriggerAt();
         stopCountdownService();
         updateTimerStatus();
+        TimerHomeWidgetProvider.refreshAll(context);
         Toast.makeText(context, "已取消定时返回桌面", Toast.LENGTH_LONG).show();
     }
 
@@ -220,7 +258,7 @@ public class TimerManager {
         long remaining = getRemainingMs();
         if (remaining > 0) {
             tvTimerStatus.setText("定时进行中");
-            tvRemainingTime.setText("剩余：" + formatDurationWithSeconds(remaining));
+            tvRemainingTime.setText(formatDurationWithSeconds(remaining));
             tvRemainingTime.setVisibility(View.VISIBLE);
             btnCancelTimer.setEnabled(true);
         } else {
@@ -235,7 +273,7 @@ public class TimerManager {
             @Override
             public void run() {
                 updateTimerStatus();
-                handler.postDelayed(this, 1000); // 每秒更新一次
+                handler.postDelayed(this, 1000);
             }
         };
         handler.post(updateRunnable);
@@ -261,7 +299,6 @@ public class TimerManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS)
                     != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                // 通知权限需要用户手动授予，这里只显示提示
                 Toast.makeText(context, "需要通知权限以显示定时提醒", Toast.LENGTH_LONG).show();
             }
         }

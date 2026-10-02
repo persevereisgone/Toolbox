@@ -6,6 +6,18 @@
       "sourceType": "github",
       "skillPath": ".github/skills/testing_and_automation/android-testing/SKILL.md",
       "computedHash": "bc18f8cea2b7601cef52141845708ef674ba37dc05e7bf4b2d8fd08b11c2ab41"
+    },
+    "mobile-android-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/ui-design/skills/mobile-android-design/SKILL.md",
+      "computedHash": "143a60d6a0744a5058adf984e3a64b75cd2ef3714a15557f4ff6fd95e39ff23a"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "b0f52ab109c122ee4de15f4880cba51a70a14fc6dca9ab63f1027b09120da0ef"
     }
   }
 }

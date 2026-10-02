@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>定时功能 redesign - 全页面 + 展示形式（可滚动 · 规范间距）</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 24px;max-width:1200px;line-height:1.9}
+.sub b{color:#ffd479}
+.stage{display:flex;gap:30px;align-items:flex-start;margin-bottom:44px;flex-wrap:wrap}
+.frame-tag{font-size:12px;font-weight:700;color:#9aa7bd;margin:0 0 10px 4px;letter-spacing:1px;max-width:330px;line-height:1.8}
+.frame-tag b{color:#fff}.frame-tag i{font-style:normal;color:#7fe0a8}
+.phone{width:340px;height:720px;border-radius:38px;overflow:hidden;border:1px solid #2a3550;background:#f6f8fc;color:#14181f;position:relative;flex:none}
+.scr{height:100%;overflow-y:auto;padding:20px 20px 40px}
+.scr::-webkit-scrollbar{width:4px}.scr::-webkit-scrollbar-thumb{background:#c3ccd9;border-radius:4px}
+.scrollhint{position:absolute;right:8px;top:50%;color:#8c98ae;font-size:10px;writing-mode:vertical-rl;letter-spacing:2px}
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:4px}.bar b{font-size:17px}.bar .x{color:#8c98ae;font-size:18px}.bar .r{margin-left:auto;font-size:12px;font-weight:700;color:#3c73f0;background:#eaf1ff;border-radius:999px;padding:6px 12px}
+.hero{background:linear-gradient(155deg,#3f8cff,#6f67ff);border-radius:20px;padding:20px;color:#fff;margin-bottom:20px}
+.hero .pill{display:inline-block;background:rgba(255,255,255,.22);border-radius:999px;font-size:10px;font-weight:800;letter-spacing:2px;padding:4px 12px}
+.hero h2{font-size:24px;margin-top:12px}.hero p{font-size:13px;color:#d6e4f7;margin-top:8px;line-height:1.7}
+.card{background:#fff;border:1px solid #e7edf6;border-radius:20px;padding:20px;margin-bottom:20px}
+.card h4{font-size:15px;margin-bottom:4px}.card .d{font-size:12px;color:#8c98ae;line-height:1.7;margin-bottom:12px}
+.big{font-size:46px;font-weight:800;text-align:center;letter-spacing:2px;margin:10px 0}
+.center{text-align:center}.mut{font-size:12px;color:#8c98ae;line-height:1.7}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.preset{background:#eef3fb;border-radius:14px;padding:14px 4px;text-align:center;font-size:13px;font-weight:700;min-height:52px;display:flex;align-items:center;justify-content:center}
+.preset.on{background:#427dff;color:#fff}
+.inp{background:#fff;border:1px solid #e2e9f5;border-radius:14px;padding:13px 14px;font-size:14px;min-height:52px;color:#9aa7bd}
+.btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font-size:14px;font-weight:800;min-height:52px}
+.pri{background:#427dff;color:#fff}.sec{background:#eef3fb;color:#14181f}.dan{background:#fff;color:#e15a5a;border:1px solid #f5d7d7}
+.row2{display:flex;gap:12px}.row2>*{flex:1}
+.swrow{display:flex;align-items:center;gap:12px}.sw{margin-left:auto;width:50px;height:30px;border-radius:999px;background:#427dff;position:relative;flex:none}.sw:after{content:"";position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;background:#fff}
+.sw.off{background:#c9d4e6}.sw.off:after{right:auto;left:3px}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:20px 20px 28px;box-shadow:0 -8px 40px rgba(0,0,0,.25)}
+.sheet .grab{width:40px;height:4px;border-radius:4px;background:#d5dce8;margin:0 auto 14px}
+.sheet h4{font-size:16px;text-align:center}.sheet .d{font-size:12px;color:#8c98ae;text-align:center;margin:6px 0 14px}
+.wheel{display:flex;gap:12px;justify-content:center;margin-bottom:16px}.wheel div{background:#f2f5fa;border-radius:14px;padding:14px 0;text-align:center;flex:1;font-size:13px;color:#8c98ae;line-height:2}.wheel div b{display:block;font-size:26px;color:#14181f}
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.dlg{position:absolute;left:24px;right:24px;top:50%;transform:translateY(-50%);background:#fff;border-radius:20px;padding:22px}
+.dlg h4{font-size:16px}.dlg p{font-size:13px;color:#5b6472;margin:8px 0 16px;line-height:1.7}
+.overlay-demo{background:#14181f;border-radius:18px;padding:16px;color:#fff;margin-bottom:12px}
+.overlay-demo .t{font-size:26px;font-weight:800;text-align:center;letter-spacing:2px}
+.overlay-demo .b{display:flex;gap:8px;margin-top:12px}.overlay-demo .b span{flex:1;text-align:center;font-size:12px;background:rgba(255,255,255,.12);border-radius:10px;padding:10px}
+.spec{background:#1a2340;border:1px solid #2a3550;border-radius:14px;padding:14px 16px;font-size:12px;color:#9aa7bd;line-height:2;max-width:330px}
+.spec b{color:#7fe0a8}.spec h5{color:#fff;font-size:13px;margin-bottom:4px}
+.sec-t{font-size:15px;font-weight:800;margin:34px 0 16px;color:#ffd479;letter-spacing:1px}
+</style></head><body>
+<h1>定时功能 redesign · 全页面 + 展示形式 v1（可滚动 · 规范间距）</h1>
+<div class="sub">上一版把一屏内容硬塞进 560px  fixed 高度，间距被压扁。这版每台手机 <b>720px 高、可滚动</b>，卡间距统一 <b>20px</b>、卡内边距 <b>20px</b>、行间距 <b>12px</b>，和落地 dimen（space_lg 16 / space_xl 20）对齐。共 <b>5 帧</b>：①主页面（滚动全览）②自定义时长 bottom-sheet（滚轮选择）③剩余时间查询对话框 ④倒计时悬浮窗展示形式 ⑤取消确认 + 无定时空状态。功能对照原 function_timer.xml + MainActivity 锁屏 dialog（15~120/自定义/查看剩余/取消）。</div>
+
+<div class="sec-t">① 主页面（滚动 · 全部功能一屏流）</div>
+<div class="stage">
+<div><div class="frame-tag"><b>Frame 1 · 主页</b> <i>可上下滚动 ↓</i> 瘦标题 → 倒计时大字 → 6 预设 → 自动锁屏 → 自定义 → 取消/刷新 → 底部说明（hero 大横幅已删，不占位）</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b><span class="r">● 进行中</span></div><div class="center mut" style="margin:8px 0 20px">快速预设 · 自定义时长 · 到点自动回桌面</div>
+<div class="big">12:30</div><div class="center mut" style="margin-bottom:20px">25 分钟后回到桌面 · 已开启自动锁屏</div>
+<div class="card"><h4>快速设置</h4><div class="d">点即设，6 档全保留（原 15/30/45/60/90/120）</div><div class="grid3"><div class="preset">15分钟</div><div class="preset on">25分钟</div><div class="preset">45分钟</div></div><div style="height:12px"></div><div class="grid3"><div class="preset">1小时</div><div class="preset">1.5小时</div><div class="preset">2小时</div></div></div>
+<div class="card"><h4>定时结束后自动锁屏</h4><div class="d">开启后定时结束时先返回桌面然后自动锁定屏幕</div><div class="swrow"><span style="font-size:14px">自动锁屏</span><div class="sw"></div></div></div>
+<div class="card"><h4>自定义时长</h4><div class="d">小时 + 分钟滚轮（Frame 2 bottom-sheet），记忆上次选择</div><div class="row2"><div class="inp">0 小时</div><div class="inp">25 分钟</div></div><div style="height:12px"></div><button class="btn pri">设置自定义时长 ›</button></div>
+<div class="row2"><button class="btn sec" style="color:#e15a5a">取消定时</button><button class="btn pri">刷新状态</button></div><div style="height:16px"></div>
+<div class="mut">设置定时后应用将在指定时间后自动返回桌面，并显示倒计时悬浮窗。</div>
+</div><span class="scrollhint">SCROLL ↓</span></div></div>
+<div class="spec"><h5>落地 spec（Frame 1）</h5>· 删 hero 大横幅（TIMER pill+渐变），换一行小副标题，省 ~150px<br>· 删外层“当前状态”卡，大字直接裸放，省一卡<br>· ScrollView + fillViewport，padding <b>space_xl 20</b><br>· 卡间距 <b>space_lg 16~20</b>，卡内 <b>20</b>，预设 gap <b>12</b><br>· 字阶：卡标题 15 / 大字 46 / 说明 12<br>· 预设选中态：主色底 + 白字，其余 secondary<br>· 开关 SwitchCompat 保留，加 contentDescription<br>· 底部说明 Caption tertiary，不可删（原布局有）</div>
+</div>
+
+<div class="sec-t">② 自定义时长（bottom-sheet 滚轮 · 替代两个 EditText）</div>
+<div class="stage">
+<div><div class="frame-tag"><b>Frame 2 · 自定义时长</b> <i>底部弹出</i> 原 dialog_time_wheel（时/分 NumberPicker + 确定/取消 + 记忆上次）</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<div class="card"><h4>当前状态</h4><div class="center mut">当前没有正在进行的定时</div></div>
+<div class="dim"></div>
+<div class="sheet"><div class="grab"></div><h4>自定义时长</h4><div class="d">滚轮选择 · 自动记住上次（0h 25m）</div>
+<div class="wheel"><div>小时<b>0</b>0~12</div><div>分钟<b>25</b>0~59</div></div>
+<div class="row2"><button class="btn sec">取消</button><button class="btn pri">确定 · 25分钟后</button></div>
+<div class="center mut" style="margin-top:10px">≤0 时提示“请选择大于0的时长” · 确定后要悬浮窗+通知+精准闹钟权限</div>
+</div>
+</div></div></div>
+<div class="spec"><h5>展示形式设计</h5>· 原生 NumberPicker → <b>bottom-sheet 双滚轮</b>，露出当前值上下各 1 行<br>· 确定按钮文案带结果 <b>“确定 · 25分钟后”</b>（所见即所得）<br>· enter <b>200ms 上滑 + scrim</b>，exit 120ms<br>· ≤0 不关弹层，行内红字提示（不用 Toast 盖住）</div>
+</div>
+
+<div class="sec-t">③ 剩余时间查询 · ④ 悬浮窗展示形式 · ⑤ 取消确认/空状态</div>
+<div class="stage">
+<div><div class="frame-tag"><b>Frame 3 · 查看剩余时间</b> <i>居中对话框</i> 原 showRemainingTime（有则显示/无则 Toast）</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<div class="card"><h4>当前状态</h4><div class="big">12:30</div></div>
+<div class="dim"></div>
+<div class="dlg"><h4>剩余时间</h4><p>剩余 <b style="color:#335fd1">12分30秒</b> 后回到主屏<br>无定时时显示“当前没有正在进行的定时”</p><div class="row2"><button class="btn sec">取消定时</button><button class="btn pri">知道了</button></div></div>
+</div></div></div>
+<div><div class="frame-tag"><b>Frame 4 · 倒计时悬浮窗</b> <i>展示形式重设计</i> 紧凑横条（图标+12:30）· 点按出菜单（调整时长/收起到侧边/取消定时）· 收到侧边只留窄标签，点标签恢复</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<div class="overlay-demo"><div class="center mut" style="color:#9aa7bd">悬浮窗 · 可拖动</div><div class="t">12:30</div><div class="center mut" style="color:#9aa7bd">25分钟后回到桌面</div><div class="b"><span>■ 停止</span><span>✕ 关闭悬浮</span></div></div>
+<div class="card"><h4>常驻通知（下拉栏）</h4><div class="mut">⏱ 定时进行中 · 剩余 12:30<br>点通知回到本页 · 杀进程不杀闹钟（AlarmManager 兜底）</div></div>
+<div class="card"><h4>权限链（缺一不可）</h4><div class="mut">悬浮窗 → 通知（Android 13+）→ 精准闹钟（Android 12+）<br>缺哪个弹窗去设置，不静默失败</div></div>
+</div></div></div>
+<div><div class="frame-tag"><b>Frame 5 · 取消确认 + 空状态</b> <i>对话框 + 状态</i> 原 cancelScheduledLock（取消闹钟+停服务+Toast）</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>定时返回桌面</b></div><div style="height:12px"></div>
+<div class="card"><h4>当前状态</h4><div class="center mut">当前没有正在进行的定时<br>（空状态：无大字、无取消按钮高亮）</div></div>
+<div class="dim"></div>
+<div class="dlg"><h4>取消已设置的定时？</h4><p>将取消闹钟并停止倒计时悬浮窗，此操作不可撤销。</p><div class="row2"><button class="btn sec">再想想</button><button class="btn dan">确认取消</button></div></div>
+</div></div></div>
+</div>
+
+<div class="sub">v1→这次：① 高度 560 fixed → <b>720 可滚动</b>，卡间距/内边距按 dimen 规范铺开，不再挤；② 功能按 function_timer.xml + MainActivity dialog 全量核对（6 预设/开关/自定义/取消/刷新/底部说明/剩余查询/悬浮窗/权限链，一个不少）；③ 展示形式定了三处：<b>自定义用 bottom-sheet 双滚轮</b>、<b>剩余用居中对话框</b>、<b>悬浮窗给暂停/停止/关悬浮三键</b>。确认这套（或指改哪帧），我就按帧出 XML 落地清单；然后按同样套路一页一页做（下一页你定：菜谱 / 统计 / 抽奖？）。</div>
+</body></html>

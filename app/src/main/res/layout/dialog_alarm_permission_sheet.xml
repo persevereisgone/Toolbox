@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:paddingStart="@dimen/space_lg" android:paddingEnd="@dimen/space_lg"
+    android:paddingTop="@dimen/space_xs" android:paddingBottom="@dimen/space_lg">
+
+    <View
+        android:layout_width="40dp" android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/space_md"
+        android:background="@drawable/bg_sheet_grab" />
+
+    <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/alarm_permission_sheet_title"
+        android:textAppearance="@style/TextAppearance.Toolbox.Title" />
+
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="@string/alarm_permission_sheet_desc"
+        android:lineSpacingMultiplier="1.5"
+        android:textAppearance="@style/TextAppearance.Toolbox.Body.Secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_alarm_perm_later"
+            style="@style/Widget.Toolbox.Button.Secondary"
+            android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="@dimen/button_height_md"
+            android:layout_marginEnd="@dimen/space_xxs"
+            android:text="@string/alarm_btn_later" />
+
+        <Button
+            android:id="@+id/btn_alarm_perm_settings"
+            style="@style/Widget.Toolbox.Button.Primary"
+            android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="@dimen/button_height_md"
+            android:layout_marginStart="@dimen/space_xxs"
+            android:text="@string/alarm_btn_goto_settings" />
+    </LinearLayout>
+</LinearLayout>

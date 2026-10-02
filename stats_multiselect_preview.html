@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>统计 · 行内多选模式（替代批量删除弹窗）待审</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans SC",system-ui,sans-serif}
+body{background:#0f1420;color:#fff;padding:32px}
+h1{font-size:22px}.sub{color:#9aa7bd;font-size:13px;margin:6px 0 24px;max-width:1100px;line-height:1.9}
+.sub b{color:#ffd479}
+.stage{display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap}
+.tag{font-size:12px;color:#9aa7bd;margin:0 0 10px 4px;max-width:330px;line-height:1.8}
+.tag b{color:#fff}.tag i{font-style:normal;color:#7fe0a8}
+.phone{width:330px;height:640px;border-radius:36px;overflow:hidden;border:1px solid #2a3550;background:#f6f8fc;color:#14181f;position:relative;flex:none}
+.scr{height:100%;overflow-y:auto;padding:16px 14px 28px}
+.bar{display:flex;align-items:center;gap:10px}.bar b{font-size:16px}.bar .x{color:#8c98ae;font-size:18px}
+.bar .sel{margin-left:auto;font-size:12px;font-weight:800;color:#335fd1;background:#eaf1ff;border-radius:999px;padding:6px 12px}
+.item{display:flex;align-items:center;gap:10px;border:1px solid #e7edf6;border-radius:14px;padding:8px 10px;margin-bottom:8px;background:#fff}
+.item.on{border-color:#427dff;background:#f2f6ff}
+.box{width:24px;height:24px;border-radius:8px;border:2px solid #c3ccd9;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800}
+.box.on{background:#427dff;border-color:#427dff}
+.item b{font-size:13px;display:block}.item small{font-size:11px;color:#8c98ae}
+.qty{margin-left:auto;display:flex;align-items:center;gap:6px;color:#8c98ae;font-size:12px}
+.actionbar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #e7edf6;padding:12px 16px 20px;display:flex;gap:10px}
+.btn{flex:1;border:none;border-radius:13px;padding:13px;font-size:13px;font-weight:800;min-height:48px}
+.pri{background:#427dff;color:#fff}.dan{background:#e15a5a;color:#fff}.secb{background:#eef3fb;color:#14181f}
+.mut{font-size:12px;color:#8c98ae;line-height:1.7}
+.dim{position:absolute;inset:0;background:rgba(10,15,25,.45)}
+.dlg{position:absolute;left:26px;right:26px;top:50%;transform:translateY(-50%);background:#fff;border-radius:18px;padding:20px}
+.dlg h4{font-size:15px}.dlg p{font-size:13px;color:#5b6472;margin:8px 0 14px}
+.r2{display:flex;gap:10px}.r2>*{flex:1}
+.n{max-width:1100px;color:#9aa7bd;font-size:13px;line-height:2;margin-top:20px}.n b{color:#fff}
+</style></head><body>
+<h1>统计 · 行内多选模式（替代 S-3 批量删除弹窗）</h1>
+<div class="sub">现在：点批量删除→弹多选框→勾→删（两层）。提议：<b>行内长按直接进多选</b>，标题变“已选 N 项”，底部出删除/取消，删完自动退出。批量删除弹窗入口保留（兼容老手），两种并存。</div>
+<div class="stage">
+<div><div class="tag"><b>M-1 长按进多选</b> <i>长按任意行</i> 行首出现复选框，标题提示已选 1 项</div><div class="phone"><div class="scr">
+<div class="bar"><span class="x">‹</span><b>物品统计</b></div>
+<div style="height:10px"></div>
+<div class="item on"><span class="box on">✓</span><div><b>矿泉水</b><small>×24</small></div><div class="qty">长按进入</div></div>
+<div class="item"><span class="box"></span><div><b>苹果</b><small>×12</small></div></div>
+<div class="item"><span class="box"></span><div><b>纸巾</b><small>×8</small></div></div>
+<div class="mut">−/＋/× 在多选态隐藏，只留勾选，点行即切换</div>
+</div></div></div>
+<div><div class="tag"><b>M-2 已选 N 项</b> <i>点选多行</i> 顶部计数，底部删除（danger）/取消</div><div class="phone"><div class="scr" style="padding-bottom:100px">
+<div class="bar"><span class="x">‹</span><b>物品统计</b><span class="sel">已选 2 项 ✕</span></div>
+<div class="mut" style="margin:8px 0">退出多选3种：① 点右上 ✕ / 底部取消 ② 系统返回键 ③ 把已选项逐个点掉（剩0个自动退）</div>
+<div style="height:10px"></div>
+<div class="item on"><span class="box on">✓</span><div><b>矿泉水</b><small>×24</small></div></div>
+<div class="item on"><span class="box on">✓</span><div><b>苹果</b><small>×12</small></div></div>
+<div class="item"><span class="box"></span><div><b>纸巾</b><small>×8</small></div></div>
+<div class="actionbar"><button class="btn secb">取消</button><button class="btn" style="background:#fff;color:#e15a5a;border:1px solid #f5d7d7">删除所选 (2)</button></div>
+</div></div></div>
+<div><div class="tag"><b>M-3 删除确认</b> <i>点删除</i> 复用 danger 确认框，删完退回普通态+Toast</div><div class="phone"><div class="scr" style="overflow:hidden">
+<div class="bar"><span class="x">‹</span><b>物品统计</b><span class="sel">已选 2 项</span></div>
+<div class="dim"></div>
+<div class="dlg"><h4>删除所选 2 个物品？</h4><p>矿泉水、苹果将被删除，此操作不可撤销。</p><div class="r2"><button class="btn secb">再想想</button><button class="btn dan">确认删除</button></div></div>
+</div></div></div>
+</div>
+<div class="n">要拍的点：<b>①</b> 做不做（做了 S-3 弹窗留不留，我建议留，两种并存）；<b>②</b> 进入手势只要长按，还是行首常驻小勾（常驻更易发现但占宽）；<b>③</b> 删完要不要 Snackbar 撤销（批量删建议加，误删代价大）。你定，我就进落地文档+开工。</div>
+</body></html>

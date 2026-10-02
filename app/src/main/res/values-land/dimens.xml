@@ -1,3 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- P2 横屏 gutter:手机 20dp -> 横屏 24dp,减少左右留白浪费 -->
+    <dimen name="activity_horizontal_margin">24dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">48dp</dimen>
 </resources>
