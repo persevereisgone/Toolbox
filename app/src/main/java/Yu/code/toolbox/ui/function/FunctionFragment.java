@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -40,6 +42,30 @@ public class FunctionFragment extends Fragment {
     private CookBookFragment cookBookFragment;
     private TodoFunctionManager todoFunctionManager;
     private AlarmFunctionManager alarmFunctionManager;
+    private ActivityResultLauncher<String[]> statisticsImportLauncher;
+    private ActivityResultLauncher<Intent> exactAlarmSettingsLauncher;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        statisticsImportLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri != null && statisticsManager != null) {
+                        statisticsManager.importFromFileUri(uri);
+                    }
+                });
+        exactAlarmSettingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (alarmFunctionManager != null) {
+                        alarmFunctionManager.onExactAlarmSettingsReturned();
+                    }
+                    if (timerManager != null) {
+                        timerManager.onExactAlarmSettingsReturned();
+                    }
+                });
+    }
 
     @Nullable
     @Override
@@ -107,6 +133,8 @@ public class FunctionFragment extends Fragment {
             View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
             container.addView(functionView);
             statisticsManager = new StatisticsManager(requireContext(), functionView);
+            statisticsManager.setFileImportLauncher(() -> statisticsImportLauncher.launch(
+                    new String[]{"text/csv", "text/comma-separated-values", "text/plain"}));
         } else if (layoutId == R.layout.function_recorder_playlist) {
             View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
             container.addView(functionView);
@@ -114,7 +142,8 @@ public class FunctionFragment extends Fragment {
         } else if (layoutId == R.layout.function_timer) {
             View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
             container.addView(functionView);
-            timerManager = new TimerManager(requireContext(), functionView);
+            timerManager = new TimerManager(requireContext(), functionView,
+                    intent -> exactAlarmSettingsLauncher.launch(intent));
         } else if (layoutId == R.layout.function_lottery) {
             View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
             container.addView(functionView);
@@ -143,7 +172,8 @@ public class FunctionFragment extends Fragment {
         } else if (layoutId == R.layout.function_alarm) {
             View functionView = LayoutInflater.from(requireContext()).inflate(layoutId, container, false);
             container.addView(functionView);
-            alarmFunctionManager = new AlarmFunctionManager(requireContext(), functionView);
+            alarmFunctionManager = new AlarmFunctionManager(requireContext(), functionView,
+                    intent -> exactAlarmSettingsLauncher.launch(intent));
         } else if (layoutId == R.layout.function_cookbook) {
             cookBookFragment = new CookBookFragment();
             getChildFragmentManager()
@@ -230,9 +260,6 @@ public class FunctionFragment extends Fragment {
         }
         if (screenRecorderManager != null) {
             screenRecorderManager.onActivityResult(requestCode, resultCode, data);
-        }
-        if (statisticsManager != null) {
-            statisticsManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

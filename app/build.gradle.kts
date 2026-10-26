@@ -10,8 +10,8 @@ android {
         applicationId = "Yu.code.toolbox"
         minSdk = 30
         targetSdk = 34
-        versionCode = 121
-        versionName = "1.2.1"
+        versionCode = 122
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

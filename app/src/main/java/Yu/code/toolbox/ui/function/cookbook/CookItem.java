@@ -49,14 +49,14 @@ public class CookItem {
         if (ingredients == null || ingredients.isEmpty()) {
             return new String[0];
         }
-        return ingredients.split("[,，]+");
+        return ingredients.split("[,，、;；\n\r]+");
     }
 
     public String[] getSeasoningArray() {
         if (seasonings == null || seasonings.isEmpty()) {
             return new String[0];
         }
-        return seasonings.split("[,，]+");
+        return seasonings.split("[,，、;；\n\r]+");
     }
 
     @Override

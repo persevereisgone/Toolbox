@@ -29,25 +29,26 @@ public class AlarmStore {
 
     public AlarmStore(Context c) { prefs = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE); }
 
-    public void setCountdown(Context ctx, long ms, String label) {
+    public boolean setCountdown(Context ctx, long ms, String label) {
         long now = System.currentTimeMillis();
         long at = now + ms;
+        if (!schedule(ctx, at)) return false;
         prefs.edit().putLong(KEY_TRIGGER, at).putString(KEY_LABEL, label).putString(KEY_MODE, MODE_COUNTDOWN)
                 .putLong(KEY_START, now).putLong(KEY_TOTAL, ms).apply();
-        schedule(ctx, at);
         refreshWidgets(ctx);
+        return true;
     }
 
-    public void setCountdownMinutes(Context ctx, float minutes) {
+    public boolean setCountdownMinutes(Context ctx, float minutes) {
         int m = clamp((int) Math.round(minutes));
         int sec = Math.max(6, (int) Math.round(minutes * 60));
         String label = minutes < 1
                 ? ctx.getString(R.string.alarm_countdown_label_sec, sec)
                 : ctx.getString(R.string.alarm_countdown_label, m);
-        setCountdown(ctx, sec * 1000L, label);
+        return setCountdown(ctx, sec * 1000L, label);
     }
 
-    public void setRtc(Context ctx, int h, int m, String label) {
+    public boolean setRtc(Context ctx, int h, int m, String label) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, h);
         cal.set(Calendar.MINUTE, m);
@@ -56,38 +57,67 @@ public class AlarmStore {
         if (cal.getTimeInMillis() <= System.currentTimeMillis()) cal.add(Calendar.DAY_OF_YEAR, 1);
         long now = System.currentTimeMillis();
         long at = cal.getTimeInMillis();
+        if (!schedule(ctx, at)) return false;
         prefs.edit().putLong(KEY_TRIGGER, at).putString(KEY_LABEL, label).putString(KEY_MODE, MODE_RTC)
                 .putLong(KEY_START, now).putLong(KEY_TOTAL, Math.max(1, at - now)).apply();
-        schedule(ctx, at);
         refreshWidgets(ctx);
+        return true;
     }
 
     /** 组件A微调：目标时刻前后平移，落到过去则按 setRtc 同规则顺延明天。 */
-    public void addMinutes(Context ctx, int delta) {
+    public boolean addMinutes(Context ctx, int delta) {
         long t = getTriggerAt();
-        if (t <= 0) return;
+        if (t <= 0) return false;
         long at = t + delta * 60_000L;
         if (at <= System.currentTimeMillis()) at += 24 * 60 * 60 * 1000L;
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(at);
-        setRtc(ctx, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), getLabel(ctx));
+        return setRtc(ctx, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), getLabel(ctx));
     }
 
-    private void schedule(Context ctx, long at) {
+    private boolean schedule(Context ctx, long at) {
         AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (am == null) return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) return false;
         Intent i = new Intent(ctx, AlarmReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(ctx, 9001, i, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        if (am == null) return;
         // 用 setAlarmClock：系统按"闹钟"对待，Doze/后台限制下优先级最高，到点必触发，状态栏还会显示闹钟图标
         Intent show = new Intent(ctx, Yu.code.toolbox.MainActivity.class)
                 .putExtra("open_function", Yu.code.toolbox.R.layout.function_alarm);
         PendingIntent showPi = PendingIntent.getActivity(ctx, 9002, show, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         try {
             am.setAlarmClock(new AlarmManager.AlarmClockInfo(at, showPi), pi);
-        } catch (Exception e) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
-            else am.setExact(AlarmManager.RTC_WAKEUP, at, pi);
+            return true;
+        } catch (SecurityException e) {
+            return false;
+        } catch (RuntimeException e) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, at, pi);
+                } else {
+                    am.setExact(AlarmManager.RTC_WAKEUP, at, pi);
+                }
+                return true;
+            } catch (RuntimeException fallbackFailure) {
+                return false;
+            }
         }
+    }
+
+    public static void restoreAfterBoot(Context ctx) {
+        AlarmStore store = new AlarmStore(ctx);
+        long triggerAt = store.getTriggerAt();
+        if (triggerAt <= 0) return;
+        if (triggerAt <= System.currentTimeMillis()) {
+            AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+            Intent alarmIntent = new Intent(ctx, AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    ctx, 9001, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            if (am != null) am.cancel(pendingIntent);
+            store.prefs.edit().remove(KEY_TRIGGER).remove(KEY_START).remove(KEY_TOTAL).apply();
+            return;
+        }
+        store.schedule(ctx, triggerAt);
     }
 
     public void cancel(Context ctx) {
@@ -99,8 +129,8 @@ public class AlarmStore {
         refreshWidgets(ctx);
     }
 
-    public void snooze5(Context ctx) {
-        setCountdown(ctx, 5 * 60 * 1000L, ctx.getString(R.string.alarm_btn_snooze));
+    public boolean snooze5(Context ctx) {
+        return setCountdown(ctx, 5 * 60 * 1000L, ctx.getString(R.string.alarm_btn_snooze));
     }
 
     public long getTriggerAt() { return prefs.getLong(KEY_TRIGGER, -1); }

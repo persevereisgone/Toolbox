@@ -1,0 +1,18 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>timer widget 2x1 / 2x2 v2</title>
+<style>body{font-family:system-ui;background:#222;padding:16px;color:#fff}.row{display:flex;gap:16px;flex-wrap:wrap}
+.w21{width:220px;height:58px}.w22{width:220px;height:220px}.c{background:#fff;color:#111;border-radius:14px;padding:8px 10px;box-sizing:border-box;display:flex;align-items:center;gap:8px}
+.c.dark{background:#1B2538;color:#fff}.big{font-weight:800}.s{font-size:11px;opacity:.7}.btn{background:#0B57D0;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px}</style>
+<h3>2x1 (220x58 ≈ 2格宽x1格高) — 只能一行,无大字</h3>
+<div class="row">
+<div class="w21 c"><div>⏱</div><div><div class="big">24:36</div><div class="s">返回桌面 · 进行中</div></div><div style="flex:1"></div><div class="btn">+15</div><div class="btn" style="background:#eee;color:#111">✕</div></div>
+<div class="w21 c"><div class="btn">15</div><div class="btn">30</div><div class="btn">60</div><div class="s">未设置<br>点即设</div></div>
+<div class="w21 c dark"><div>⏱</div><div class="big">24:36</div><div style="flex:1;height:6px;background:#333;border-radius:3px"><div style="width:60%;height:100%;background:#7AA7FF;border-radius:3px"></div></div><div>✕</div></div>
+</div>
+<h3>2x2 (220x220) — 大字+宫格放得下</h3>
+<div class="row">
+<div class="w22 c" style="flex-direction:column;align-items:stretch"><div class="s">定时返回桌面 · 进行中</div><div class="big" style="font-size:44px">24:36</div><div style="display:flex;gap:6px"><div class="btn">+15</div><div class="btn">自定</div><div class="btn" style="background:#eee;color:#111">取消</div></div></div>
+<div class="w22 c" style="flex-direction:column"><div class="s">快捷预设 点即设</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;width:100%"><div class="btn">15</div><div class="btn">30</div><div class="btn">45</div><div class="btn">60</div><div class="btn">90</div><div class="btn">120</div></div></div>
+<div class="w22 c dark" style="flex-direction:column;align-items:stretch"><div class="s" style="color:#aaa">沉浸 · 夜间</div><div class="big" style="font-size:44px">24:36</div><div style="height:8px;background:#333;border-radius:4px"><div style="width:60%;height:100%;background:#7AA7FF;border-radius:4px"></div></div><div class="s" style="color:#aaa">到点仅回桌面 · 自动锁屏关</div></div>
+</div>
+<p>V1信息型 / V2宫格型 / V3极简深色型. 结论:2x1放弃大字,只保留 剩余mm:ss+一个动作.</p>

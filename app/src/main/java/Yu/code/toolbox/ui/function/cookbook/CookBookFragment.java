@@ -328,7 +328,7 @@ public class CookBookFragment extends Fragment {
         }
     }
 
-    private String currentCookbookFilter = "全部";
+    private String currentCookbookFilter = CookBookManager.CATEGORY_ALL;
     private String currentCookbookSearchQuery = "";
 
     private void refreshCookbooks() {
@@ -365,7 +365,12 @@ public class CookBookFragment extends Fragment {
         boolean empty = cookbooks.isEmpty();
         boolean hasActiveFilter = !allLabel.equals(currentCookbookFilter) || !search.isEmpty();
         if (tvCookbookEmptyHint != null) {
-            tvCookbookEmptyHint.setVisibility(empty && hasActiveFilter ? View.VISIBLE : View.GONE);
+            if (empty) {
+                tvCookbookEmptyHint.setText(getString(hasActiveFilter
+                        ? Yu.code.toolbox.R.string.cookbook_empty_filtered
+                        : Yu.code.toolbox.R.string.cookbook_empty_library));
+            }
+            tvCookbookEmptyHint.setVisibility(empty ? View.VISIBLE : View.GONE);
         }
         if (btnClearCookbookFilters != null) {
             btnClearCookbookFilters.setVisibility(empty && hasActiveFilter ? View.VISIBLE : View.GONE);
@@ -581,6 +586,10 @@ public class CookBookFragment extends Fragment {
                         Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_category_empty, Toast.LENGTH_SHORT).show();
                         return;
                     }
+                    if (CookBookManager.CATEGORY_ALL.equalsIgnoreCase(name)) {
+                        Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_category_reserved, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if (!cookBookManager.addCategory(name)) {
                         Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_category_exists, Toast.LENGTH_SHORT).show();
                         return;
@@ -602,6 +611,10 @@ public class CookBookFragment extends Fragment {
                     String name = input == null ? "" : input.trim();
                     if (name.isEmpty()) {
                         Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_category_empty, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (CookBookManager.CATEGORY_ALL.equalsIgnoreCase(name)) {
+                        Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_category_reserved, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (!cookBookManager.renameCategory(oldName, name)) {

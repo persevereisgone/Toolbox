@@ -34,6 +34,7 @@ public class CookBookManager {
     public static final String CATEGORY_COLD = "凉菜";
     public static final String CATEGORY_DESSERT = "甜品";
     public static final String CATEGORY_SIDE = "配菜";
+    public static final String CATEGORY_ALL = "全部";
 
     public CookBookManager(Context context) {
         preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -72,6 +73,26 @@ public class CookBookManager {
         cookbooks.add(cookbook);
         saveCookbooks(cookbooks);
         return cookbook.getId();
+    }
+
+    public int addCookbooks(List<CookItem> additions) {
+        if (additions == null || additions.isEmpty()) {
+            return 0;
+        }
+        List<CookItem> cookbooks = getAllCookbooks();
+        int addedCount = 0;
+        for (CookItem item : additions) {
+            if (item == null) {
+                continue;
+            }
+            item.setId(nextId++);
+            cookbooks.add(item);
+            addedCount++;
+        }
+        if (addedCount > 0) {
+            saveCookbooks(cookbooks);
+        }
+        return addedCount;
     }
 
     public boolean updateCookbook(CookItem updatedCookbook) {
@@ -124,19 +145,44 @@ public class CookBookManager {
             saveCategories(defaults);
             return defaults;
         }
+        int reservedIndex = -1;
+        for (int i = 0; i < categories.size(); i++) {
+            String category = categories.get(i);
+            if (category != null && CATEGORY_ALL.equalsIgnoreCase(category.trim())) {
+                if (reservedIndex < 0) reservedIndex = i;
+                categories.remove(i--);
+            }
+        }
+        if (reservedIndex >= 0) {
+            String replacement = "全部菜谱";
+            int suffix = 2;
+            while (containsCategory(categories, replacement)) {
+                replacement = "全部菜谱" + suffix++;
+            }
+            categories.add(Math.min(reservedIndex, categories.size()), replacement);
+            saveCategories(categories);
+            migrateCategoryName(CATEGORY_ALL, replacement);
+        }
         return categories;
+    }
+
+    private boolean containsCategory(List<String> categories, String name) {
+        for (String category : categories) {
+            if (category != null && category.equalsIgnoreCase(name)) return true;
+        }
+        return false;
     }
 
     public List<String> getFilterCategories() {
         List<String> result = new ArrayList<>();
-        result.add("全部");
+        result.add(CATEGORY_ALL);
         result.addAll(getCategories());
         return result;
     }
 
     public boolean addCategory(String name) {
         String normalized = normalizeCategoryName(name);
-        if (normalized.isEmpty()) {
+        if (normalized.isEmpty() || CATEGORY_ALL.equalsIgnoreCase(normalized)) {
             return false;
         }
         List<String> categories = getCategories();
@@ -155,7 +201,7 @@ public class CookBookManager {
             return false;
         }
         String normalized = normalizeCategoryName(newName);
-        if (normalized.isEmpty()) {
+        if (normalized.isEmpty() || CATEGORY_ALL.equalsIgnoreCase(normalized)) {
             return false;
         }
         List<String> categories = getCategories();
@@ -365,16 +411,23 @@ public class CookBookManager {
 
     public Map<String, Integer> generatePurchaseList() {
         List<CookItem> menuItems = getMenuItems();
-        Map<String, Integer> purchaseMap = new HashMap<>();
+        Map<String, Integer> recipeCounts = new HashMap<>();
         Map<String, String> displayNames = new HashMap<>();
 
         for (CookItem item : menuItems) {
-            accumulateIngredients(item.getIngredientArray(), purchaseMap, displayNames);
-            accumulateIngredients(item.getSeasoningArray(), purchaseMap, displayNames);
+            if (item == null) {
+                continue;
+            }
+            Set<String> recipeIngredients = new HashSet<>();
+            accumulateIngredients(item.getIngredientArray(), recipeIngredients, displayNames);
+            accumulateIngredients(item.getSeasoningArray(), recipeIngredients, displayNames);
+            for (String key : recipeIngredients) {
+                recipeCounts.put(key, recipeCounts.getOrDefault(key, 0) + 1);
+            }
         }
 
         Map<String, Integer> result = new HashMap<>();
-        for (Map.Entry<String, Integer> entry : purchaseMap.entrySet()) {
+        for (Map.Entry<String, Integer> entry : recipeCounts.entrySet()) {
             String display = displayNames.get(entry.getKey());
             if (display == null || display.isEmpty()) {
                 display = entry.getKey();
@@ -384,7 +437,7 @@ public class CookBookManager {
         return result;
     }
 
-    private void accumulateIngredients(String[] rawItems, Map<String, Integer> purchaseMap,
+    private void accumulateIngredients(String[] rawItems, Set<String> recipeIngredients,
                                        Map<String, String> displayNames) {
         if (rawItems == null) {
             return;
@@ -398,7 +451,7 @@ public class CookBookManager {
             if (key.isEmpty()) {
                 key = trimmed;
             }
-            purchaseMap.put(key, purchaseMap.getOrDefault(key, 0) + 1);
+            recipeIngredients.add(key);
             String existingDisplay = displayNames.get(key);
             if (existingDisplay == null || preferDisplayName(trimmed, existingDisplay)) {
                 displayNames.put(key, preferredDisplayName(trimmed, key));
@@ -415,8 +468,10 @@ public class CookBookManager {
         }
         String s = raw.trim().toLowerCase(java.util.Locale.ROOT);
         s = s.replaceAll("\\s+", "");
+        s = s.replaceAll("^[0-9]+(\\.[0-9]+)?(kg|g|ml|l|千克|克|毫升|升|两|斤|个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)", "");
+        s = s.replaceAll("[0-9]+(\\.[0-9]+)?(kg|g|ml|l|千克|克|毫升|升|两|斤)$", "");
+        s = s.replaceAll("[0-9]+(\\.[0-9]+)?(个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)+$", "");
         s = s.replaceAll("^[0-9]+(\\.[0-9]+)?", "");
-        s = s.replaceAll("[0-9]+(\\.[0-9]+)?(g|kg|ml|l|克|千克|毫升|升|两|斤)?$", "");
         s = s.replaceAll("(适量|少许|若干|各|左右)$", "");
         s = s.replaceAll("(个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)+$", "");
         return s.trim();
@@ -428,14 +483,14 @@ public class CookBookManager {
 
     private static String preferredDisplayName(String raw, String key) {
         String cleaned = raw.replaceAll("\\s+", "");
-        if (cleaned.matches(".*[0-9].*") && !key.isEmpty() && key.length() < cleaned.length()) {
-            // 尽量展示去数量后的名称；若清洗后为空则退回原文
-            String withoutQty = cleaned.replaceAll("^[0-9]+(\\.[0-9]+)?(g|kg|ml|l|克|千克|毫升|升)?", "");
-            withoutQty = withoutQty.replaceAll("[0-9]+(\\.[0-9]+)?(g|kg|ml|l|克|千克|毫升|升)?$", "");
-            withoutQty = withoutQty.replaceAll("(适量|少许)$", "");
-            if (!withoutQty.isEmpty()) {
-                return withoutQty;
-            }
+        String withoutQty = cleaned.replaceAll(
+                "^[0-9]+(\\.[0-9]+)?(kg|g|ml|l|千克|克|毫升|升|两|斤|个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)", "");
+        withoutQty = withoutQty.replaceAll(
+                "[0-9]+(\\.[0-9]+)?(kg|g|ml|l|千克|克|毫升|升|两|斤|个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)+$", "");
+        withoutQty = withoutQty.replaceAll("(适量|少许|若干|各|左右)$", "");
+        withoutQty = withoutQty.replaceAll("(个|只|片|根|条|块|颗|粒|勺|汤匙|茶匙)+$", "");
+        if (!withoutQty.isEmpty()) {
+            return withoutQty;
         }
         return cleaned.isEmpty() ? key : cleaned;
     }

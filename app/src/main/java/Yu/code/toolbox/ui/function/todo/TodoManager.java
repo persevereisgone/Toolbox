@@ -78,15 +78,28 @@ public class TodoManager {
         saveAndRefresh(ctx, l);
     }
 
-    public void deleteDone(Context ctx) {
-        List<TodoItem> l = getAll();
-        l.removeIf(TodoItem::isDone);
-        saveAndRefresh(ctx, l);
+    public List<TodoItem> deleteDone(Context ctx) {
+        List<TodoItem> current = getAll();
+        List<TodoItem> removed = new ArrayList<>();
+        List<TodoItem> remaining = new ArrayList<>();
+        for (TodoItem item : current) {
+            if (item.isDone()) removed.add(item); else remaining.add(item);
+        }
+        saveAndRefresh(ctx, remaining);
+        return removed;
     }
 
     /** P1: 撤销"清除已完成"时把快照拼回原列表. */
     public void restoreItems(Context ctx, List<TodoItem> snapshot) {
-        saveAndRefresh(ctx, new ArrayList<>(snapshot));
+        if (snapshot == null || snapshot.isEmpty()) return;
+        List<TodoItem> current = getAll();
+        java.util.Set<Integer> existingIds = new java.util.HashSet<>();
+        for (TodoItem item : current) existingIds.add(item.getId());
+        for (TodoItem item : snapshot) {
+            if (item != null && existingIds.add(item.getId())) current.add(item);
+        }
+        current.sort((a, b) -> Boolean.compare(a.isDone(), b.isDone()));
+        saveAndRefresh(ctx, current);
     }
 
     public List<TodoItem> getTopUndone(int n) {

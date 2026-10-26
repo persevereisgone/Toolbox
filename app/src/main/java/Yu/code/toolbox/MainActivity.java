@@ -481,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void saveTriggerAt(long triggerAt) {
         SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        sp.edit().putLong(KEY_TRIGGER_AT, triggerAt).apply();
+        sp.edit().putLong(KEY_TRIGGER_AT, triggerAt).putBoolean("lock_restore_pending", false).apply();
     }
 
     /**
@@ -490,7 +490,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void clearTriggerAt() {
         SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        sp.edit().remove(KEY_TRIGGER_AT).apply();
+        sp.edit().remove(KEY_TRIGGER_AT).putBoolean("lock_restore_pending", false).apply();
     }
 
     /**

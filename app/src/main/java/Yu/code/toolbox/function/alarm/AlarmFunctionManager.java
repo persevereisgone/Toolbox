@@ -24,9 +24,15 @@ import Yu.code.toolbox.R;
  * 倒计时默认单位：分钟（支持小数，0.5 = 30 秒）。
  */
 public class AlarmFunctionManager {
+    public interface ExactAlarmSettingsLauncher {
+        void launch(Intent intent);
+    }
+
     private final Context ctx;
     private final View root;
     private final AlarmStore store;
+    private final ExactAlarmSettingsLauncher exactAlarmSettingsLauncher;
+    private Runnable pendingExactAlarmOperation;
 
     private View hero;
     private TextView tvHeroMode, tvStatus, tvHeroSub;
@@ -38,10 +44,12 @@ public class AlarmFunctionManager {
     private boolean lastRunning = false;
     private boolean firstRefresh = true;
 
-    public AlarmFunctionManager(Context ctx, View root) {
+    public AlarmFunctionManager(Context ctx, View root,
+                                ExactAlarmSettingsLauncher exactAlarmSettingsLauncher) {
         this.ctx = ctx;
         this.root = root;
         this.store = new AlarmStore(ctx);
+        this.exactAlarmSettingsLauncher = exactAlarmSettingsLauncher;
 
         hero = root.findViewById(R.id.hero_alarm);
         tvHeroMode = root.findViewById(R.id.tv_alarm_hero_mode);
@@ -106,7 +114,11 @@ public class AlarmFunctionManager {
 
     private void startCountdown(float minutes) {
         ensureNotificationPermission();
-        store.setCountdownMinutes(ctx, minutes);
+        if (!store.setCountdownMinutes(ctx, minutes)) {
+            Toast.makeText(ctx, R.string.alarm_permission_not_granted, Toast.LENGTH_LONG).show();
+            refresh();
+            return;
+        }
         Toast.makeText(ctx, R.string.alarm_countdown_started, Toast.LENGTH_SHORT).show();
         refresh();
     }
@@ -115,7 +127,7 @@ public class AlarmFunctionManager {
     private boolean ensureExactPermission(Runnable pendingOp) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-            if (am != null && !am.canScheduleExactAlarms()) {
+            if (am == null || !am.canScheduleExactAlarms()) {
                 showPermissionSheet(pendingOp);
                 return false;
             }
@@ -133,25 +145,19 @@ public class AlarmFunctionManager {
         });
         sheet.findViewById(R.id.btn_alarm_perm_settings).setOnClickListener(v -> {
             dialog.dismiss();
-            // ① 精准闹钟设置页
-            try {
-                Intent i = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
-                        Uri.parse("package:" + ctx.getPackageName()));
-                ctx.startActivity(i);
-            } catch (Exception ignored) {
+            if (exactAlarmSettingsLauncher == null) {
+                Toast.makeText(ctx, R.string.alarm_permission_not_granted, Toast.LENGTH_LONG).show();
+                return;
             }
-            // ② 电池优化白名单：锁屏/后台被杀的主因，一并申请
+            pendingExactAlarmOperation = pendingOp;
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                    Uri.parse("package:" + ctx.getPackageName()));
             try {
-                android.os.PowerManager pm = (android.os.PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
-                if (pm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(ctx.getPackageName())) {
-                    Intent b = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                            Uri.parse("package:" + ctx.getPackageName()));
-                    ctx.startActivity(b);
-                }
-            } catch (Exception ignored) {
+                exactAlarmSettingsLauncher.launch(intent);
+            } catch (RuntimeException e) {
+                pendingExactAlarmOperation = null;
+                Toast.makeText(ctx, R.string.alarm_permission_not_granted, Toast.LENGTH_LONG).show();
             }
-            if (pendingOp != null) pendingOp.run();
-            refresh();
         });
         dialog.setOnDismissListener(d -> refresh());
         dialog.show();
@@ -181,8 +187,31 @@ public class AlarmFunctionManager {
 
     private void applyRtc(int h, int m) {
         ensureNotificationPermission();
-        store.setRtc(ctx, h, m, String.format(Locale.getDefault(), "%02d:%02d", h, m));
+        if (!store.setRtc(ctx, h, m, String.format(Locale.getDefault(), "%02d:%02d", h, m))) {
+            Toast.makeText(ctx, R.string.alarm_permission_not_granted, Toast.LENGTH_LONG).show();
+            refresh();
+            return;
+        }
         Toast.makeText(ctx, R.string.alarm_set_done, Toast.LENGTH_SHORT).show();
+        refresh();
+    }
+
+    public void onExactAlarmSettingsReturned() {
+        AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && (am == null || !am.canScheduleExactAlarms())) {
+            pendingExactAlarmOperation = null;
+            Toast.makeText(ctx, R.string.alarm_permission_not_granted, Toast.LENGTH_LONG).show();
+            refresh();
+            return;
+        }
+        Runnable pending = pendingExactAlarmOperation;
+        pendingExactAlarmOperation = null;
+        if (pending != null) {
+            pending.run();
+        } else {
+            store.restoreAfterBoot(ctx);
+        }
         refresh();
     }
 
@@ -235,14 +264,7 @@ public class AlarmFunctionManager {
         boolean needPerm = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
-            needPerm = am != null && !am.canScheduleExactAlarms();
-        }
-        // 电池优化没加白名单也亮提示：锁屏/后台被杀的主因
-        if (!needPerm && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try {
-                android.os.PowerManager pm = (android.os.PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
-                needPerm = pm != null && !pm.isIgnoringBatteryOptimizations(ctx.getPackageName());
-            } catch (Exception ignored) {}
+            needPerm = am == null || !am.canScheduleExactAlarms();
         }
         setVisibleIfChanged(permissionHint, needPerm);
     }

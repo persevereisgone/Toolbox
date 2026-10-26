@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 import android.widget.TextView;
 import java.util.Locale;
 import Yu.code.toolbox.R;
@@ -43,7 +44,9 @@ public class AlarmRingActivity extends Activity {
         findViewById(R.id.btn_ring_snooze).setOnClickListener(v -> {
             AlarmReceiver.stopRing();
             AlarmReceiver.cancelNotif(this);
-            store.snooze5(this);
+            if (!store.snooze5(this)) {
+                Toast.makeText(this, R.string.alarm_permission_not_granted, Toast.LENGTH_LONG).show();
+            }
             finish();
         });
 

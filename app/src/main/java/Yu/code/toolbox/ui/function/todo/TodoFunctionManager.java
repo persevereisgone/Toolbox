@@ -62,14 +62,14 @@ public class TodoFunctionManager {
             reload();
         });
         btnClearDone.setOnClickListener(v -> {
-            List<TodoItem> snapshot = new ArrayList<>(m.getAll());
-            boolean hasDone = false;
-            for (TodoItem i : snapshot) if (i.isDone()) { hasDone = true; break; }
-            if (!hasDone) { Toast.makeText(ctx, "没有已完成的待办", Toast.LENGTH_SHORT).show(); return; }
-            m.deleteDone(ctx);
+            List<TodoItem> removed = m.deleteDone(ctx);
+            if (removed.isEmpty()) {
+                Toast.makeText(ctx, "没有已完成的待办", Toast.LENGTH_SHORT).show();
+                return;
+            }
             reload();
-            com.google.android.material.snackbar.Snackbar.make(root, "已清除已完成", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
-                .setAction("撤销", vv -> { m.restoreItems(ctx, snapshot); reload(); })
+            styled(com.google.android.material.snackbar.Snackbar.make(root, "已清除已完成", com.google.android.material.snackbar.Snackbar.LENGTH_LONG))
+                .setAction("撤销", vv -> { m.restoreItems(ctx, removed); reload(); })
                 .show();
         });
         reload();
@@ -106,7 +106,21 @@ public class TodoFunctionManager {
         View empty = root.findViewById(R.id.layout_todo_empty);
         View rv = root.findViewById(R.id.rv_todo);
         boolean isEmpty = shown.isEmpty();
-        if (empty != null) empty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        if (empty != null) {
+            empty.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+            TextView emptyTitle = empty.findViewById(R.id.tv_todo_empty_title);
+            TextView emptyHint = empty.findViewById(R.id.tv_todo_empty_hint);
+            if (all.isEmpty()) {
+                emptyTitle.setText("暂无待办");
+                emptyHint.setText("在上方输入框写下第一件事吧");
+            } else if (filterMode == FILTER_DONE) {
+                emptyTitle.setText("还没有已完成项");
+                emptyHint.setText("完成待办后会显示在这里");
+            } else if (filterMode == FILTER_UNDONE) {
+                emptyTitle.setText("所有待办都已完成");
+                emptyHint.setText("切换“全部”查看完整清单");
+            }
+        }
         if (rv != null) rv.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
@@ -115,6 +129,16 @@ public class TodoFunctionManager {
                 ctx.getResources().getColor(selected ? R.color.app_text_primary : R.color.app_surface)));
         chip.setTextColor(ctx.getResources().getColor(
                 selected ? R.color.white : R.color.app_text_secondary));
+    }
+
+    private com.google.android.material.snackbar.Snackbar styled(com.google.android.material.snackbar.Snackbar snack) {
+        View v = snack.getView();
+        v.setBackgroundResource(R.drawable.snackbar_rounded_bg);
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        int m = (int) (12 * ctx.getResources().getDisplayMetrics().density);
+        lp.setMargins(m, 0, m, m);
+        v.setLayoutParams(lp);
+        return snack;
     }
 
     private String metaOf(TodoItem it) {
@@ -167,9 +191,9 @@ public class TodoFunctionManager {
             if (removed == null) { reload(); return; }
             m.deleteItem(ctx, removed.getId());
             reload();
-            com.google.android.material.snackbar.Snackbar.make(root,
+            styled(com.google.android.material.snackbar.Snackbar.make(root,
                             "已删除“" + removed.getTitle() + "”",
-                            com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
+                            com.google.android.material.snackbar.Snackbar.LENGTH_LONG))
                     .setAction("撤销", vv -> { m.restoreSingle(ctx, removed); reload(); })
                     .show();
         }
@@ -223,6 +247,7 @@ public class TodoFunctionManager {
             h.cb.setContentDescription((it.isDone() ? "标为未完成:" : "标为完成:") + it.getTitle());
             h.btnEdit.setOnClickListener(v -> showEditSheet(it));
             h.cb.setOnCheckedChangeListener((b, c) -> { m.toggleDone(ctx, it.getId()); reload(); });
+            h.hit.setOnClickListener(v -> h.cb.performClick());
             int stagger = Math.min(pos, 5) * ctx.getResources().getInteger(R.integer.motion_stagger);
             Animation enter = AnimationUtils.loadAnimation(ctx, R.anim.list_item_enter);
             enter.setStartOffset(stagger);
@@ -233,12 +258,14 @@ public class TodoFunctionManager {
 
         class H extends RecyclerView.ViewHolder {
             CheckBox cb;
+            View hit;
             TextView title;
             TextView meta;
             Button btnEdit;
             H(View v) {
                 super(v);
                 cb = v.findViewById(R.id.cb_todo);
+            hit = v.findViewById(R.id.cb_hit);
                 title = v.findViewById(R.id.tv_todo_title);
                 meta = v.findViewById(R.id.tv_todo_meta);
                 btnEdit = v.findViewById(R.id.btn_todo_edit);

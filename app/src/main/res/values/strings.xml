@@ -37,8 +37,8 @@
     <string name="empty_menu">暂无菜品加入菜单，请在菜谱详情页点击"加入菜单"</string>
     <string name="empty_purchase">今日菜单为空，无需采购</string>
     <string name="add_cookbook_hint">例如：红烧肉</string>
-    <string name="ingredients_hint">例如：五花肉500g,冰糖30g</string>
-    <string name="seasonings_hint">例如：姜5片,八角2颗,料酒2勺</string>
+    <string name="ingredients_hint">每行一种食材，也可用逗号分隔，例如：五花肉500g\n冰糖30g</string>
+    <string name="seasonings_hint">每行一种配料，也可用逗号分隔，例如：姜5片\n料酒2勺</string>
     <string name="steps_hint">例如：1.焯水；2.炒糖色；3.炖煮...</string>
     <string name="btn_add_to_menu">加入菜单</string>
     <string name="btn_clear_menu">清空菜单</string>
@@ -48,6 +48,7 @@
     <string name="cookbook_add_category">添加分类</string>
     <string name="cookbook_category_name_hint">分类名称</string>
     <string name="cookbook_category_exists">分类已存在</string>
+    <string name="cookbook_category_reserved">“全部”是筛选保留项，请换一个分类名</string>
     <string name="cookbook_category_empty">分类名称不能为空</string>
     <string name="cookbook_category_added">已添加分类</string>
     <string name="cookbook_category_renamed">已重命名分类</string>
@@ -98,8 +99,11 @@
     <string name="cookbook_purchased">已买</string>
     <string name="cookbook_filter_chip">筛选：%1$s ×</string>
     <string name="cookbook_empty_filtered">没有匹配的菜谱</string>
+    <string name="cookbook_empty_library">菜谱库为空，请到“管理”添加菜谱。</string>
     <string name="cookbook_clear_filters">清除筛选</string>
     <string name="cookbook_purchase_progress">已买 %1$d / 共 %2$d</string>
+    <string name="cookbook_purchase_recipe_count">%1$d 道菜</string>
+    <string name="cookbook_import_started">正在导入菜谱，请稍候。</string>
     <string name="cookbook_already_in_menu">已在今日菜单中</string>
     <string name="cookbook_clear_menu_confirm_title">清空菜单</string>
     <string name="cookbook_clear_menu_confirm_message">确定清空今日菜单吗？采购清单与已买标记也会一并清除。</string>
@@ -152,8 +156,9 @@
     <string name="alarm_time_sheet_desc">已过今天则自动顺延明天</string>
     <string name="alarm_permission_hint">需要精准闹钟权限，点此去设置</string>
     <string name="alarm_permission_sheet_title">需要精准闹钟权限</string>
-    <string name="alarm_permission_sheet_desc">Android 12 及以上必须逐项允许，否则到点不会响。点「去设置」打开「闹钟和提醒」权限，返回后自动继续刚才的操作。</string>
+    <string name="alarm_permission_sheet_desc">Android 12 及以上需要精准闹钟权限。开启后返回，应用会继续刚才的操作。</string>
     <string name="alarm_btn_goto_settings">去设置</string>
+    <string name="alarm_permission_not_granted">精准闹钟权限未开启，闹钟没有设置</string>
     <string name="alarm_btn_later">稍后</string>
     <string name="alarm_set_done">已设置</string>
     <string name="alarm_countdown_started">已开始</string>

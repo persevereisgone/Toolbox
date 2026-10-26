@@ -98,8 +98,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_xs"
-                android:maxLines="6"
-                android:ellipsize="end"
                 style="@style/TextAppearance.Toolbox.Body"
                 android:textColor="@color/app_text_primary" />
         </LinearLayout>

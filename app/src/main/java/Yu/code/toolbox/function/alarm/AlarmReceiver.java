@@ -27,7 +27,14 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override public void onReceive(Context ctx, Intent intent) {
         String a = intent.getAction();
         if (ACTION_DISMISS.equals(a)) { stopRing(); cancelNotif(ctx); return; }
-        if (ACTION_SNOOZE.equals(a)) { stopRing(); cancelNotif(ctx); new AlarmStore(ctx).snooze5(ctx); return; }
+        if (ACTION_SNOOZE.equals(a)) {
+            stopRing();
+            cancelNotif(ctx);
+            if (!new AlarmStore(ctx).snooze5(ctx)) {
+                android.widget.Toast.makeText(ctx, R.string.alarm_permission_not_granted, android.widget.Toast.LENGTH_LONG).show();
+            }
+            return;
+        }
         startRing(ctx);
         showNotif(ctx);
         AlarmWidgetProvider.refreshAll(ctx);

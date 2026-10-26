@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,10 +28,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class CookBookImportExportHelper {
+
+    private static final Handler MAIN = new Handler(Looper.getMainLooper());
+    private static final ExecutorService IMPORT_EXECUTOR = Executors.newSingleThreadExecutor();
 
     public interface UiCallback {
         void showToast(String message);
@@ -44,12 +51,36 @@ public class CookBookImportExportHelper {
     private final UiCallback callback;
 
     public CookBookImportExportHelper(Context context, CookBookManager manager, UiCallback callback) {
-        this.context = context;
+        Context applicationContext = context.getApplicationContext();
+        this.context = applicationContext == null ? context : applicationContext;
         this.manager = manager;
-        this.callback = callback;
+        this.callback = new UiCallback() {
+            @Override
+            public void showToast(String message) {
+                MAIN.post(() -> callback.showToast(message));
+            }
+
+            @Override
+            public void showResultDialog(String title, String message) {
+                MAIN.post(() -> callback.showResultDialog(title, message));
+            }
+
+            @Override
+            public void onImportDataChanged() {
+                MAIN.post(callback::onImportDataChanged);
+            }
+        };
     }
 
     public void importFromUri(Uri uri) {
+        if (uri == null) {
+            return;
+        }
+        callback.showToast(context.getString(Yu.code.toolbox.R.string.cookbook_import_started));
+        IMPORT_EXECUTOR.execute(() -> importFromUriInternal(uri));
+    }
+
+    private void importFromUriInternal(Uri uri) {
         File tempFile = null;
         try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
             if (inputStream == null) {
@@ -143,7 +174,7 @@ public class CookBookImportExportHelper {
     private void importCookbookFromZip(File zipFile) {
         Map<String, String> importedImagePaths = new HashMap<>();
         try (java.util.zip.ZipFile zip = new java.util.zip.ZipFile(zipFile)) {
-            String csvContent = null;
+            List<CookItem> imported = new ArrayList<>();
             int csvCount = 0;
             int imageCount = 0;
             java.util.Enumeration<? extends java.util.zip.ZipEntry> entries = zip.entries();
@@ -157,7 +188,7 @@ public class CookBookImportExportHelper {
                 if (lowerName.endsWith(".csv")) {
                     csvCount++;
                     try (InputStream entryStream = zip.getInputStream(entry)) {
-                        csvContent = readAll(entryStream);
+                        imported.addAll(parseCookbooksFromCsv(readAll(entryStream)));
                     }
                 } else if (lowerName.startsWith("cover_images/")) {
                     imageCount++;
@@ -170,13 +201,12 @@ public class CookBookImportExportHelper {
                     }
                 }
             }
-            if (csvContent == null) {
+            if (csvCount == 0) {
                 callback.showResultDialog(
                         context.getString(Yu.code.toolbox.R.string.cookbook_import_fail_title),
                         "导入包中未找到 CSV 数据。\n\nCSV 数量：" + csvCount + "\n图片数量：" + imageCount);
                 return;
             }
-            List<CookItem> imported = parseCookbooksFromCsv(csvContent);
             if (imported.isEmpty()) {
                 callback.showResultDialog(
                         context.getString(Yu.code.toolbox.R.string.cookbook_import_fail_title),
@@ -203,6 +233,10 @@ public class CookBookImportExportHelper {
 
     private void importCookbooksWithDedup(List<CookItem> imported, Map<String, String> importedImagePaths,
                                           int csvCount, int imageCount) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            MAIN.post(() -> importCookbooksWithDedup(imported, importedImagePaths, csvCount, imageCount));
+            return;
+        }
         if (imported == null || imported.isEmpty()) {
             callback.showToast(context.getString(Yu.code.toolbox.R.string.cookbook_import_nothing));
             return;
@@ -214,6 +248,7 @@ public class CookBookImportExportHelper {
         int importedCount = 0;
         int skippedDuplicateCount = 0;
         int restoredImageCount = 0;
+        List<CookItem> acceptedCookbooks = new ArrayList<>();
         for (CookItem item : imported) {
             String normalizedName = normalizeCookbookName(item.getName());
             if (normalizedName.isEmpty()) {
@@ -223,15 +258,16 @@ public class CookBookImportExportHelper {
                 skippedDuplicateCount++;
                 continue;
             }
+            item.setCategory(resolveImportedCategory(item.getCategory()));
             item.setId(0);
             String resolvedImage = resolveImportedImage(item.getImageUri(), importedImagePaths);
             if (resolvedImage != null && !resolvedImage.isEmpty() && !resolvedImage.equals(item.getImageUri())) {
                 restoredImageCount++;
             }
             item.setImageUri(resolvedImage);
-            manager.addCookbook(item);
-            importedCount++;
+            acceptedCookbooks.add(item);
         }
+        importedCount = manager.addCookbooks(acceptedCookbooks);
         if (importedCount == 0) {
             callback.showResultDialog(
                     context.getString(Yu.code.toolbox.R.string.cookbook_import_nothing),
@@ -242,6 +278,20 @@ public class CookBookImportExportHelper {
         callback.showResultDialog(
                 context.getString(Yu.code.toolbox.R.string.cookbook_import_done_title),
                 "已导入: " + importedCount + " 条\n跳过重名: " + skippedDuplicateCount + " 条\n恢复图片: " + restoredImageCount + " 张\nCSV 条数: " + csvCount + "\n图片数: " + imageCount);
+    }
+
+    private String resolveImportedCategory(String categoryName) {
+        String normalized = categoryName == null ? "" : categoryName.trim();
+        List<String> categories = manager.getCategories();
+        if (normalized.isEmpty()) {
+            return categories.get(0);
+        }
+        for (String category : categories) {
+            if (category.equalsIgnoreCase(normalized)) {
+                return category;
+            }
+        }
+        return manager.addCategory(normalized) ? normalized : manager.getCategories().get(0);
     }
 
     private List<CookItem> parseCookbooksFromCsv(String content) {

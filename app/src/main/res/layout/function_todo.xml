@@ -59,7 +59,7 @@
             android:id="@+id/chip_todo_all"
             style="@style/Widget.Toolbox.Button.Secondary"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:minWidth="64dp"
             android:textSize="@dimen/text_caption" />
 
@@ -67,7 +67,7 @@
             android:id="@+id/chip_todo_undone"
             style="@style/Widget.Toolbox.Button.Secondary"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:layout_marginStart="@dimen/space_sm"
             android:minWidth="64dp"
             android:textSize="@dimen/text_caption" />
@@ -76,7 +76,7 @@
             android:id="@+id/chip_todo_done"
             style="@style/Widget.Toolbox.Button.Secondary"
             android:layout_width="wrap_content"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:layout_marginStart="@dimen/space_sm"
             android:minWidth="64dp"
             android:textSize="@dimen/text_caption" />
@@ -103,12 +103,14 @@
         android:padding="@dimen/space_xl">
 
         <TextView
+            android:id="@+id/tv_todo_empty_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="暂无待办"
             style="@style/TextAppearance.Toolbox.TitleMedium" />
 
         <TextView
+            android:id="@+id/tv_todo_empty_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xs"

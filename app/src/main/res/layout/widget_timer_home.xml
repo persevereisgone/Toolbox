@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:paddingLeft="8dp" android:paddingRight="8dp"
+    android:paddingTop="6dp" android:paddingBottom="6dp"
+    android:background="@drawable/bg_widget_m3">
+
+    <!-- 未设置态:上行文字 + 下行预设 -->
+    <LinearLayout
+        android:id="@+id/group_preset"
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⏱" android:textSize="12sp"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false" />
+            <TextView
+                android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/timer_widget_title"
+                android:textColor="@color/widget_on_surface"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:textSize="10sp" android:textStyle="bold"
+                android:singleLine="true" />
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/timer_widget_empty"
+                android:textColor="@color/widget_on_variant"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:textSize="9sp"
+                android:singleLine="true" />
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="2dp">
+            <TextView android:id="@+id/btn_w_preset_15"
+                android:layout_width="0dp" android:layout_weight="1" android:layout_height="24dp"
+                android:gravity="center"
+                android:background="@drawable/widget_pill_solid"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:text="15分" android:textSize="11sp" android:textColor="#0B57D0"
+                android:singleLine="true" />
+            <TextView android:id="@+id/btn_w_preset_30"
+                android:layout_width="0dp" android:layout_weight="1" android:layout_height="24dp"
+                android:gravity="center"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/widget_pill_solid"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:text="30分" android:textSize="11sp" android:textColor="#0B57D0"
+                android:singleLine="true" />
+            <TextView android:id="@+id/btn_w_preset_60"
+                android:layout_width="0dp" android:layout_weight="1" android:layout_height="24dp"
+                android:gravity="center"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/widget_pill_solid"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:text="60分" android:textSize="11sp" android:textColor="#0B57D0"
+                android:singleLine="true" />
+            <TextView android:id="@+id/btn_w_preset_custom"
+                android:layout_width="0dp" android:layout_weight="1" android:layout_height="24dp"
+                android:gravity="center"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/widget_pill_solid"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:text="自定" android:textSize="11sp" android:textColor="#0B57D0"
+                android:singleLine="true" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 已设置态:上行剩余+取消,下行进度 -->
+    <LinearLayout
+        android:id="@+id/group_running"
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:visibility="gone">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="⏱" android:textSize="12sp" />
+            <TextView
+                android:id="@+id/tv_w_remain"
+                android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:fontFamily="monospace"
+                android:text="24:36"
+                android:textColor="@color/widget_on_surface"
+                android:textSize="13sp" android:textStyle="bold"
+                android:singleLine="true" />
+            <TextView android:id="@+id/btn_w_cancel"
+                android:layout_width="52dp" android:layout_height="24dp"
+                android:gravity="center"
+                android:background="@drawable/widget_pill_solid"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="false"
+                android:text="取消" android:textSize="11sp" android:textColor="#0B57D0"
+                android:singleLine="true" />
+        </LinearLayout>
+        <ProgressBar
+            android:id="@+id/pb_w_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent" android:layout_height="4dp"
+            android:layout_marginTop="3dp"
+            android:max="100" android:progress="60" />
+    </LinearLayout>
+</LinearLayout>

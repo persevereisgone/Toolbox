@@ -46,7 +46,8 @@ public class PurchaseListAdapter extends RecyclerView.Adapter<PurchaseListAdapte
     public void onBindViewHolder(@NonNull PurchaseViewHolder holder, int position) {
         PurchaseItem item = items.get(position);
         holder.tvName.setText(item.name);
-        holder.tvQty.setText(String.valueOf(item.quantity));
+        holder.tvQty.setText(holder.itemView.getContext().getString(
+                Yu.code.toolbox.R.string.cookbook_purchase_recipe_count, item.recipeCount));
         holder.checkPurchased.setOnCheckedChangeListener(null);
         holder.checkPurchased.setChecked(item.purchased);
         applyPurchasedStyle(holder, item.purchased);
@@ -93,12 +94,12 @@ public class PurchaseListAdapter extends RecyclerView.Adapter<PurchaseListAdapte
 
     public static class PurchaseItem {
         public final String name;
-        public final int quantity;
+        public final int recipeCount;
         public boolean purchased;
 
-        public PurchaseItem(String name, int quantity) {
+        public PurchaseItem(String name, int recipeCount) {
             this.name = name;
-            this.quantity = quantity;
+            this.recipeCount = recipeCount;
         }
     }
 }

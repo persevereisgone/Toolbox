@@ -29,7 +29,7 @@ public class LockAlarmReceiver extends BroadcastReceiver {
         }
 
         // 清除记录，避免再次自动拉起
-        sp.edit().remove("lock_trigger_at").apply();
+        sp.edit().remove("lock_trigger_at").putBoolean("lock_restore_pending", false).apply();
 
         // 直接停止倒计时前台服务，避免前台服务未及时启动的崩溃
         context.stopService(new Intent(context, CountdownOverlayService.class));

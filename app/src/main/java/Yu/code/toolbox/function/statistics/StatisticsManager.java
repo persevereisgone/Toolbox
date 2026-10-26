@@ -24,7 +24,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,7 +71,6 @@ public class StatisticsManager {
     private static final String KEY_LIST_SORT = "list_sort";
     private static final String KEY_FULLSCREEN_SORT = "fullscreen_sort";
     private static final String DEFAULT_SET_NAME = "默认统计组";
-    private static final int REQUEST_CODE_IMPORT_FILE = 6001;
 
     private Context context;
     private View rootView;
@@ -87,6 +85,7 @@ public class StatisticsManager {
     private TextView tvTotalCount;
     private LinearLayout layoutSetPills;
     private boolean speedOpen;
+    private Runnable fileImportLauncher;
 
     private List<StatisticsSet> statisticsSets;
     private String currentSetName;
@@ -938,7 +937,7 @@ public class StatisticsManager {
      */
     private void importData() {
         // 显示导入选项对话框
-        String[] options = {"从 Excel/CSV 文件导入", "手动输入数据"};
+        String[] options = {"导入 CSV 文件（Excel 可打开）", "手动输入数据"};
         new AlertDialog.Builder(context, R.style.AppDialogStyle)
                 .setTitle("选择导入方式")
                 .setItems(options, (dialog, which) -> {
@@ -958,24 +957,19 @@ public class StatisticsManager {
      * 从文件导入
      */
     private void importFromFile() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        
-        // 支持的文件类型
-        String[] mimeTypes = {"text/csv", "text/comma-separated-values", "application/vnd.ms-excel", 
-                              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-        
+        if (fileImportLauncher == null) {
+            Toast.makeText(context, "无法打开文件选择器", Toast.LENGTH_SHORT).show();
+            return;
+        }
         try {
-            ((FragmentActivity) context).startActivityForResult(
-                Intent.createChooser(intent, "选择 Excel/CSV 文件"), 
-                REQUEST_CODE_IMPORT_FILE
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
+            fileImportLauncher.run();
+        } catch (RuntimeException e) {
             Toast.makeText(context, "无法打开文件选择器", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setFileImportLauncher(Runnable launcher) {
+        fileImportLauncher = launcher;
     }
 
     /**
@@ -1021,18 +1015,6 @@ public class StatisticsManager {
                             null);
                 },
                 null);
-    }
-
-    /**
-     * 处理文件选择结果
-     */
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_IMPORT_FILE && resultCode == android.app.Activity.RESULT_OK) {
-            if (data != null && data.getData() != null) {
-                Uri fileUri = data.getData();
-                importFromFileUri(fileUri);
-            }
-        }
     }
 
     /**

@@ -35,8 +35,8 @@
 
     <ImageButton
         android:id="@+id/btn_decrease"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginEnd="@dimen/space_xxs"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="减少数量"
@@ -48,13 +48,13 @@
     <TextView
         android:id="@+id/tv_quantity"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="48dp"
         android:layout_marginEnd="@dimen/space_xxs"
         android:background="@drawable/app_chip_bg"
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
-        android:minWidth="40dp"
+        android:minWidth="48dp"
         android:paddingStart="@dimen/space_xs"
         android:paddingEnd="@dimen/space_xs"
         android:textColor="@color/app_primary_dark"
@@ -63,8 +63,8 @@
 
     <ImageButton
         android:id="@+id/btn_increase"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginEnd="@dimen/space_xxs"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="增加数量"
@@ -75,8 +75,8 @@
 
     <ImageButton
         android:id="@+id/btn_delete"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="删除物品"
         android:padding="@dimen/space_xs"

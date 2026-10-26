@@ -459,7 +459,8 @@ public class CountdownOverlayService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
         if (am != null) am.cancel(pi);
-        getSharedPreferences("lock_prefs", MODE_PRIVATE).edit().remove("lock_trigger_at").apply();
+        getSharedPreferences("lock_prefs", MODE_PRIVATE).edit()
+                .remove("lock_trigger_at").putBoolean("lock_restore_pending", false).apply();
         TimerHomeWidgetProvider.refreshAll(this);
         stopSelfSafely();
     }

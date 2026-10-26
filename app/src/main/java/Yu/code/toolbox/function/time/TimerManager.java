@@ -30,7 +30,12 @@ public class TimerManager {
     private static final String KEY_AUTO_LOCK = "auto_lock_screen";
     private static final String KEY_LAST_HOURS = "last_custom_hours";
     private static final String KEY_LAST_MINUTES = "last_custom_minutes";
+    private static final String KEY_RESTORE_PENDING = "lock_restore_pending";
     private static final int REQ_CODE_LOCK = 1001;
+
+    public interface ExactAlarmSettingsLauncher {
+        void launch(Intent intent);
+    }
 
     private Context context;
     private View rootView;
@@ -42,15 +47,26 @@ public class TimerManager {
     private TextView tvRemainingTime;
     private Button btnCancelTimer;
     private androidx.appcompat.widget.SwitchCompat switchAutoLock;
+    private final ExactAlarmSettingsLauncher exactAlarmSettingsLauncher;
+    private Runnable pendingExactAlarmOperation;
 
     public TimerManager(Context context, View rootView) {
+        this(context, rootView, null);
+    }
+
+    public TimerManager(Context context, View rootView,
+                        ExactAlarmSettingsLauncher exactAlarmSettingsLauncher) {
         this.context = context;
         this.rootView = rootView;
         this.prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.handler = new Handler();
+        this.exactAlarmSettingsLauncher = exactAlarmSettingsLauncher;
 
         initViews();
         setupClickListeners();
+        if (prefs.getBoolean(KEY_RESTORE_PENDING, false) && restoreAfterBoot(context)) {
+            startCountdownService();
+        }
         updateTimerStatus();
         startStatusUpdater();
     }
@@ -61,8 +77,12 @@ public class TimerManager {
         btnCancelTimer = rootView.findViewById(R.id.btn_cancel_timer);
         switchAutoLock = rootView.findViewById(R.id.switch_auto_lock);
 
-        switchAutoLock.setChecked(false);
-        prefs.edit().putBoolean(KEY_AUTO_LOCK, false).apply();
+        boolean savedAutoLock = prefs.getBoolean(KEY_AUTO_LOCK, false);
+        boolean autoLock = savedAutoLock && isDeviceAdminActive();
+        switchAutoLock.setChecked(autoLock);
+        if (savedAutoLock && !autoLock) {
+            prefs.edit().putBoolean(KEY_AUTO_LOCK, false).apply();
+        }
     }
 
     private void setupClickListeners() {
@@ -217,20 +237,12 @@ public class TimerManager {
     private void setTimer(long delayMillis) {
         if (!ensureOverlayPermission()) return;
         ensureNotificationPermissionIfNeeded();
-        if (!ensureExactAlarmPermission()) return;
+        if (!ensureExactAlarmPermission(() -> setTimer(delayMillis))) return;
 
         long triggerAt = System.currentTimeMillis() + delayMillis;
-        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pi = buildLockPendingIntent();
-
-        if (am != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pi);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                am.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pi);
-            } else {
-                am.set(AlarmManager.RTC_WAKEUP, triggerAt, pi);
-            }
+        if (!scheduleTriggerAt(context, triggerAt)) {
+            Toast.makeText(context, "无法设置精准闹钟，请检查系统权限", Toast.LENGTH_LONG).show();
+            return;
         }
 
         saveTriggerAt(triggerAt);
@@ -257,7 +269,9 @@ public class TimerManager {
     private void updateTimerStatus() {
         long remaining = getRemainingMs();
         if (remaining > 0) {
-            tvTimerStatus.setText("定时进行中");
+            tvTimerStatus.setText(prefs.getBoolean(KEY_RESTORE_PENDING, false)
+                    ? "计时待恢复：请授予精准闹钟权限"
+                    : "定时进行中");
             tvRemainingTime.setText(formatDurationWithSeconds(remaining));
             tvRemainingTime.setVisibility(View.VISIBLE);
             btnCancelTimer.setEnabled(true);
@@ -304,19 +318,78 @@ public class TimerManager {
         }
     }
 
-    private boolean ensureExactAlarmPermission() {
+    private boolean ensureExactAlarmPermission(Runnable pendingOperation) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return true;
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (am != null && am.canScheduleExactAlarms()) return true;
         Toast.makeText(context, "需要授予精准闹钟权限", Toast.LENGTH_LONG).show();
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-            intent.setData(android.net.Uri.parse("package:" + context.getPackageName()));
-            context.startActivity(intent);
+        if (exactAlarmSettingsLauncher == null) return false;
+        pendingExactAlarmOperation = pendingOperation;
+        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                android.net.Uri.parse("package:" + context.getPackageName()));
+        try {
+            exactAlarmSettingsLauncher.launch(intent);
+        } catch (RuntimeException e) {
+            pendingExactAlarmOperation = null;
+            Toast.makeText(context, "无法打开精准闹钟设置", Toast.LENGTH_LONG).show();
+        }
+        return false;
+    }
+
+    public void onExactAlarmSettingsReturned() {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (am == null || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms())) {
+            pendingExactAlarmOperation = null;
+            Toast.makeText(context, "精准闹钟权限未开启，计时没有设置", Toast.LENGTH_LONG).show();
+            updateTimerStatus();
+            return;
+        }
+        Runnable pending = pendingExactAlarmOperation;
+        pendingExactAlarmOperation = null;
+        if (pending != null) {
+            pending.run();
+        } else if (prefs.getBoolean(KEY_RESTORE_PENDING, false) && restoreAfterBoot(context)) {
+            startCountdownService();
+        }
+        updateTimerStatus();
+    }
+
+    public static boolean scheduleTriggerAt(Context context, long triggerAt) {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (am == null) return false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) return false;
+        Intent intent = new Intent(context, LockAlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                REQ_CODE_LOCK,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent);
+            }
+            return true;
+        } catch (RuntimeException e) {
             return false;
         }
-        return true;
+    }
+
+    public static boolean restoreAfterBoot(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        long triggerAt = preferences.getLong(KEY_TRIGGER_AT, -1L);
+        if (triggerAt <= 0) return false;
+        if (triggerAt <= System.currentTimeMillis()) {
+            preferences.edit().remove(KEY_TRIGGER_AT).remove("lock_total_ms")
+                    .putBoolean(KEY_RESTORE_PENDING, false).apply();
+            return false;
+        }
+        boolean scheduled = scheduleTriggerAt(context, triggerAt);
+        preferences.edit().putBoolean(KEY_RESTORE_PENDING, !scheduled).apply();
+        return scheduled;
     }
 
     private PendingIntent buildLockPendingIntent() {
@@ -350,11 +423,11 @@ public class TimerManager {
     }
 
     private void saveTriggerAt(long triggerAt) {
-        prefs.edit().putLong(KEY_TRIGGER_AT, triggerAt).apply();
+        prefs.edit().putLong(KEY_TRIGGER_AT, triggerAt).putBoolean(KEY_RESTORE_PENDING, false).apply();
     }
 
     private void clearTriggerAt() {
-        prefs.edit().remove(KEY_TRIGGER_AT).apply();
+        prefs.edit().remove(KEY_TRIGGER_AT).putBoolean(KEY_RESTORE_PENDING, false).apply();
     }
 
     private long getRemainingMs() {
