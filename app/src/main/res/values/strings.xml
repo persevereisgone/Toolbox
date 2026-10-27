@@ -68,6 +68,13 @@
     <string name="cookbook_new_title">新建菜谱</string>
     <string name="cookbook_cover_source_title">选择封面来源</string>
     <string name="cookbook_cover_source_message">请选择从相册选择图片，或直接使用相机拍摄。</string>
+    <string name="cookbook_crop_title">调整封面</string>
+    <string name="cookbook_crop_cancel">取消</string>
+    <string name="cookbook_crop_apply">使用此区域</string>
+    <string name="cookbook_crop_hint">拖动照片调整位置，拖动边角调整选取范围</string>
+    <string name="cookbook_crop_view_desc">封面裁剪区域</string>
+    <string name="cookbook_crop_failed">图片裁剪失败，请重新选择</string>
+    <string name="cookbook_crop_loading_failed">无法加载这张图片，请重新选择</string>
     <string name="cookbook_pick_gallery">相册选择</string>
     <string name="cookbook_take_photo">直接拍照</string>
     <string name="cookbook_camera_open_failed">无法打开相机</string>

@@ -24,6 +24,7 @@ public class CookBookManager {
     private static final String KEY_MENU_ITEMS = "menu_items_list";
     private static final String KEY_PURCHASED_ITEMS = "purchased_items_list";
     private static final String KEY_CATEGORIES = "categories_list";
+    private static final String KEY_INGREDIENTS_CATEGORY_MIGRATED = "ingredients_category_migrated";
 
     private final SharedPreferences preferences;
     private final Gson gson;
@@ -34,6 +35,7 @@ public class CookBookManager {
     public static final String CATEGORY_COLD = "凉菜";
     public static final String CATEGORY_DESSERT = "甜品";
     public static final String CATEGORY_SIDE = "配菜";
+    public static final String CATEGORY_INGREDIENTS = "配料";
     public static final String CATEGORY_ALL = "全部";
 
     public CookBookManager(Context context) {
@@ -163,6 +165,13 @@ public class CookBookManager {
             saveCategories(categories);
             migrateCategoryName(CATEGORY_ALL, replacement);
         }
+        if (!preferences.getBoolean(KEY_INGREDIENTS_CATEGORY_MIGRATED, false)) {
+            if (!containsCategory(categories, CATEGORY_INGREDIENTS)) {
+                categories.add(CATEGORY_INGREDIENTS);
+                saveCategories(categories);
+            }
+            preferences.edit().putBoolean(KEY_INGREDIENTS_CATEGORY_MIGRATED, true).apply();
+        }
         return categories;
     }
 
@@ -289,6 +298,7 @@ public class CookBookManager {
         defaults.add(CATEGORY_COLD);
         defaults.add(CATEGORY_DESSERT);
         defaults.add(CATEGORY_SIDE);
+        defaults.add(CATEGORY_INGREDIENTS);
         return defaults;
     }
 

@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.recyclerview)
     implementation(libs.fragment)
+    implementation(libs.android.image.cropper)
     
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)

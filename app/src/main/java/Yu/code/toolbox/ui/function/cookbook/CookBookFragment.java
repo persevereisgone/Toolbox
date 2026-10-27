@@ -1,8 +1,10 @@
 package Yu.code.toolbox.ui.function.cookbook;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -50,7 +52,6 @@ public class CookBookFragment extends Fragment {
     private MenuListAdapter menuAdapter;
     private PurchaseListAdapter purchaseAdapter;
     private List<CookItem> cookbooks = new ArrayList<>();
-    private CookItem pendingImageTarget;
     private ImageView pendingImagePreview;
     private String pendingImageUri;
 
@@ -80,12 +81,14 @@ public class CookBookFragment extends Fragment {
     private RecyclerView rvCookbooks;
     private BottomNavigationView bottomNav;
     private ActivityResultLauncher<PickVisualMediaRequest> coverPickerLauncher;
+    private ActivityResultLauncher<Intent> coverCropLauncher;
     private ActivityResultLauncher<String> cameraPermissionLauncher;
     private ActivityResultLauncher<Uri> cameraLauncher;
     private ActivityResultLauncher<String[]> importCookbookLauncher;
     private ActivityResultLauncher<String> exportCookbookLauncher;
     private ActivityResultLauncher<String> downloadTemplateLauncher;
     private Uri pendingCameraUri;
+    private File pendingCameraPhotoFile;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,20 +104,42 @@ public class CookBookFragment extends Fragment {
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), success -> {
             if (!isAdded()) return;
             if (Boolean.TRUE.equals(success) && pendingCameraUri != null) {
-                String storedPath = copyImageToInternalStorage(pendingCameraUri);
-                if (storedPath == null) {
-                    Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_image_save_failed, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                pendingImageUri = storedPath;
-                if (pendingImageTarget != null) {
-                    pendingImageTarget.setImageUri(storedPath);
-                }
-                if (pendingImagePreview != null) {
-                    CookbookImageLoader.load(requireContext(), storedPath, pendingImagePreview, Yu.code.toolbox.R.drawable.recipe);
-                }
-                Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_cover_selected, Toast.LENGTH_SHORT).show();
+                launchCoverCrop(pendingCameraUri);
+            } else {
+                cleanupPendingCameraPhoto();
             }
+        });
+        coverCropLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (!isAdded()) return;
+            Intent data = result.getData();
+            if (result.getResultCode() != Activity.RESULT_OK || data == null) {
+                cleanupPendingCameraPhoto();
+                return;
+            }
+
+            String croppedUriValue = data.getStringExtra(CookbookCoverCropActivity.EXTRA_CROPPED_URI);
+            String croppedCacheName = data.getStringExtra(CookbookCoverCropActivity.EXTRA_CROPPED_CACHE_NAME);
+            String storedPath = null;
+            try {
+                if (croppedUriValue != null) {
+                    storedPath = copyImageToInternalStorage(Uri.parse(croppedUriValue));
+                }
+            } finally {
+                if (croppedCacheName != null && !croppedCacheName.contains(File.separator)) {
+                    new File(requireContext().getCacheDir(), croppedCacheName).delete();
+                }
+                cleanupPendingCameraPhoto();
+            }
+
+            if (storedPath == null) {
+                Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_image_save_failed, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            pendingImageUri = storedPath;
+            if (pendingImagePreview != null) {
+                CookbookImageLoader.load(requireContext(), storedPath, pendingImagePreview, Yu.code.toolbox.R.drawable.recipe);
+            }
+            Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_cover_selected, Toast.LENGTH_SHORT).show();
         });
         importCookbookLauncher = registerForActivityResult(new ActivityResultContracts.OpenDocument(), uri -> {
             if (!isAdded() || uri == null || importExportHelper == null) return;
@@ -138,19 +163,7 @@ public class CookBookFragment extends Fragment {
                     if (!isAdded() || uri == null) {
                         return;
                     }
-                    String storedPath = copyImageToInternalStorage(uri);
-                    if (storedPath == null) {
-                        Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_image_save_failed, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    pendingImageUri = storedPath;
-                    if (pendingImageTarget != null) {
-                        pendingImageTarget.setImageUri(storedPath);
-                    }
-                    if (pendingImagePreview != null) {
-                        CookbookImageLoader.load(requireContext(), storedPath, pendingImagePreview, Yu.code.toolbox.R.drawable.recipe);
-                    }
-                    Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_cover_selected, Toast.LENGTH_SHORT).show();
+                    launchCoverCrop(uri);
                 });
     }
 
@@ -747,7 +760,6 @@ public class CookBookFragment extends Fragment {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         etCategory.setAdapter(categoryAdapter);
 
-        pendingImageTarget = editingItem;
         pendingImagePreview = ivCoverPreview;
         pendingImageUri = editingItem != null ? editingItem.getImageUri() : null;
         tvDialogTitle.setText(isEditing
@@ -816,6 +828,20 @@ public class CookBookFragment extends Fragment {
                 .build());
     }
 
+    private void launchCoverCrop(Uri sourceUri) {
+        Intent intent = new Intent(requireContext(), CookbookCoverCropActivity.class);
+        intent.putExtra(CookbookCoverCropActivity.EXTRA_SOURCE_URI, sourceUri.toString());
+        coverCropLauncher.launch(intent);
+    }
+
+    private void cleanupPendingCameraPhoto() {
+        if (pendingCameraPhotoFile != null) {
+            pendingCameraPhotoFile.delete();
+            pendingCameraPhotoFile = null;
+        }
+        pendingCameraUri = null;
+    }
+
     private void showCoverSourceDialog() {
         Yu.code.toolbox.Utils.DialogUtils.showCommonConfirmDialog(requireContext(),
                 getString(Yu.code.toolbox.R.string.cookbook_cover_source_title),
@@ -836,10 +862,12 @@ public class CookBookFragment extends Fragment {
 
     private void launchCamera() {
         try {
-            File photoFile = new File(requireContext().getCacheDir(), "cookbook_camera_" + System.currentTimeMillis() + ".jpg");
-            pendingCameraUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".fileprovider", photoFile);
+            cleanupPendingCameraPhoto();
+            pendingCameraPhotoFile = new File(requireContext().getCacheDir(), "cookbook_camera_" + System.currentTimeMillis() + ".jpg");
+            pendingCameraUri = FileProvider.getUriForFile(requireContext(), requireContext().getPackageName() + ".fileprovider", pendingCameraPhotoFile);
             cameraLauncher.launch(pendingCameraUri);
         } catch (Exception e) {
+            cleanupPendingCameraPhoto();
             Toast.makeText(requireContext(), Yu.code.toolbox.R.string.cookbook_camera_open_failed, Toast.LENGTH_SHORT).show();
         }
     }
@@ -1130,7 +1158,6 @@ public class CookBookFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         rootView = null;
-        pendingImageTarget = null;
         pendingImagePreview = null;
         pendingImageUri = null;
     }

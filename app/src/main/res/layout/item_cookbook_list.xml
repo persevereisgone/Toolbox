@@ -59,7 +59,7 @@
             android:padding="@dimen/space_sm"
             android:scaleType="centerInside"
             android:src="@drawable/ic_favorite_24"
-            android:layout_marginStart="@dimen/space_xs"
+            android:layout_marginStart="@dimen/space_xxs"
             app:tint="@color/app_primary" />
 
         <ImageButton
@@ -71,8 +71,6 @@
             android:padding="@dimen/space_sm"
             android:scaleType="centerInside"
             android:src="@drawable/ic_add_24"
-            android:layout_marginStart="@dimen/space_xs"
-            android:layout_marginEnd="@dimen/space_xs"
             app:tint="@color/app_text_primary" />
 
         <ImageButton
@@ -84,7 +82,6 @@
             android:padding="@dimen/space_sm"
             android:scaleType="centerInside"
             android:src="@drawable/ic_delete_24"
-            android:layout_marginEnd="@dimen/space_xs"
             app:tint="@color/app_danger" />
 
     </LinearLayout>
